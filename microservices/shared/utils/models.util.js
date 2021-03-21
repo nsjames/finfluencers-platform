@@ -1,0 +1,56 @@
+const Databased = require('../models/Databased.model');
+
+
+const throwFields = (fields, msg = "") => {
+    throw new Error(`Fields are incorrect: ${JSON.stringify(fields, null, 4)} -- ${msg}`);
+}
+
+const validateFields = (model, source) => {
+    const modelProperties = Object.keys(model);
+    if(!Object.keys(source).every(prop => {
+        const propIsRight = modelProperties.includes(prop) || prop === 'docType';
+        if(!propIsRight) console.error(prop);
+        return propIsRight;
+    })) {
+        console.error(source);
+        return throwFields(model, "wrong props");
+    }
+    if(!modelProperties.every(prop => {
+        const propIsRight = prop === 'docType' || !source.hasOwnProperty(prop) || typeof source[prop] === model[prop] || source[prop] === null || model[prop] === 'any';
+        if(!propIsRight) console.error('Model prop error', prop, typeof source[prop], model[prop]);
+        return propIsRight;
+    })) {
+        console.error(source);
+        return throwFields(model, "wrong prop types");
+    }
+
+    modelProperties.map(prop => {
+        if(!source.hasOwnProperty(prop)) source[prop] = null;
+    });
+    return true;
+};
+
+const createModel = (name, schema = {}, methods = {}) => {
+    return ({[name] : class extends Databased {
+            constructor(json = {}) {
+                if(!json) json = {};
+                // Make sure schema matches
+                validateFields(schema, json);
+                // Allows injecting custom constructor handling
+                if(methods.constructor) methods.constructor(json);
+
+                // Initializes Databased extension
+                super(name.toLowerCase());
+
+                // Adds properties and methods to class
+                Object.keys(schema).map(prop => this[prop] = json[prop]);
+                Object.keys(methods).map(method => method === 'constructor' ? null : this[method] = methods[method]);
+            }
+
+        }})[name];
+}
+
+module.exports = {
+    validateFields,
+    createModel
+}

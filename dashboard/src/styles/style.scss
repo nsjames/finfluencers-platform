@@ -1,0 +1,136 @@
+@import "./variables";
+
+div, figure, section, nav, article, input, textarea, button {
+  padding:0; margin:0; box-sizing: border-box;
+}
+
+input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+html, body {
+  height:100%;
+  padding:0; margin:0; box-sizing: border-box;
+}
+
+body {
+
+  overflow-x: hidden;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  display:inherit;
+  text-decoration: inherit;
+  color:inherit;
+}
+
+
+h1 {
+  font-size: 64px;
+  font-weight: 300;
+  color:$dark_blue;
+  margin:0;
+  padding:0;
+}
+
+h2 {
+  font-size: 48px;
+  font-weight: 800;
+  color:$dark_blue;
+  margin:0;
+  padding:0;
+}
+
+h3 {
+  font-size: 24px;
+  font-weight: 800;
+  color:$dark_blue;
+  margin:0;
+  padding:0;
+}
+
+h4 {
+  text-transform: uppercase;
+  color: $primary;
+  text-decoration: underline;
+  font-size: 14px;
+}
+
+p {
+  color:$grey;
+  font-weight: 300;
+  margin:0;
+  padding:0;
+
+  &.big {
+    font-size: 24px;
+
+  }
+}
+
+@media (max-width: $breakpoint) {
+  h1 {
+    font-size: 64px;
+  }
+
+  h2 {
+    font-size: 48px;
+  }
+
+  h4 {
+    font-size: 14px;
+  }
+
+  p {
+
+    &.big {
+      font-size: 18px;
+
+    }
+  }
+}
+
+.text-container {
+  max-width:900px;
+  margin:0 auto;
+  text-align:center;
+
+  &.less {
+    max-width:600px;
+  }
+}
+
+.spacer {
+  height:60px;
+
+  @media (max-width: $breakpoint) {
+    height:30px;
+  }
+}
+
+pre {
+  text-align:left;
+  padding:20px;
+  background:$dark_blue;
+  color:white;
+  border-radius:6px;
+  margin:0;
+  font-size: 18px;
+  font-family: 'Monospaced';
+}
+
+.hero {
+
+  max-width:750px;
+  margin:0 auto;
+}

@@ -1,0 +1,45 @@
+{
+  "name": "finfluencers",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "tokens": "babel-node --presets es2015 export_tokens_list_for_mock.js"
+  },
+  "dependencies": {
+    "@ethersproject/address": "^5.0.11",
+    "@ethersproject/solidity": "^5.0.10",
+    "@uniswap/sdk": "^3.0.3",
+    "@walletconnect/web3-provider": "^1.3.6",
+    "apollo-cache-inmemory": "^1.6.6",
+    "apollo-client": "^2.6.10",
+    "apollo-link-http": "^1.5.17",
+    "bignumber.js": "^9.0.1",
+    "buefy": "^0.9.4",
+    "chart.js": "^2.9.4",
+    "core-js": "^3.6.5",
+    "dayjs": "^1.10.4",
+    "ethers": "^5.0.31",
+    "graphql": "^15.5.0",
+    "graphql-tag": "^2.11.0",
+    "numeral": "^2.0.6",
+    "vue": "^2.6.11",
+    "vue-router": "^3.2.0",
+    "vuex": "^3.4.0",
+    "web3": "^1.3.4"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-plugin-vuex": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "isomorphic-fetch": "^3.0.0",
+    "sass": "^1.26.5",
+    "sass-loader": "^8.0.2",
+    "vue-template-compiler": "^2.6.11"
+  }
+}

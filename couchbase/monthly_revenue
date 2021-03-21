@@ -1,0 +1,17 @@
+// monthly_revenue view
+
+// Map
+function (doc, meta) {
+  if(doc.docType == 'accountinvoice'){
+  	emit([doc.year, doc.month], doc.dollars);
+  }
+}
+
+// Reduce
+function(key, values, rereduce) {
+  var sum = 0;
+  for(i=0; i < values.length; i++) {
+    sum = sum + values[i];
+  }
+  return(sum);
+}

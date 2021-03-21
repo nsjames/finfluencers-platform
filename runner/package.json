@@ -1,0 +1,19 @@
+{
+  "name": "runner",
+  "version": "1.0.0",
+  "description": "",
+  "main": "run.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "isomorphic-fetch": "^3.0.0"
+  },
+  "devDependencies": {
+    "chokidar": "^3.4.3",
+    "decache": "^4.6.0"
+  }
+}
