@@ -17,11 +17,13 @@
 		width:$bubble;
 		height:$bubble;
 		border-radius:50%;
-		background:var(--background-color);
 		box-shadow:var(--soft-shadow);
 		display:flex;
 		align-items: center;
 		justify-content: center;
+
+		transition: all 0.8s ease;
+		transition-property: box-shadow;
 
 		.icon {
 			width:$icon;

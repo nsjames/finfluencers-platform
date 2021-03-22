@@ -1,6 +1,5 @@
 const {createModel} = require('../utils/models.util');
 const {sha256} = require('../utils/crypto.util');
-const PLATFORM_TYPES = require('../services/platforms/PLATFORM_TYPES');
 
 const FIELDS = {
     user_platform_index:'string',
@@ -19,8 +18,7 @@ const METHODS = {
             // interactions required for tracking.
 	        json.interval = (() => {
 		        switch ((json.platform_type)) {
-			        case PLATFORM_TYPES.YOUTUBE: return 60;
-			        case PLATFORM_TYPES.INSTAGRAM: return 60;
+
 			        default: return 60;
 		        }
 	        })() * 1000;

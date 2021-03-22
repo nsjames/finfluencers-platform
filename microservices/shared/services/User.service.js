@@ -51,7 +51,7 @@ module.exports = class UserService {
     }
 
     static async totalUsers(){
-        return ORM.query(`SELECT COUNT(*) FROM BUCKET_NAME WHERE docType = 'user'`);
+        return ORM.query(`SELECT COUNT(*) FROM BUCKET_NAME WHERE doc_type = 'user'`);
     }
 
 	static async addWealth(user_index){

@@ -7,8 +7,8 @@ const FIELDS = {
     name:'string',
     email:'string',
     auth:'object',
-    last_connection:'number',
     wealth:'number',
+    public_key:'string',
 };
 
 const METHODS = {
@@ -19,11 +19,17 @@ const METHODS = {
         return this.rawIndex('email', sha256(this.email))
     },
     constructor(json){
-        if(!json.hasOwnProperty('last_connection') || typeof json.last_connection !== "number") {
-            json.last_connection = 0;
+        if(!json.hasOwnProperty('id')) {
+            json.id = 0;
+            json.name = '';
+            json.email = '';
+            json.auth = null;
         }
-        if(!json.hasOwnProperty('wealth') || json.wealth === null){
+        if(!json.hasOwnProperty('wealth') || json.wealth === null) {
             json.wealth = 0;
+        }
+        if(!json.hasOwnProperty('public_key') || !json.public_key) {
+            json.public_key = '';
         }
     },
     safe(){
@@ -33,7 +39,6 @@ const METHODS = {
             name:this.name,
             email:this.email,
             auth:auth.safe(),
-            last_connection:this.last_connection,
 	        wealth:this.wealth,
         }
     },

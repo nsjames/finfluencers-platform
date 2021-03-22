@@ -7,7 +7,7 @@
 		</transition>
 
 		<section class="post-text">
-			<textarea :placeholder="textPlaceholder"></textarea>
+			<textarea v-model="text" :placeholder="textPlaceholder"></textarea>
 		</section>
 
 		<section class="actions">
@@ -16,9 +16,21 @@
 					v-on:selected="x => selectedContentType = x" />
 			</section>
 			<section class="post-details">
-				<span>0/255</span>
+				<span><b :class="{'over-length':text.length > MAX_CHARS}">{{text.length}}</b> / {{MAX_CHARS}}</span>
 				<button>Post</button>
 			</section>
+		</section>
+
+		<section class="sandbox" v-if="selectedContentType.id === 'trade'">
+			<section>
+				<input type="checkbox" />
+				<span>Sandbox</span>
+			</section>
+			<p>
+				Sandboxing is a way to train your financial decision making muscle. Your sandboxed actions will not impact your profile, or modify your portfolio.
+				Instead, it is a way for you to branch your portfolio into theoretical directions, so that you can experiment
+				with different ways to grow your wealth.
+			</p>
 		</section>
 	</section>
 </template>
@@ -33,7 +45,7 @@
 		},
 		{
 			id:'trade',
-			text:'Share your latest trade',
+			text:'Share a trade',
 			image:'',
 		},
 		{
@@ -48,6 +60,8 @@
 		},
 	]
 
+	const MAX_CHARS = 2000;
+
 	export default {
 		components:{
 			ContentPortfolio:() => import('./ContentPortfolio'),
@@ -57,6 +71,8 @@
 		data(){return {
 			contentTypes,
 			selectedContentType:contentTypes[0],
+			text:'',
+			MAX_CHARS,
 		}},
 		computed:{
 			textPlaceholder(){
@@ -72,6 +88,42 @@
 <style lang="scss" scoped>
 	.post-content {
 
+		.over-length {
+			color:red;
+			font-weight: bold;
+		}
+
+		.sandbox {
+			text-align:left;
+			padding:20px;
+			border-radius:var(--radius);
+			background:var(--hint-bg);
+			box-shadow:var(--soft-shadow);
+
+			transition: all 0.5s ease;
+			transition-property: box-shadow, color;
+
+			p {
+				color:var(--text-secondary);
+				font-size: 12px;
+				margin-top:10px;
+			}
+
+			> section {
+
+				&:first-child {
+					display:flex;
+					align-items: center;
+
+					span {
+						margin-left:10px;
+						color:var(--text-primary);
+						font-size: 16px;
+					}
+				}
+			}
+
+		}
 
 		.switch-content-type-enter-active, .switch-content-type-leave-active {
 			transition: all 0.2s ease;

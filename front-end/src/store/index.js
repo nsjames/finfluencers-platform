@@ -20,11 +20,13 @@ export default new Vuex.Store({
 		setTheme:(state, x) => state.theme = x,
 		addPopup:(state, x) => state.popups.unshift(x),
 		removePopup:(state, x) => state.popups = state.popups.filter(y => y.id !== x.id),
+		setUser:(state, x) => state.user = x,
 	},
 	actions: {
 		setTheme:(context, x) => context.commit('setTheme', x),
 		addPopup:(context, x) => context.commit('addPopup', x),
 		removePopup:(context, x) => context.commit('removePopup', x),
+		setUser:(context, x) => context.commit('setUser', x),
 	},
 	modules: {
 

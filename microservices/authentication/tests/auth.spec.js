@@ -26,7 +26,7 @@ describe('Authentication', () => {
     it('should be able to login', done => {
         new Promise(async() => {
             await UserService.insert(new User({
-                docType: 'user',
+                doc_type: 'user',
                 id: '5bbbca3b-93c6-4fa7-8112-2140e36e5a4e',
                 name: 'passport',
                 email: 'passport@test.com',

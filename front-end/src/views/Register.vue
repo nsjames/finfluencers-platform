@@ -38,11 +38,11 @@
 					</section>
 
 					<section class="container" key="STATES.ERROR" v-if="state === STATES.ERROR">
-						<section class="title">Oh shit.</section>
+						<section class="title">Drat.</section>
 						<section class="subtitle">
 							{{error}}
 						</section>
-						<button class="black">Go Back</button>
+						<button class="black" @click="backState">Go Back</button>
 					</section>
 
 					<section class="container" key="STATES.ACCESS_CODE" v-if="state === STATES.ACCESS_CODE">
@@ -56,7 +56,7 @@
 							code right away just sit tight.
 						</section>
 
-						<input class="vip" placeholder="Access Code" />
+						<input class="vip" v-model="code" placeholder="Access Code" />
 						<section class="vip-access">
 							<section>
 								Think you deserve access? <a href="mailto:test@test.com">Email us and tell us why.</a>
@@ -73,13 +73,13 @@
 							from an entire financial sandbox and playground.
 						</section>
 
-						<input placeholder="Choose your username" />
-						<input placeholder="Enter your email" />
+						<input placeholder="Choose your username" v-model="name" />
+						<input placeholder="Enter your email" v-model="email" />
 						<section class="split-inputs">
-							<input placeholder="Password" type="password" />
-							<input placeholder="Re-type password" type="password" />
+							<input placeholder="Password" type="password" v-model="password" />
+							<input placeholder="Re-type password" type="password" v-model="passwordConfirm" />
 						</section>
-						<button @click="$router.push('/explore')">Create account</button>
+						<button @click="register">Create account</button>
 
 						<figure class="or">OR</figure>
 
@@ -101,6 +101,8 @@
 
 <script>
 
+	import * as ApiService from "../services/ApiService";
+
 	const STATES = {
 		ACCESS_CODE:0,
 		BASIC_INFO:1,
@@ -114,8 +116,15 @@
 		},
 		data(){return {
 			STATES,
+			previousState:null,
 			state:STATES.ACCESS_CODE,
 			error:null,
+			code:'',
+
+			email:'',
+			name:'',
+			password:'',
+			passwordConfirm:'',
 		}},
 		mounted(){
 			document.documentElement.className = 'light';
@@ -125,12 +134,30 @@
 			document.documentElement.className = localStorage.getItem('theme') || 'light';
 		},
 		methods:{
+			backState(){
+				this.state = this.previousState || STATES.ACCESS_CODE;
+			},
 			async validateAccessCode(){
 				this.state = STATES.LOADING;
-				await new Promise(r => setTimeout(r, 1500));
-				this.state = STATES.BASIC_INFO;
+				await new Promise(r => setTimeout(r, 500));
+				const found = await ApiService.checkActivationCode(this.code);
+				if(found){
+					this.state = STATES.BASIC_INFO;
+				} else {
+					this.error = "The activation code you entered is either invalid, or already consumed.";
+					this.state = STATES.ERROR;
+					this.previousState = STATES.ACCESS_CODE;
+				}
+			},
+			async register(){
+				// this.$router.push('/explore');
+				if(this.password !== this.passwordConfirm){
+					// TODO: Error snackbar
+					return alert("Error: Password != confirm")
+				}
+				const result = await ApiService.register(this.email, this.password, this.code);
 			}
-		}
+		},
 	}
 </script>
 

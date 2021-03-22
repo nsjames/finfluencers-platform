@@ -1,14 +1,14 @@
 const {createServer, ORM} = require('@finfluencers/shared');
 const routeGenerator = require('./routes');
-// const Watchable = require('@finfluencers/shared/models/Watchable.model');
+const Watchable = require('@finfluencers/shared/models/Watchable.model');
 // const Validatable = require('@finfluencers/shared/models/Validatable.model');
-// const MessageQueueService = require('@finfluencers/shared/services/MessageQueue.service');
+const MessageQueueService = require('@finfluencers/shared/services/MessageQueue.service');
 // const UserService = require('@finfluencers/shared/services/User.service');
 // const ValidationService = require('@finfluencers/shared/services/Validation.service');
 // const logger = require('../../utilities/logger');
-// const PQueue = require('p-queue').default;
-// const assignQueue = new PQueue({concurrency: 2});
-// const watchableQueue = new PQueue({concurrency: 2});
+const PQueue = require('p-queue').default;
+const assignQueue = new PQueue({concurrency: 2});
+const watchableQueue = new PQueue({concurrency: 2});
 
 const server = createServer(process.env.PORT || null, routeGenerator);
 
@@ -29,7 +29,7 @@ const server = createServer(process.env.PORT || null, routeGenerator);
 // // When starting, could be existing validatable that need assigning
 // const checkValidatables = async () => {
 // 	const now = +new Date();
-// 	const validatables = await ORM.query(`SELECT * FROM BUCKET_NAME WHERE docType = 'validatable' AND done = false`, Validatable);
+// 	const validatables = await ORM.query(`SELECT * FROM BUCKET_NAME WHERE doc_type = 'validatable' AND done = false`, Validatable);
 // 	if(!validatables || !validatables.length) return;
 //
 // 	console.log('Found validatables: ', validatables.length);
@@ -70,7 +70,7 @@ const server = createServer(process.env.PORT || null, routeGenerator);
 //
 // intervals.push(setInterval(async () => {
 //     const now = +new Date();
-//     const watchables = await ORM.query(`SELECT * FROM BUCKET_NAME WHERE docType = 'watchable' AND \`last_checked\` < ${now} - \`interval\``, Watchable);
+//     const watchables = await ORM.query(`SELECT * FROM BUCKET_NAME WHERE doc_type = 'watchable' AND \`last_checked\` < ${now} - \`interval\``, Watchable);
 //     if(!watchables || !watchables.length) return;
 //
 // 	console.log('Found watchables: ', watchables.length);

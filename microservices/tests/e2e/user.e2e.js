@@ -56,14 +56,6 @@ describe('User flow', () => {
         });
     });
 
-    it('should be able to update last_connection by touch', done => {
-        new Promise(async() => {
-            const touched = await API.touchUser();
-            assert(touched, "Did not touch the user's connection time");
-            done();
-        });
-    });
-
 
 
 });

@@ -2,7 +2,7 @@
 
 // Map
 function (doc, meta) {
-  if(doc.docType == 'accountinvoice'){
+  if(doc.doc_type == 'accountinvoice'){
   	emit([doc.year, doc.month], doc.dollars);
   }
 }

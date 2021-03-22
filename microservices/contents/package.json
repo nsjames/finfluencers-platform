@@ -1,0 +1,13 @@
+{
+  "name": "@finfluencers/contents",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "testfile": "mocha --timeout 20000 --exit",
+    "test": "npm run testfile \"./**/*.spec.js\"",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

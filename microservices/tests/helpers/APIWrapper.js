@@ -57,6 +57,7 @@ module.exports = {
             email,
             name:email.split('@')[0],
             auth:{type:1, data:'1111'},
+            code:'1111',
         })
     },
     login:async(email, pass = '1111') => {

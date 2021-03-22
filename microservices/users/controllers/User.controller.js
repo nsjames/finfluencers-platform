@@ -2,14 +2,23 @@ const {results, ORM, authentication, uuid, SALT, couchbase} = require('@finfluen
 const {sha256} = require('@finfluencers/shared/utils/crypto.util');
 const User = require('@finfluencers/shared/models/User.model');
 const UserService = require('@finfluencers/shared/services/User.service');
+const BlockchainService = require('@finfluencers/shared/services/Blockchain.service');
 
 module.exports = class UserController {
 
     static async insert(userJson){
         try {
+            if(!userJson.code || !userJson.code.length) return results.error(results.ERROR_TYPES.INVALID_PARAMS, "Invalid activation code");
             if(!userJson.email || !userJson.email.length) return results.error(results.ERROR_TYPES.INVALID_PARAMS, "The email you specified is invalid");
             if(!userJson.name || !userJson.name.replace(/\s+/g, "").length) return results.error(results.ERROR_TYPES.INVALID_PARAMS, "The name you specified is invalid");
             if(!userJson.auth) return results.error(results.ERROR_TYPES.INVALID_PARAMS, "The auth you specified is invalid");
+
+            const activationCode = userJson.code;
+            delete userJson.code;
+
+            // TODO: Activate code on blockchain
+            const activated = await BlockchainService.checkActivationCode(activationCode);
+	        if(!activated) return results.error(results.ERROR_TYPES.BLOCKCHAIN, "Invalid activation code");
 
             userJson.name = userJson.name.replace(/[\t\n]+/g,' ');
             userJson.email = userJson.email.toLowerCase().replace(/\s+/g, "");

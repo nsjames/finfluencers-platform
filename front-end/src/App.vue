@@ -37,7 +37,7 @@
 		data(){return {
 			lastDropdownId:null,
 			routeTransition:'route-change',
-			loading:true,
+			loading:false,
 		}},
 		components:{
 			ColorBlast,

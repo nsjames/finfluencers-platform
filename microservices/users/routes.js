@@ -1,9 +1,11 @@
 const Results = require("@finfluencers/shared/models/Results.model");
+const {ERROR_TYPES} = require("@finfluencers/shared/models/Results.model");
 
 const { Router } = require('@finfluencers/shared');
 
 const UserController = require('./controllers/User.controller');
 const AuthenticationService = require('@finfluencers/shared/services/Authentication.service');
+const BlockchainService = require('@finfluencers/shared/services/Blockchain.service');
 
 const senderIp = req => req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
@@ -12,6 +14,11 @@ module.exports = () => {
 
     routes.get('/health', async (req, res) => {
         res.json('ok');
+    });
+
+    routes.get('/find-code/:code', async (req, res) => {
+        const found = await BlockchainService.checkActivationCode(req.params.code);
+	    res.json(Results.success(!!found));
     });
 
     routes.post('/register', async (req, res) => {

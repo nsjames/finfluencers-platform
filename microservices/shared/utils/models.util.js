@@ -8,7 +8,7 @@ const throwFields = (fields, msg = "") => {
 const validateFields = (model, source) => {
     const modelProperties = Object.keys(model);
     if(!Object.keys(source).every(prop => {
-        const propIsRight = modelProperties.includes(prop) || prop === 'docType';
+        const propIsRight = modelProperties.includes(prop) || prop === 'doc_type' || prop === 'created_at';
         if(!propIsRight) console.error(prop);
         return propIsRight;
     })) {
@@ -16,7 +16,7 @@ const validateFields = (model, source) => {
         return throwFields(model, "wrong props");
     }
     if(!modelProperties.every(prop => {
-        const propIsRight = prop === 'docType' || !source.hasOwnProperty(prop) || typeof source[prop] === model[prop] || source[prop] === null || model[prop] === 'any';
+        const propIsRight = prop === 'doc_type' || prop === 'created_at' || !source.hasOwnProperty(prop) || typeof source[prop] === model[prop] || source[prop] === null || model[prop] === 'any';
         if(!propIsRight) console.error('Model prop error', prop, typeof source[prop], model[prop]);
         return propIsRight;
     })) {
