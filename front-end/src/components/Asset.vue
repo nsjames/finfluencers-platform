@@ -1,18 +1,20 @@
 <template>
 	<section class="asset-bubble">
-		<figure class="icon"></figure>
+		<figure class="icon">
+			<span v-if="symbol">{{(symbol).slice(0, 4)}}</span>
+		</figure>
 	</section>
 </template>
 
 <script>
 	export default {
-
+		props:['symbol']
 	}
 </script>
 
 <style lang="scss" scoped>
-	$bubble:60px;
-	$icon:32px;
+	$bubble:80px;
+	$icon:60px;
 	.asset-bubble {
 		width:$bubble;
 		height:$bubble;
@@ -33,6 +35,13 @@
 			background-size:cover;
 			background-position: center;
 			background:rgba(0,0,0,0.05);
+
+			display:flex;
+			align-items: center;
+			justify-content: center;
+			color:var(--text-primary);
+			font-weight: bold;
+			font-size: 11px;
 		}
 
 	}

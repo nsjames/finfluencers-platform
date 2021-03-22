@@ -36,9 +36,14 @@ body {
   --graph-bg: rgba(130, 130, 243, 0.05);
   --graph-line-0:#CFFFDC;
   --graph-line-1:#CECEFE;
+  --graph-line-mine:rgba(0,0,0,0.05);
   --landing-button:#10101F;
   --colorful-button:linear-gradient(150.18deg, #CFFFDC 41.75%, #CECEFE 79.62%);
   --shark-fin:rgba(0,0,0,0.08);
+  --warning-bg: rgba(130, 130, 243, 0.05);
+  --warning-shadow: rgba(130, 130, 243, 0.3);
+  --error-snackbar: red;
+  --posted-highlight: rgba(130, 130, 243, 0.3);
 }
 
 .dark {
@@ -53,9 +58,14 @@ body {
   --graph-bg: rgba(130, 130, 243, 0.05);
   --graph-line-0:#CFFFDC;
   --graph-line-1:#CECEFE;
+  --graph-line-mine:rgba(255,255,255,0.1);
   --landing-button: #ffffff;
   --colorful-button:linear-gradient(101.18deg, #CFFFDC 41.75%, #CECEFE 79.62%);
   --shark-fin: rgba(0,0,0,0.3);
+  --warning-bg: rgba(255, 0, 0, 0.21);
+  --warning-shadow: rgba(255, 0, 0, 0.4);
+  --error-snackbar: red;
+  --posted-highlight: rgba(130, 130, 243, 0.7);
 }
 
 body {

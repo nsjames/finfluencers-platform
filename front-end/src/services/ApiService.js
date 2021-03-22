@@ -1,4 +1,5 @@
 const store = require('../store/index').default;
+const {Snackbar} = require('../models/Snackbar');
 
 const {sha256} = require('@finfluencers/shared/utils/crypto.util');
 
@@ -25,12 +26,14 @@ const POST = (route, data, api_key = false) => fetch(`${HOST}/${route}`, {
 	// console.log(route, x);
 	if(!x) return null;
 	if(x.error){
+		Snackbar.error(x.details);
 		console.error(x);
 		return null;
 	}
 
 	return x.data;
 }).catch(err => {
+	Snackbar.error(err);
 	console.error(err);
 	return null;
 });
@@ -42,19 +45,21 @@ const GET = (route, api_key = false) => fetch(`${HOST}/${route}`, {
 	// console.log(route, x);
 	if(!x) return null;
 	if(x.error){
+		Snackbar.error(x.details);
 		console.error(x);
 		return null;
 	}
 
 	return x.data;
 }).catch(err => {
+	Snackbar.error(err);
 	console.error(err);
 	return null;
 });
 
 
 const regenUser = async () => {
-	const user = await ApiService.getUser();
+	const user = await ApiService.getSelfUser();
 	if(!user) return false;
 	console.log('user', user);
 
@@ -107,8 +112,11 @@ const ApiService = {
 	postContent:async(content) => {
 		return POST('contents', content)
 	},
-	getUser:async() => {
+	getSelfUser:async() => {
 		return GET('users/user')
+	},
+	getUser:async(name) => {
+		return GET(`users/user/${encodeURIComponent(name)}`)
 	},
 	async touchUser(){
 		return GET(`users/touch`);

@@ -11,6 +11,8 @@ module.exports = class ContentService {
         	const user = await UserService.getById(json.user_id);
         	if(!user) return {error:'Could not find user'};
 
+        	console.log('user', user);
+
         	let id = uuid();
 	        while(!!await ContentService.getById(id).catch((() => false))) id = uuid();
 
@@ -22,6 +24,8 @@ module.exports = class ContentService {
 	        // TODO: Add to blockchain
 
 	        const posted = await ORM.insert(content);
+
+	        content.user = user.safer();
 
 	        return content;
         } catch(err){

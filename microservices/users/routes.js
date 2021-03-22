@@ -30,6 +30,13 @@ module.exports = () => {
         res.json(Results.success(req.user.safe()));
     });
 
+    routes.get('/user/:name', AuthenticationService.validate, async (req, res) => {
+        const user = await UserController.find(req.params.name);
+        console.log('found user', user);
+        if(user) res.json(Results.success(user));
+        else res.json(Results.error(ERROR_TYPES.DATABASE, `User (${req.params.name}) could not be found`))
+    });
+
     routes.get('/touch', AuthenticationService.validate, async (req, res) => {
         const touched = await UserController.touch(req.user);
         if(touched) res.json(Results.success(true));

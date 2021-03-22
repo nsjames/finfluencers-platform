@@ -2,7 +2,11 @@
 	<section class="post-prediction">
 		<label>Token and target</label>
 		<section style="display:flex">
-			<DropdownInput style="flex:1;" :options="[1,1,1]" :selected="'Hello'" :value="'1.0'" placeholder="1.0" />
+			<!--<DropdownInput style="flex:1;" :options="[1,1,1]" :selected="'Hello'" :value="'1.0'" placeholder="1.0" v-on:changed="x => content.data.price = x" />-->
+			<DualInput style="flex:1;" :value-b="content.data.asset" :placeholder-b="'Enter ticker'" :value-a="content.data.price" placeholder-a="$100.00"
+			           v-on:changeda="x => content.data.asset = x"
+			           v-on:changedb="x => content.data.price = x"
+			/>
 			<section class="target-date">
 				<i class="far fa-calendar-alt"></i>
 				<span>Select Date</span>
@@ -13,7 +17,7 @@
 
 <script>
 	export default {
-
+		props:['content'],
 	}
 </script>
 

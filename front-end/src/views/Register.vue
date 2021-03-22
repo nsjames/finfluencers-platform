@@ -105,7 +105,7 @@
 </template>
 
 <script>
-
+	import {Snackbar} from '../models/Snackbar'
 	import * as ApiService from "../services/ApiService";
 
 	const STATES = {
@@ -147,6 +147,10 @@
 				this.previousState = null;
 			},
 			async validateAccessCode(){
+				if(!this.code || !this.code.length){
+					return Snackbar.error("Invalid activation code");
+				}
+
 				this.state = STATES.LOADING;
 				await new Promise(r => setTimeout(r, 500));
 				const found = await ApiService.checkActivationCode(this.code);
@@ -159,18 +163,13 @@
 				}
 			},
 			async register(){
-				// this.$router.push('/explore');
-				if(this.password !== this.passwordConfirm){
-					// TODO: Error snackbar
-					return alert("Error: Password != confirm")
-				}
-				const result = await ApiService.register(this.email, this.password, this.code);
-				if(!result){
-					// TODO: Error handling
-					return alert("Problem registering");
-				}
+				if(this.password !== this.passwordConfirm)
+					return Snackbar.error("Password confirmation does not match password");
 
-				this.$router.push('/explore');
+				const result = await ApiService.register(this.email, this.password, this.code);
+				if(result) this.$router.push('/explore');
+
+
 			}
 		},
 	}

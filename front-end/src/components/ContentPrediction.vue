@@ -46,7 +46,6 @@
 				}
 
 				.price {
-					margin-left:10px;
 					color:var(--highlight);
 					font-weight: bold;
 				}

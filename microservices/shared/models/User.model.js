@@ -42,6 +42,11 @@ const METHODS = {
 	        wealth:this.wealth,
         }
     },
+    safer(){
+        const safer = this.safe();
+        delete safer.auth;
+        return safer;
+    },
 };
 
 module.exports = createModel('User', FIELDS, METHODS);

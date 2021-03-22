@@ -14,6 +14,7 @@ Vue.component('Profile', () => import('./components/Profile.vue'));
 Vue.component('SpreadBar', () => import('./components/SpreadBar.vue'));
 Vue.component('Dropdown', () => import('./components/Dropdown.vue'));
 Vue.component('DropdownInput', () => import('./components/DropdownInput.vue'));
+Vue.component('DualInput', () => import('./components/DualInput.vue'));
 Vue.component('Graph', () => import('./components/Graph.vue'));
 Vue.component('Asset', () => import('./components/Asset.vue'));
 Vue.component('Logo', () => import('./components/svgs/Logo.vue'));

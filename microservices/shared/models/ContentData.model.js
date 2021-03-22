@@ -25,6 +25,23 @@ export class PredictionContent {
 
 export class PortfolioContent {
 	constructor(json = {}){
-		this.portfolio = getOrDefault(json, 'portfolio', null);
+		this.wealth = getOrDefault(json, 'wealth', 0);
+		this.options = getOrDefault(json, 'options', []);
 	}
 }
+
+export const PORTFOLIO_OPTIONS = {
+	NONE:0,
+	SAVED_VS_EARNED:1,
+	TOTAL_INVESTED:2,
+	AVERAGE_RETURNS:3,
+}
+
+export const portfolioOptionToText = option => {
+	switch(option){
+		case PORTFOLIO_OPTIONS.NONE: return 'None';
+		case PORTFOLIO_OPTIONS.SAVED_VS_EARNED: return 'Saved vs Earned';
+		case PORTFOLIO_OPTIONS.TOTAL_INVESTED: return 'Investments';
+		case PORTFOLIO_OPTIONS.AVERAGE_RETURNS: return 'Avg. Returns';
+	}
+};

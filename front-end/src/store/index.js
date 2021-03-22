@@ -7,10 +7,13 @@ const mockContent = require('../data/mock_contents').default;
 
 console.log('mockContent', mockContent);
 
+let dummyPortfolioData = [1,2,3,2,3,2,3,4,4,4,3,4,5,4,3,4,4,4,4,3].map((x,i) => x+20 + (x*i));
+
 export default new Vuex.Store({
 	state: {
 		theme:'light',
 		popups:[],
+		snackbars:[],
 
 		user:null,
 		contents:mockContent,
@@ -24,6 +27,8 @@ export default new Vuex.Store({
 		setContents:(state, x) => state.contents = x,
 		appendContent:(state, x) => state.contents.push(x),
 		prependContent:(state, x) => state.contents.unshift(x),
+		setSnackbar:(state, x) => state.snackbars.push(x),
+		removeSnackbar:(state, x) => state.snackbars = state.snackbars.filter(y => y.id !== x.id),
 	},
 	actions: {
 		setTheme:(context, x) => context.commit('setTheme', x),
@@ -33,6 +38,16 @@ export default new Vuex.Store({
 		setContents:(context, x) => context.commit('setContents', x),
 		appendContent:(context, x) => context.commit('appendContent', x),
 		prependContent:(context, x) => context.commit('prependContent', x),
+		setSnackbar:(context, x) => {
+			context.commit('setSnackbar', x);
+			setTimeout(() => {
+				context.commit('removeSnackbar', x);
+			}, x.timeout);
+		},
+		removeSnackbar:(context, x) => context.commit('removeSnackbar', x),
+	},
+	getters: {
+		userPortfolioGraphData:state => state.user ? dummyPortfolioData /* TODO */ : null,
 	},
 	modules: {
 

@@ -20,7 +20,7 @@
 
 
 	export default {
-		props:['hovering', 'height', 'dataArr', 'noAnimations'],
+		props:['hovering', 'height', 'dataArr', 'noAnimations', 'secondary'],
 		data(){return {
 			chart:null,
 			graphSet:false,
@@ -40,6 +40,7 @@
 				var style = getComputedStyle(document.body);
 				var color0 = style.getPropertyValue('--graph-line-0');
 				var color1 = style.getPropertyValue('--graph-line-1');
+				var color2 = style.getPropertyValue('--graph-line-mine');
 
 				var gradientStroke = this.$refs.graph.getContext("2d").createLinearGradient(500, 0, 100, 0);
 				gradientStroke.addColorStop(0, color1);
@@ -54,11 +55,11 @@
 							data,
 							lineTension: 0.4,
 							fill: false,
-							borderColor: gradientStroke,
+							borderColor: this.secondary ? color2 : gradientStroke,
 							backgroundColor: 'transparent',
 							spanGaps: false,
 							pointRadius:0,
-							borderWidth:3,
+							borderWidth:this.secondary ? 1 : 5,
 						}]
 					},
 					options: {
@@ -71,8 +72,8 @@
 							padding: {
 								left:-10,
 								right:-10,
-								top:20,
-								bottom:20,
+								top:0,
+								bottom:0,
 							}
 						},
 						scales: {
@@ -80,8 +81,6 @@
 								stacked: true,
 								ticks: {
 									display: false,
-									suggestedMin: -100,
-									suggestedMax: 100,
 
 									beginAtZero: true,
 									scaleBeginAtZero: true

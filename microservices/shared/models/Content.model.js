@@ -24,4 +24,4 @@ const METHODS = {
     },
 };
 
-module.exports = createModel('Content', FIELDS, METHODS);
+module.exports = createModel('Content', FIELDS, METHODS, ['user']);

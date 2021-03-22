@@ -97,9 +97,6 @@
 				const login = await ApiService.login(this.email, this.password);
 
 				if(login) this.$router.push('/explore');
-				else {
-					// TODO: Error handling
-				}
 			},
 		}
 	}

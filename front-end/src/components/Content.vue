@@ -1,17 +1,19 @@
 <template>
-	<section class="content">
+	<section class="content" :id="`content_${content.id}`" :ref="`content_${content.id}`" @click="removeSelfPosted">
 		<section class="header">
-			<Profile :size="44" />
+			<Profile :size="44" :user="content.user" />
 
 			<section class="timestamp">
-				10m ago
+				{{timeAgo}} ago
 			</section>
 		</section>
 
 		<section class="innards">
 			<Labels :labels="labels" />
 
-			<ContentPortfolio v-if="isPortfolio" class="portfolio" :portfolio="content.data" />
+			<ContentPortfolio v-if="isPortfolio" class="portfolio" :portfolio="content.data"
+			                  :totals="['82%', 'Wealth Score']"
+			                  :show-comparison="user && user.id !== content.user_id" />
 			<ContentTrade v-if="isTrade" :trade="content.data" />
 			<ContentPrediction v-if="isPrediction" :prediction="content.data" :created-at="content.created_at" />
 
@@ -21,7 +23,11 @@
 
 			<section class="actions">
 				<section>
-					<i class="far fa-heart"></i>
+					<i class="fas fa-chevron-up"></i>
+					<span>16</span>
+				</section>
+				<section>
+					<i class="fas fa-chevron-down"></i>
 					<span>3</span>
 				</section>
 				<!--<section>-->
@@ -32,6 +38,10 @@
 					<i class="far fa-comment"></i>
 					<span>3</span>
 				</section>
+				<!--<section>-->
+					<!--<i class="fas fa-money-bill"></i>-->
+					<!--<span>tip</span>-->
+				<!--</section>-->
 			</section>
 		</section>
 
@@ -40,6 +50,8 @@
 
 <script>
 	import {CONTENT_TYPE} from "@finfluencers/shared/models/ContentType";
+	import ago from '../util/ago'
+	import {mapState} from "vuex";
 
 	export default {
 		props:['content'],
@@ -49,6 +61,10 @@
 			ContentPrediction:() => import('./ContentPrediction'),
 		},
 		computed:{
+			...mapState([
+				'user',
+			]),
+			timeAgo(){ return ago(this.content.created_at); },
 			isTrade(){ return this.content.type === CONTENT_TYPE.TRADE; },
 			isPrediction(){ return this.content.type === CONTENT_TYPE.PREDICTION; },
 			isPortfolio(){ return this.content.type === CONTENT_TYPE.PORTFOLIO; },
@@ -58,6 +74,12 @@
 			labels(){
 				return (this.isSandboxed ? ['Sandboxed'] : []).concat(this.content.tags)
 			},
+		},
+		methods:{
+			removeSelfPosted(){
+				const elem = this.$refs[`content_${this.content.id}`];
+				elem.classList.remove('self-posted');
+			}
 		}
 	}
 </script>
@@ -67,6 +89,14 @@
 		margin-bottom:80px;
 		padding:20px 0;
 		border-radius:var(--radius);
+
+		transition:all 0.2s ease;
+		transition-property: padding, box-shadow;
+
+		&.self-posted {
+			padding:20px;
+			box-shadow:0 0 50px var(--posted-highlight);
+		}
 
 		.header {
 			display:flex;
@@ -98,10 +128,10 @@
 			transition: box-shadow 0.5s ease;
 
 			.text {
-				font-size: 16px;
+				font-size: 18px;
 				font-family: var(--secondary-font);
 				color:var(--text-primary);
-				padding:0 0 20px 0;
+				padding:10px;
 			}
 
 			.portfolio {

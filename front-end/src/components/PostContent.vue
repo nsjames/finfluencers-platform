@@ -1,14 +1,29 @@
 <template>
 	<section class="post-content">
-		<transition name="switch-content-type" mode="out-in">
-			<PostTrade v-if="content.type === CONTENT_TYPE.TRADE" />
-			<PostPrediction v-if="content.type === CONTENT_TYPE.PREDICTION" />
-			<ContentPortfolio v-if="content.type === CONTENT_TYPE.PORTFOLIO" />
-		</transition>
+
+		<section class="actions">
+			<section class="post-type">
+				<Dropdown :transparent="true" :selected="contentTypes[content.type]" :options="contentTypes"
+				          v-on:selected="x => content.type = x.id" />
+			</section>
+			<section class="post-details">
+				<span><b :class="{'over-length':content.text.data.length > MAX_CHARS}">{{content.text.data.length}}</b> / {{MAX_CHARS}}</span>
+				<button @click="post" v-if="!posting">Post</button>
+				<button v-if="posting">
+					<i class="fas fa-spin fa-spinner"></i>
+				</button>
+			</section>
+		</section>
 
 		<section class="post-text">
 			<textarea v-model="content.text.data" :placeholder="contentTypes[content.type].placeholder"></textarea>
 		</section>
+
+		<transition name="switch-content-type" mode="out-in">
+			<PostTrade v-if="content.type === CONTENT_TYPE.TRADE" :content="content" />
+			<PostPrediction v-if="content.type === CONTENT_TYPE.PREDICTION" :content="content" />
+			<PostPortfolio v-if="content.type === CONTENT_TYPE.PORTFOLIO" :content="content" />
+		</transition>
 
 		<transition name="sandbox" mode="out-in">
 			<section key="sandbox" class="sandbox" v-if="canSandbox">
@@ -25,29 +40,18 @@
 			<section key="CONTENT_TYPE.ADVICE" class="advice-warning" v-if="content.type === CONTENT_TYPE.ADVICE">
 				<b>Advice on finfluencers is crowd-sourced</b>. Do your own research along with advice you are given,
 				and make sure you are accepting advice from users who not only have proven track records, but also a
-				higher wealth score than you. If you accept advice from people with lower scores, you may be harming yourself.
+				higher wealth score than you. If you accept advice from people with lower scores, you may be harming yourself
+				by following their bad habits.
 			</section>
 			<section key="CONTENT_TYPE.KNOWLEDGE" class="advice-warning" v-if="content.type === CONTENT_TYPE.KNOWLEDGE">
-				<b>Be careful giving advice on finfluencers</b>. If you give bad advice it will impact your wealth score negatively.
+				Giving advice has the potential for large impact on your wealth score; but it goes both ways.
+				If you give good advice, you'll gain a considerable amount of wealth points.
+				If you give bad advice, it will stick with you for a while and you'll have to do twice as much to raise your wealth score.
 			</section>
 			<section key="CONTENT_TYPE.PREDICTION" class="advice-warning" v-if="content.type === CONTENT_TYPE.PREDICTION">
 				Predictions greatly impact your wealth score. Getting predictions consistently right will net you highly positive influence in the finance space.
 			</section>
 		</transition>
-
-		<section class="actions">
-			<section class="post-type">
-				<Dropdown :transparent="true" :selected="contentTypes[content.type]" :options="contentTypes"
-					v-on:selected="x => content.type = x.id" />
-			</section>
-			<section class="post-details">
-				<span><b :class="{'over-length':content.text.data.length > MAX_CHARS}">{{content.text.data.length}}</b> / {{MAX_CHARS}}</span>
-				<button @click="post" v-if="!posting">Post</button>
-				<button v-if="posting">
-					<i class="fas fa-spin fa-spinner"></i>
-				</button>
-			</section>
-		</section>
 	</section>
 </template>
 
@@ -61,13 +65,13 @@
 	const contentTypes = {
 		[CONTENT_TYPE.KNOWLEDGE]:{
 			id:CONTENT_TYPE.KNOWLEDGE,
-			text:'Spread financial knowledge',
+			text:'Spread your knowledge',
 			image:'',
 			placeholder:'Show the world what you know about finance.',
 		},
 		[CONTENT_TYPE.ADVICE]:{
 			id:CONTENT_TYPE.ADVICE,
-			text:'Get financial advice',
+			text:'Ask for advice',
 			image:'',
 			placeholder:'Want is it that you want help with?',
 		},
@@ -104,6 +108,7 @@
 			ContentPortfolio:() => import('./ContentPortfolio'),
 			PostTrade:() => import('./post-content/PostTrade'),
 			PostPrediction:() => import('./post-content/PostPrediction'),
+			PostPortfolio:() => import('./post-content/PostPortfolio'),
 		},
 		data(){return {
 			contentTypes,
@@ -116,15 +121,12 @@
 			posting:false,
 		}},
 		mounted(){
-			console.log('content', this.content);
+
 		},
 		computed:{
 			...mapState([
 				'user',
 			]),
-			textPlaceholder(){
-				return contentTypes.find(x => x.id === this.content.type).placeholder;
-			},
 			canSandbox(){
 				switch(this.content.type){
 					case CONTENT_TYPE.TRADE:
@@ -143,19 +145,25 @@
 
 					await new Promise(r => setTimeout(r, 1000));
 					const posted = await ApiService.postContent(this.content);
+					console.log('content', this.content);
 					console.log('posted', posted);
 					if(posted) {
-						this.prependContent(new ContentModel(posted));
+						await this.prependContent(new ContentModel(posted));
+						this.$nextTick(() => {
+							const elem = document.getElementById(`content_${posted.id}`);
+
+							if(elem) elem.classList.add('self-posted')
+						})
 
 						this.content = new ContentModel({
 							type:CONTENT_TYPE.KNOWLEDGE,
 							text:new TextContent()
 						});
+
 					}
 
 					this.posting = false;
 				}
-				console.log('this.content', this.content);
 
 
 			},
@@ -188,14 +196,17 @@
 
 		.advice-warning {
 			text-align:left;
-			font-size: 12px;
+			font-size: 14px;
 			color:var(--text-primary);
-			box-shadow:var(--soft-shadow);
+			border:2px solid var(--warning-shadow);
 			padding:20px;
 			border-radius:var(--radius);
-			background:var(--hint-bg);
-			margin-top:-10px;
+			background:var(--warning-bg);
+			margin-top:20px;
 			margin-bottom:10px;
+
+			transition: all 0.5s ease;
+			transition-property: border, background;
 		}
 
 		.sandbox {
@@ -204,7 +215,7 @@
 			border-radius:var(--radius);
 			background:var(--hint-bg);
 			box-shadow:var(--soft-shadow);
-			margin-top:-5px;
+			margin-top:20px;
 			margin-bottom:10px;
 
 
@@ -284,6 +295,7 @@
 			display:flex;
 			justify-content: space-between;
 			align-items: center;
+			margin-bottom:20px;
 
 			.post-type {
 

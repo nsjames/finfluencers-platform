@@ -1,53 +1,77 @@
 <template>
-	<section class="profile">
+	<section>
+		<section class="profile" v-if="profile">
 
-		<section class="banner" :style="`background-image:url(${bannerImage})`">
-			<section class="corners">
-				<div></div>
-				<div></div>
+			<section class="banner" :style="`background-image:url(${bannerImage})`">
+				<section class="corners">
+					<div></div>
+					<div></div>
+				</section>
 			</section>
+			<figure class="banner-placeholder"></figure>
+
+			<figure class="avatar" :style="`background-image:url(${bannerImage})`"></figure>
+
+			<section class="header">
+				<section>
+					<figure class="name">testing user</figure>
+					<figure class="overview">
+						<span>1.2m wealth</span>
+						<span>2.3k followers</span>
+						<span>+20% last 7 days</span>
+					</figure>
+				</section>
+				<section>
+					<i class="fas fa-cog"></i>
+					<button>Follow</button>
+				</section>
+			</section>
+
+			<section class="portfolio-container">
+				<label>{{profile.name}}'s portfolio</label>
+				<section class="portfolio">
+					<ContentPortfolio :totals="['82%', 'Wealth Score']" :details="[
+					['Saved versus earned','84%'],
+				]" :show-comparison="user && user.id !== profile.id" />
+				</section>
+			</section>
+
+
+			<SpreadBar />
+
+			<Content :key="content.id" :content="content" v-for="content in contents" />
 		</section>
-		<figure class="banner-placeholder"></figure>
-
-		<figure class="avatar" :style="`background-image:url(${bannerImage})`"></figure>
-
-		<section class="header">
-			<section>
-				<figure class="name">testing user</figure>
-				<figure class="overview">
-					<span>1.2m wealth</span>
-					<span>2.3k followers</span>
-					<span>+20% last 7 days</span>
-				</figure>
-			</section>
-			<section>
-				<i class="fas fa-cog"></i>
-				<button>Follow</button>
-			</section>
-		</section>
-
-		<SpreadBar />
-
-		<Content :key="content.id" :content="content" v-for="content in contents" />
 	</section>
 
 </template>
 
 <script>
 	import ColorBlast from '../components/svgs/ColorBlast';
+	import ContentPortfolio from '../components/ContentPortfolio';
 	import PostContent from '../components/PostContent';
 	import Content from '../components/Content';
 	import {mapState} from "vuex";
+	import * as ApiService from "../services/ApiService";
 
 	export default {
 		components:{
 			ColorBlast,
 			PostContent,
 			Content,
+			ContentPortfolio,
+		},
+		data(){return {
+			profile:null,
+		}},
+		async mounted(){
+			this.profile = await ApiService.getUser(this.$route.params.user);
+			if(!this.profile) return this.$router.push('/404');
+			ApiService.setFeedContents({profile:this.$route.params.user})
 		},
 		computed:{
 			...mapState([
 				'contents',
+				'user',
 			]),
 			bannerImage(){
 				return `
@@ -177,6 +201,24 @@
 					color:var(--text-secondary);
 					font-size: 14px;
 				}
+			}
+		}
+
+		.portfolio-container {
+			margin-top:40px;
+			text-align:left;
+
+			label {
+				font-size: 13px;
+				font-weight: bold;
+				color:var(--text-secondary);
+			}
+
+			.portfolio {
+				margin-top:10px;
+				padding:20px;
+				box-shadow:var(--soft-shadow);
+				border-radius:var(--radius);
 			}
 		}
 	}

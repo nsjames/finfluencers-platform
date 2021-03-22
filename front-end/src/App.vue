@@ -13,6 +13,16 @@
 			</transition>
 		</section>
 
+		<section class="snackbars">
+			<section class="floater">
+				<transition-group name="snackbar">
+					<section :key="snackbar.id" class="snackbar" v-for="snackbar in snackbars" :class="`type-${snackbar.type}`" @click="snackbar.close()">
+						{{snackbar.text}}
+					</section>
+				</transition-group>
+			</section>
+		</section>
+
 	</section>
 </template>
 
@@ -47,6 +57,9 @@
 			EventBus.$off('opened-dropdown', this.openedDropdown);
 		},
 		computed:{
+			...mapState([
+				'snackbars',
+			]),
 			notLandingPage(){
 				return !['/', '/register'].includes(this.$route.fullPath);
 				// return true;
@@ -113,6 +126,36 @@
 			padding:0 30px;
 		}
 
+		.snackbars {
+			position: fixed;
+			bottom:20px;
+			left:0;
+			right:0;
+			z-index:9999999999999999;
+			display:flex;
+			align-items: center;
+			justify-content: center;
+
+			.floater {
+
+
+				.snackbar {
+					cursor: pointer;
+					padding:10px 40px;
+					background:var(--highlight);
+					color:#fff;
+					border-radius:var(--radius);
+					font-size: 14px;
+					box-shadow:0 2px 10px rgba(0,0,0,0.2);
+					margin-top:10px;
+
+					&.type-1 {
+						background:var(--error-snackbar);
+					}
+				}
+			}
+		}
+
 		.loader {
 			position: fixed;
 			top:0;
@@ -143,6 +186,15 @@
 
 		}
 
+
+		.snackbar-enter-active, .snackbar-leave-active {
+			transition: all 0.1s ease;
+			transition-property: transform, opacity;
+		}
+		.snackbar-enter, .snackbar-leave-to /* .snackbar-leave-active below version 2.1.8 */ {
+			opacity:0;
+			transform:translateY(20px);
+		}
 
 		.route-change-enter-active, .route-change-leave-active {
 			transition: all 0.1s ease;
