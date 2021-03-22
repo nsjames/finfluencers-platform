@@ -69,6 +69,9 @@ const ApiService = {
 		token = null;
 		localStorage.removeItem('token')
 	},
+	checkUser(){
+		regenUser();
+	},
 	checkActivationCode:async(code) => {
 		const hash = sha256(code);
 		return GET(`users/find-code/${hash}`)
@@ -101,11 +104,19 @@ const ApiService = {
 			return false;
 		})
 	},
+	postContent:async(content) => {
+		return POST('contents', content)
+	},
 	getUser:async() => {
 		return GET('users/user')
 	},
 	async touchUser(){
 		return GET(`users/touch`);
+	},
+	async setFeedContents(options = {}){
+		const feed = await POST('contents/feed', options);
+		console.log('feed', feed);
+		if(feed) store.dispatch('setContents', feed);
 	},
 }
 

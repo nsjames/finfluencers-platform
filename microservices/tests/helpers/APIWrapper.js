@@ -72,8 +72,8 @@ module.exports = {
     getUser:async() => {
         return GET('users/user')
     },
-    async touchUser(){
-        return GET(`users/touch`);
+    postContent:async(content) => {
+        return POST('contents', content)
     },
 
 

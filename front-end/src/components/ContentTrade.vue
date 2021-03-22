@@ -26,6 +26,7 @@
 <style lang="scss" scoped>
 	.content-trade {
 
+		position: relative;
 
 		.assets {
 			display:flex;

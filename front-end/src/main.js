@@ -17,6 +17,8 @@ Vue.component('DropdownInput', () => import('./components/DropdownInput.vue'));
 Vue.component('Graph', () => import('./components/Graph.vue'));
 Vue.component('Asset', () => import('./components/Asset.vue'));
 Vue.component('Logo', () => import('./components/svgs/Logo.vue'));
+Vue.component('Loader', () => import('./components/Loader.vue'));
+Vue.component('Labels', () => import('./components/Labels.vue'));
 
 new Vue({
 	router,

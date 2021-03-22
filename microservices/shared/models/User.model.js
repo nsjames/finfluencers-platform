@@ -20,7 +20,7 @@ const METHODS = {
     },
     constructor(json){
         if(!json.hasOwnProperty('id')) {
-            json.id = 0;
+            json.id = uuid();
             json.name = '';
             json.email = '';
             json.auth = null;

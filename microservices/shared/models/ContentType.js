@@ -1,8 +1,10 @@
 module.exports = {
 	CONTENT_TYPE:{
-		TEXT:0,
-		TRADE:1,
-		PREDICTION:2,
-		PORTFOLIO:3,
+		KNOWLEDGE:0,
+		ADVICE:1,
+		TRADE:2,
+		DECISION:3,
+		PREDICTION:4,
+		PORTFOLIO:5,
 	}
 };

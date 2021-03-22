@@ -28,6 +28,11 @@
 		</section>
 
 		<section class="pop-over">
+
+			<figure class="back" v-if="state !== STATES.LOADING && state !== STATES.ERROR" @click="backState">
+				<i class="fas fa-arrow-left"></i>
+			</figure>
+
 			<section class="panel">
 
 				<transition name="state-switch" mode="out-in">
@@ -81,16 +86,16 @@
 						</section>
 						<button @click="register">Create account</button>
 
-						<figure class="or">OR</figure>
+						<!--<figure class="or">OR</figure>-->
 
-						<section class="socials">
-							<button class="social">
-								<i class="fab fa-google"></i>
-							</button>
-							<button class="social">
-								<i class="fab fa-twitter"></i>
-							</button>
-						</section>
+						<!--<section class="socials">-->
+							<!--<button class="social">-->
+								<!--<i class="fab fa-google"></i>-->
+							<!--</button>-->
+							<!--<button class="social">-->
+								<!--<i class="fab fa-twitter"></i>-->
+							<!--</button>-->
+						<!--</section>-->
 					</section>
 				</transition>
 			</section>
@@ -135,7 +140,11 @@
 		},
 		methods:{
 			backState(){
-				this.state = this.previousState || STATES.ACCESS_CODE;
+				if(this.state === STATES.ACCESS_CODE) return this.$router.push('/');
+				if(this.state === STATES.BASIC_INFO) return this.state = STATES.ACCESS_CODE;
+
+				this.state = this.previousState;
+				this.previousState = null;
 			},
 			async validateAccessCode(){
 				this.state = STATES.LOADING;
@@ -156,6 +165,12 @@
 					return alert("Error: Password != confirm")
 				}
 				const result = await ApiService.register(this.email, this.password, this.code);
+				if(!result){
+					// TODO: Error handling
+					return alert("Problem registering");
+				}
+
+				this.$router.push('/explore');
 			}
 		},
 	}
@@ -173,6 +188,7 @@
 		overflow-x: hidden;
 		position: relative;
 		justify-content: center;
+
 
 
 		.state-switch-enter-active, .state-switch-leave-active {
@@ -241,6 +257,24 @@
 			display:flex;
 			align-items: center;
 			justify-content: center;
+
+			.back {
+				position: absolute;
+				top:35px;
+				left:50px;
+				font-size: 28px;
+				padding:15px 15px 15px 0;
+				color:var(--text-primary);
+				opacity:0.4;
+				cursor: pointer;
+
+				transition: all 0.2s ease;
+				transition-property: opacity;
+
+				&:hover {
+					opacity:1;
+				}
+			}
 
 			.loading {
 				display:flex;

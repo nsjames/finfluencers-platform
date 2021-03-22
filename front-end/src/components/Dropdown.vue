@@ -91,7 +91,7 @@
 			overflow: hidden;
 			overflow-y: auto;
 			max-height:260px;
-			min-width:260px;
+			min-width:300px;
 			text-align: left;
 		}
 

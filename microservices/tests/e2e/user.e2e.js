@@ -1,31 +1,13 @@
 const { assert } = require('../../../utilities/assert');
 const {ORM, createServer, Router} = require('../../shared/index');
 const User = require('../../shared/models/User.model');
+const Content = require('../../shared/models/Content.model');
 const UserService = require('../../shared/services/User.service');
 const MessageQueueService = require('../../shared/services/MessageQueue.service');
 const open = require('open');
 
 const API = require('../helpers/APIWrapper');
 let user;
-
-
-const registerAndLogin = async (email = 'e2e@test.com', register = true, touch = true) => {
-    if(register) {
-        const registered = await API.register(email);
-        assert(registered, "Did not register the user");
-        await new Promise(r => setTimeout(r, 1000));
-    }
-    const login = await API.login(email);
-    assert(login, "Did not login to the platform");
-    user = await API.getUser();
-    assert(user && user.email === email, "Did not get the user");
-    user = new User(user);
-    if(touch) {
-        const touched = await API.touchUser();
-        assert(touched, "Did not touch the user's connection time");
-    }
-    return true;
-};
 
 describe('User flow', () => {
 
@@ -52,6 +34,22 @@ describe('User flow', () => {
             user = await API.getUser();
             assert(user && user.email === 'e2e@test.com', "Did not get the user");
             user = new User(user);
+            done();
+        });
+    });
+
+    it('should be able to post content from a user', done => {
+        new Promise(async() => {
+            const content = new Content();
+	        content.text = 'This is just some test content';
+	        content.user_id = user.id;
+	        content.wealth = user.wealth;
+	        console.log('content', content);
+
+
+            const posted = await API.postContent(content);
+            console.log('posted', posted);
+            assert(posted, "Did not post content");
             done();
         });
     });

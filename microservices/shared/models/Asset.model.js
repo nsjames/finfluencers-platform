@@ -1,6 +1,6 @@
-import {getOrDefault} from "../util/getOrDefaultProp";
+const {getOrDefault} = require('../utils/getOrDefaultProp');
 
-export class Asset {
+module.exports = class Asset {
 
 	constructor(json = {}){
 		this.id = getOrDefault(json, 'id', '');

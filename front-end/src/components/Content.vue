@@ -9,13 +9,14 @@
 		</section>
 
 		<section class="innards">
+			<Labels :labels="labels" />
 
 			<ContentPortfolio v-if="isPortfolio" class="portfolio" :portfolio="content.data" />
 			<ContentTrade v-if="isTrade" :trade="content.data" />
 			<ContentPrediction v-if="isPrediction" :prediction="content.data" :created-at="content.created_at" />
 
 			<section class="text">
-				This is just some test text
+				{{content.text.data}}
 			</section>
 
 			<section class="actions">
@@ -23,6 +24,10 @@
 					<i class="far fa-heart"></i>
 					<span>3</span>
 				</section>
+				<!--<section>-->
+					<!--<i class="fas fa-retweet"></i>-->
+					<!--<span>3</span>-->
+				<!--</section>-->
 				<section>
 					<i class="far fa-comment"></i>
 					<span>3</span>
@@ -34,7 +39,7 @@
 </template>
 
 <script>
-	import {CONTENT_TYPE} from "../models/Content";
+	import {CONTENT_TYPE} from "@finfluencers/shared/models/ContentType";
 
 	export default {
 		props:['content'],
@@ -47,6 +52,12 @@
 			isTrade(){ return this.content.type === CONTENT_TYPE.TRADE; },
 			isPrediction(){ return this.content.type === CONTENT_TYPE.PREDICTION; },
 			isPortfolio(){ return this.content.type === CONTENT_TYPE.PORTFOLIO; },
+			isSandboxed(){
+				return this.content.data && this.content.data.hasOwnProperty('sandboxed') && this.content.data.sandboxed;
+			},
+			labels(){
+				return (this.isSandboxed ? ['Sandboxed'] : []).concat(this.content.tags)
+			},
 		}
 	}
 </script>
@@ -82,6 +93,7 @@
 			text-align:left;
 			box-shadow:var(--soft-shadow);
 			padding:20px;
+			position: relative;
 
 			transition: box-shadow 0.5s ease;
 
@@ -98,13 +110,14 @@
 
 			.actions {
 				margin-top:20px;
-				font-size: 18px;
 				cursor: pointer;
 				display:flex;
 				align-items: center;
 
 				> section {
-					margin-right:20px;
+					margin-right:40px;
+					display:flex;
+					align-items: center;
 				}
 
 				i {
@@ -114,6 +127,7 @@
 					opacity:0.2;
 					transition: all 0.1s ease;
 					transition-property: opacity, color;
+					font-size: 24px;
 
 					&:first-child {
 						margin-left:-10px;
@@ -129,6 +143,7 @@
 					font-size: 14px;
 					font-weight: bold;
 					color:var(--text-primary);
+					padding-top:9px;
 				}
 			}
 		}

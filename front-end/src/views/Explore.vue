@@ -15,6 +15,7 @@
 	import PostContent from '../components/PostContent';
 	import Content from '../components/Content';
 	import {mapState} from "vuex";
+	import * as ApiService from "../services/ApiService";
 
 	export default {
 		components:{
@@ -26,6 +27,9 @@
 			...mapState([
 				'contents',
 			])
+		},
+		mounted(){
+			ApiService.setFeedContents()
 		}
 	}
 </script>

@@ -33,11 +33,7 @@
 		display:flex;
 		border-radius:var(--radius);
 		background:transparent;
-		box-shadow:var(--soft-shadow);
 		position: relative;
-
-		transition:all 0.5s ease;
-		transition-property: background, box-shadow;
 
 		> .bg {
 			position: absolute;
@@ -47,6 +43,9 @@
 			right:0;
 			border-radius:var(--radius);
 			z-index:-1;
+			box-shadow:var(--soft-shadow);
+
+			transition:box-shadow 0.5s ease;
 		}
 
 		.dropdown {
@@ -65,6 +64,12 @@
 			font-family: var(--secondary-font);
 			font-size: 20px;
 			color:var(--text-primary);
+		}
+	}
+
+	.light {
+		.dropdown-input {
+			//background:var(--background-color);
 		}
 	}
 </style>

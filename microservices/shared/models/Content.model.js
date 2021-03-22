@@ -1,33 +1,26 @@
-import {CONTENT_TYPE} from "./ContentType";
+const {CONTENT_TYPE} = require("./ContentType");
 
 const {createModel} = require('../utils/models.util');
 const {sha256} = require('../utils/crypto.util');
 
 
 const FIELDS = {
-    id:'number',
-    user_id:'number',
+    id:'string',
+    user_id:'string',
     type:'number',
     data:'any',
-    text:'any',
+    text:'object',
     tags:'any',
     wealth:'number',
 };
 
 const METHODS = {
     index(){
-        return this.rawIndex(this.user_id, this.id);
+        return this.rawIndex(this.id);
     },
     constructor(json){
-        if(!json.hasOwnProperty('id') || json.id === null){
-            json.wealth = 0;
-            json.tags = [];
-            json.text = '';
-            json.data = null;
-            json.type = CONTENT_TYPE.TEXT;
-            json.user_id = 0;
-            json.id = 0;
-        }
+        if(!json.hasOwnProperty('wealth') || !json.wealth) json.wealth = 0;
+        if(!json.hasOwnProperty('tags') || !json.tags) json.tags = [];
     },
 };
 

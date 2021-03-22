@@ -4,7 +4,6 @@
 			<transition mode="out-in" name="slide-left">
 				<section key="nav-logo" v-if="!searching" class="logo" @click="$router.push('/explore')">
 					<Logo />
-					<!--<div>finfluencers</div>-->
 				</section>
 				<section key="nav-searchbar" v-if="searching" class="search-bar">
 					<i class="fas fa-search"></i>
@@ -19,7 +18,7 @@
 						<span>10</span>
 					</section>
 					<i class="fas fa-search" @click="searching = !searching"></i>
-					<Profile :size="36" />
+					<Profile v-if="user" :user="user" :size="36" />
 				</section>
 				<section key="nav-closesearch" v-if="searching" class="close-search" @click="searching = false">
 					<i class="fas fa-times"></i>
@@ -44,6 +43,7 @@
 		computed:{
 			...mapState([
 				'theme',
+				'user',
 			]),
 		},
 		methods:{

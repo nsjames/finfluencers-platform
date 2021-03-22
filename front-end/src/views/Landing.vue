@@ -41,20 +41,24 @@
 		<section class="side-panel">
 			<section class="panel">
 				<label>Sign in</label>
-				<input placeholder="Your email" />
-				<input placeholder="Password" type="password" />
-				<button @click="$router.push('/explore')">Log in</button>
+				<input placeholder="Your email" v-model="email" />
+				<input placeholder="Password" type="password" v-model="password" />
+				<button @click="login">Log in</button>
 
-				<figure class="or">OR</figure>
+				<figure class="secondary-action">
+					Want to <router-link tag="span" to="/register">create an account</router-link> instead?
+				</figure>
 
-				<section class="socials">
-					<button class="social">
-						<i class="fab fa-google"></i>
-					</button>
-					<button class="social">
-						<i class="fab fa-twitter"></i>
-					</button>
-				</section>
+				<!--<figure class="or">OR</figure>-->
+
+				<!--<section class="socials">-->
+					<!--<button class="social">-->
+						<!--<i class="fab fa-google"></i>-->
+					<!--</button>-->
+					<!--<button class="social">-->
+						<!--<i class="fab fa-twitter"></i>-->
+					<!--</button>-->
+				<!--</section>-->
 			</section>
 		</section>
 	</section>
@@ -62,6 +66,8 @@
 </template>
 
 <script>
+
+	import * as ApiService from "../services/ApiService";
 
 	const checklist = [
 		'Join like-minded people just learning how to grow their wealth',
@@ -76,6 +82,8 @@
 		},
 		data(){return {
 			checklist,
+			email:'',
+			password:'',
 		}},
 		mounted(){
 			document.documentElement.className = 'light';
@@ -83,6 +91,16 @@
 		destroyed(){
 			if(this.$route.path === '/register') return;
 			document.documentElement.className = localStorage.getItem('theme') || 'light';
+		},
+		methods:{
+			async login(){
+				const login = await ApiService.login(this.email, this.password);
+
+				if(login) this.$router.push('/explore');
+				else {
+					// TODO: Error handling
+				}
+			},
 		}
 	}
 </script>
@@ -284,6 +302,17 @@
 
 					&.social {
 						background:#F6F6F6;
+					}
+				}
+
+				.secondary-action {
+					text-align:center;
+					margin-top:20px;
+					font-size: 13px;
+
+					span {
+						text-decoration: underline;
+						cursor: pointer;
 					}
 				}
 

@@ -1,0 +1,2 @@
+CREATE INDEX doctype ON finfluencers(`doc_type`) USING GSI
+CREATE INDEX usercontent ON finfluencers(`user_id`) WHERE doc_type = 'content' USING GSI

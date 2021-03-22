@@ -8,6 +8,7 @@ const routes = [
 	{ path: '/profile/:user', name: 'Profile', component: () => import('../views/Profile.vue') },
 	{ path: '/register', name: 'Register', component: () => import('../views/Register.vue') },
 	{ path: '/explore', name: 'Explore', component: () => import('../views/Explore.vue') },
+	{ path: '*', name: '404', component: () => import('../views/404.vue') },
 ]
 
 const router = new VueRouter({
