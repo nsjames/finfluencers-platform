@@ -12,8 +12,8 @@
 			<Labels :labels="labels" />
 
 			<ContentPortfolio v-if="isPortfolio" class="portfolio" :portfolio="content.data"
-			                  :totals="['82%', 'Wealth Score']"
-			                  :show-comparison="user && user.id !== content.user_id" />
+				:wealth="parseFloat(content.data.wealth).toFixed(2)"
+				:show-comparison="user && user.id !== content.user_id" />
 			<ContentTrade v-if="isTrade" :trade="content.data" />
 			<ContentPrediction v-if="isPrediction" :prediction="content.data" :created-at="content.created_at" />
 

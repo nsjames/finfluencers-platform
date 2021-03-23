@@ -1,9 +1,10 @@
 <template>
 	<section class="post-portfolio">
 
-		<section class="totals" v-if="totals">
-			<span>{{totals[0]}}</span>
-			<span>{{totals[1]}}</span>
+		<section class="totals" v-if="wealth">
+			<span>{{wealth}}%</span>
+			<span>Wealth Score (WS)</span>
+			<span v-if="showComparison"><i></i> your comparison</span>
 		</section>
 		<section class="graphs">
 			<Graph class="graph" :height="130" :data-arr="viewedPortfolio"  />
@@ -24,7 +25,7 @@
 	import {portfolioOptionToText} from "@finfluencers/shared/models/ContentData.model";
 
 	export default {
-		props:['portfolio', 'totals', 'details', 'showComparison'],
+		props:['portfolio', 'wealth', 'details', 'showComparison'],
 		computed:{
 			...mapState([
 				'user',
@@ -79,6 +80,23 @@
 					font-size: 18px;
 					color:var(--text-primary);
 					margin-top:5px;
+				}
+
+				&:nth-child(3){
+					font-size: 11px;
+					color:var(--text-secondary);
+					margin-top:10px;
+					font-weight: bold;
+					display:flex;
+					align-items: center;
+
+					i {
+						margin-right:10px;
+						width:57px;
+						height:2px;
+						background:var(--text-secondary);
+						opacity:0.2;
+					}
 				}
 			}
 		}

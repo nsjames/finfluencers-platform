@@ -3,7 +3,7 @@
 		<figure class="avatar" @click="$router.push(user ? `/profile/${user.name}` : '/404')" :style="{'width':`${size || 36}px`, 'height':`${size || 36}px`}"></figure>
 		<section class="details">
 			<figure class="name">{{user ? user.name : 'No username'}}</figure>
-			<figure class="wealth">{{user ? user.wealth : 0}}</figure>
+			<figure class="wealth">{{parseFloat(user ? user.wealth : 0).toFixed(2)}}% WS</figure>
 		</section>
 	</section>
 </template>

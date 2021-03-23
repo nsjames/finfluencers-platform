@@ -9,6 +9,7 @@ const FIELDS = {
     auth:'object',
     wealth:'number',
     public_key:'string',
+    graphics:'any',
 };
 
 const METHODS = {

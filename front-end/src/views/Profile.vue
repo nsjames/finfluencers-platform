@@ -14,30 +14,54 @@
 
 			<section class="header">
 				<section>
-					<figure class="name">testing user</figure>
+					<figure class="name">{{profile.name}}</figure>
 					<figure class="overview">
-						<span>1.2m wealth</span>
+						<span>{{parseFloat(profile.wealth).toFixed(2)}}% WS</span>
 						<span>2.3k followers</span>
-						<span>+20% last 7 days</span>
+						<span>1.1m posts</span>
 					</figure>
 				</section>
 				<section>
-					<i class="fas fa-cog"></i>
-					<button>Follow</button>
+					<i v-if="isYourProfile" class="fas fa-cog"></i>
+					<button v-if="!isYourProfile">Follow</button>
 				</section>
 			</section>
 
 			<section class="portfolio-container">
-				<label>{{profile.name}}'s portfolio</label>
+				<label class="feed-title">{{isYourProfile ? 'Your' : `${profile.name}'s`}} feed</label>
 				<section class="portfolio">
-					<ContentPortfolio :totals="['82%', 'Wealth Score']" :details="[
+					<ContentPortfolio :wealth="parseFloat(profile.wealth).toFixed(2)" :details="[
 					['Saved versus earned','84%'],
-				]" :show-comparison="user && user.id !== profile.id" />
+				]" :show-comparison="!isYourProfile" />
 				</section>
 			</section>
 
+			<section class="edit-portfolio" v-if="isYourProfile">
+				<section class="how-to-edit">
+					<label>Manage your portfolio</label>
+					<p>
+						The more information you add to your portfolio, the better the advice you will get from
+						users on finfluencers. We also use your portfolio data to show you content which is slightly
+						above your current wealth score, so that you can progress gradually.
+						<br />
+						<br />
+						<b>
+							<u>Automation is key to financial stability.</u>
+							Consider linking your Bank and Blockchain accounts so that you don't have to track
+							them manually.
+						</b>
+					</p>
+				</section>
+				<section class="portfolio-actions">
+					<section class="action" v-for="action in PORTFOLIO_ACTIONS">
+						<i :class="action.icon"></i>
+						<span>{{action.text}}</span>
+					</section>
+				</section>
 
-			<SpreadBar />
+			</section>
+
+			<SpreadBar :margin="isYourProfile ? 150 : 70" />
 
 			<Content :key="content.id" :content="content" v-for="content in contents" />
 		</section>
@@ -53,6 +77,39 @@
 	import {mapState} from "vuex";
 	import * as ApiService from "../services/ApiService";
 
+	const PORTFOLIO_ACTIONS = [
+		{
+			id:0,
+			text:'Link Bank',
+			icon:'fas fa-university'
+		},
+		{
+			id:0,
+			text:'Link Crypto',
+			icon:'fas fa-coins'
+		},
+		{
+			id:1,
+			text:'Manage Income',
+			icon:'fas fa-money-bill-wave'
+		},
+		{
+			id:1,
+			text:'Manage Expenses',
+			icon:'fas fa-receipt'
+		},
+		{
+			id:1,
+			text:'Manage Savings',
+			icon:'fas fa-piggy-bank'
+		},
+		{
+			id:1,
+			text:'Manage Investments',
+			icon:'fas fa-chart-line'
+		},
+	];
+
 	export default {
 		components:{
 			ColorBlast,
@@ -62,6 +119,7 @@
 		},
 		data(){return {
 			profile:null,
+			PORTFOLIO_ACTIONS,
 		}},
 		async mounted(){
 			this.profile = await ApiService.getUser(this.$route.params.user);
@@ -73,6 +131,9 @@
 				'contents',
 				'user',
 			]),
+			isYourProfile(){
+				return this.user && this.user.id === this.profile.id;
+			},
 			bannerImage(){
 				return `
 				https://images.unsplash.com/photo-1593642634524-b40b5baae6bb?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1489&q=80
@@ -221,5 +282,97 @@
 				border-radius:var(--radius);
 			}
 		}
+
+		.edit-portfolio {
+			margin-top:70px;
+			display:flex;
+			align-items: center;
+
+			.how-to-edit {
+				text-align:left;
+				flex:1;
+				position: relative;
+				padding-right:50px;
+
+				> label {
+					font-size: 18px;
+					font-weight: 300;
+					color:var(--text-primary);
+				}
+
+				> p {
+					font-size: 13px;
+					max-width:500px;
+					margin-top:10px;
+					color:var(--text-secondary);
+				}
+			}
+
+			.portfolio-actions {
+				display:flex;
+				flex-wrap: wrap;
+				flex:1;
+				position: relative;
+				z-index:2;
+				justify-content: center;
+				padding-left:10px;
+
+				&:after {
+					content:'';
+					display:block;
+					position:absolute;
+					left:0;
+					top:0;
+					bottom:0;
+					width:1px;
+					background:var(--text-secondary);
+					opacity:0.2;
+				}
+
+				$action:calc(33.3% - 10px);
+				.action {
+					cursor: pointer;
+					display:flex;
+					flex-direction: column;
+					align-items: center;
+					justify-content: center;
+					padding:18px;
+					margin:20px 5px;
+					width:$action;
+					height:$action;
+					border-radius:var(--radius);
+
+
+					i {
+						font-size: 16px;
+						color:var(--text-primary);
+						opacity:0.1;
+
+						transition: all 0.2s ease;
+						transition-property: color, opacity;
+					}
+
+					span {
+						font-size: 13px;
+						margin-top:10px;
+						color:var(--text-primary);
+
+						transition: all 0.2s ease;
+						transition-property: color, opacity;
+					}
+
+					&:hover {
+						i {
+							opacity:1;
+						}
+
+						span {
+							color:var(--text-primary);
+						}
+					}
+				}
+			}
+		}
+
 	}
 </style>

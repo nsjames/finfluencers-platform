@@ -59,7 +59,7 @@
 							backgroundColor: 'transparent',
 							spanGaps: false,
 							pointRadius:0,
-							borderWidth:this.secondary ? 1 : 5,
+							borderWidth:this.secondary ? 2 : 5,
 						}]
 					},
 					options: {

@@ -105,7 +105,6 @@
 
 	export default {
 		components:{
-			ContentPortfolio:() => import('./ContentPortfolio'),
 			PostTrade:() => import('./post-content/PostTrade'),
 			PostPrediction:() => import('./post-content/PostPrediction'),
 			PostPortfolio:() => import('./post-content/PostPortfolio'),

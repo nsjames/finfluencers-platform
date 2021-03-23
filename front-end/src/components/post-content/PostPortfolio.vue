@@ -1,6 +1,6 @@
 <template>
 	<section class="post-portfolio">
-		<ContentPortfolio :totals="['82%', 'Wealth Score']" :details="formattedSelectedOptions" />
+		<ContentPortfolio :wealth="parseFloat(user.wealth).toFixed(2)" :details="formattedSelectedOptions" />
 
 		<section style="margin-top:30px;">
 			<label>Pick your stats</label>
@@ -17,6 +17,7 @@
 
 <script>
 	import {PORTFOLIO_OPTIONS, portfolioOptionToText} from '@finfluencers/shared/models/ContentData.model';
+	import {mapState} from "vuex";
 
 	export default {
 		props:['content'],
@@ -27,6 +28,9 @@
 			ContentPortfolio:async () => import('../ContentPortfolio')
 		},
 		computed:{
+			...mapState([
+				'user',
+			]),
 			remainingOptions(){
 				return Object.keys(PORTFOLIO_OPTIONS).map(key => {
 					return {
