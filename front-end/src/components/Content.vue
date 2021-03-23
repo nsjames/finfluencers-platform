@@ -24,19 +24,19 @@
 			<section class="actions">
 				<section>
 					<i class="fas fa-chevron-up"></i>
-					<span>16</span>
+					<span>0</span>
 				</section>
 				<section>
 					<i class="fas fa-chevron-down"></i>
-					<span>3</span>
+					<span>0</span>
 				</section>
 				<!--<section>-->
 					<!--<i class="fas fa-retweet"></i>-->
 					<!--<span>3</span>-->
 				<!--</section>-->
-				<section>
+				<section @click="goToContent" v-if="!hideCommentsButton">
 					<i class="far fa-comment"></i>
-					<span>3</span>
+					<span>{{content.commentCount}}</span>
 				</section>
 				<!--<section>-->
 					<!--<i class="fas fa-money-bill"></i>-->
@@ -51,10 +51,10 @@
 <script>
 	import {CONTENT_TYPE} from "@finfluencers/shared/models/ContentType";
 	import ago from '../util/ago'
-	import {mapState} from "vuex";
+	import {mapActions, mapState} from "vuex";
 
 	export default {
-		props:['content'],
+		props:['content', 'hideCommentsButton'],
 		components:{
 			ContentPortfolio:() => import('./ContentPortfolio'),
 			ContentTrade:() => import('./ContentTrade'),
@@ -78,15 +78,22 @@
 		methods:{
 			removeSelfPosted(){
 				const elem = this.$refs[`content_${this.content.id}`];
-				elem.classList.remove('self-posted');
-			}
+				if(elem) elem.classList.remove('self-posted');
+			},
+			goToContent(){
+				this.setContent(this.content);
+				this.$router.push(`/content/${this.content.id}`);
+			},
+			...mapActions([
+				'setContent'
+			])
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
 	.content {
-		margin-bottom:80px;
+		margin-bottom:30px;
 		padding:20px 0;
 		border-radius:var(--radius);
 
@@ -124,6 +131,7 @@
 			box-shadow:var(--soft-shadow);
 			padding:20px;
 			position: relative;
+			background:var(--background-color);
 
 			transition: box-shadow 0.5s ease;
 
@@ -148,6 +156,13 @@
 					margin-right:40px;
 					display:flex;
 					align-items: center;
+
+					&:hover {
+						i {
+							color:var(--highlight);
+							opacity:1;
+						}
+					}
 				}
 
 				i {
@@ -161,11 +176,6 @@
 
 					&:first-child {
 						margin-left:-10px;
-					}
-
-					&:hover {
-						color:var(--highlight);
-						opacity:1;
 					}
 				}
 

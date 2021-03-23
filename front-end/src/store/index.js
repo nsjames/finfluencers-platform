@@ -3,10 +3,6 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex);
 
-const mockContent = require('../data/mock_contents').default;
-
-console.log('mockContent', mockContent);
-
 let dummyPortfolioData = [1,2,3,2,3,2,3,4,4,4,3,4,5,4,3,4,4,4,4,3].map((x,i) => x+20 + (x*i));
 
 export default new Vuex.Store({
@@ -16,8 +12,9 @@ export default new Vuex.Store({
 		snackbars:[],
 
 		user:null,
-		contents:mockContent,
-
+		contents:[],
+		content:null,
+		comments:[],
 	},
 	mutations: {
 		setTheme:(state, x) => state.theme = x,
@@ -29,6 +26,8 @@ export default new Vuex.Store({
 		prependContent:(state, x) => state.contents.unshift(x),
 		setSnackbar:(state, x) => state.snackbars.push(x),
 		removeSnackbar:(state, x) => state.snackbars = state.snackbars.filter(y => y.id !== x.id),
+		setContent:(state, x) => state.content = x,
+		setComments:(state, x) => state.comments = x,
 	},
 	actions: {
 		setTheme:(context, x) => context.commit('setTheme', x),
@@ -45,6 +44,8 @@ export default new Vuex.Store({
 			}, x.timeout);
 		},
 		removeSnackbar:(context, x) => context.commit('removeSnackbar', x),
+		setContent:(context, x) => context.commit('setContent', x),
+		setComments:(context, x) => context.commit('setComments', x),
 	},
 	getters: {
 		userPortfolioGraphData:state => state.user ? dummyPortfolioData /* TODO */ : null,

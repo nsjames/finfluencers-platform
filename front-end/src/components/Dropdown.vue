@@ -122,4 +122,29 @@
 
 		}
 	}
+
+	.dark {
+		.dropdown {
+			.options {
+
+				$spread:7px;
+				.option {
+					margin:0 $spread;
+					color:var(--text-primary);
+
+					&:first-child {
+						margin-top:$spread;
+						border-top-left-radius:6px;
+						border-top-right-radius:6px;
+					}
+
+					&:last-child {
+						margin-bottom:$spread;
+						border-bottom-left-radius:6px;
+						border-bottom-right-radius:6px;
+					}
+				}
+			}
+		}
+	}
 </style>

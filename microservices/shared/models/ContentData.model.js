@@ -35,6 +35,7 @@ export const PORTFOLIO_OPTIONS = {
 	SAVED_VS_EARNED:1,
 	TOTAL_INVESTED:2,
 	AVERAGE_RETURNS:3,
+	TOTAL_VALUE:4,
 }
 
 export const portfolioOptionToText = option => {
@@ -43,5 +44,6 @@ export const portfolioOptionToText = option => {
 		case PORTFOLIO_OPTIONS.SAVED_VS_EARNED: return 'Saved vs Earned';
 		case PORTFOLIO_OPTIONS.TOTAL_INVESTED: return 'Investments';
 		case PORTFOLIO_OPTIONS.AVERAGE_RETURNS: return 'Avg. Returns';
+		case PORTFOLIO_OPTIONS.TOTAL_VALUE: return 'Value';
 	}
 };

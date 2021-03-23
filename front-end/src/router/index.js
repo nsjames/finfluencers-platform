@@ -6,6 +6,7 @@ Vue.use(VueRouter)
 const routes = [
 	{ path: '/', name: 'Landing', component: () => import('../views/Landing.vue') },
 	{ path: '/profile/:user', name: 'Profile', component: () => import('../views/Profile.vue') },
+	{ path: '/content/:id', name: 'Content', component: () => import('../views/Content.vue') },
 	{ path: '/register', name: 'Register', component: () => import('../views/Register.vue') },
 	{ path: '/explore', name: 'Explore', component: () => import('../views/Explore.vue') },
 	{ path: '*', name: '404', component: () => import('../views/404.vue') },

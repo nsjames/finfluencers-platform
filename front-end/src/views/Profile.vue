@@ -23,6 +23,7 @@
 				</section>
 				<section>
 					<i v-if="isYourProfile" class="fas fa-cog"></i>
+					<i v-if="isYourProfile" @click="logout" class="fas fa-power-off"></i>
 					<button v-if="!isYourProfile">Follow</button>
 				</section>
 			</section>
@@ -74,7 +75,7 @@
 	import ContentPortfolio from '../components/ContentPortfolio';
 	import PostContent from '../components/PostContent';
 	import Content from '../components/Content';
-	import {mapState} from "vuex";
+	import {mapActions, mapState} from "vuex";
 	import * as ApiService from "../services/ApiService";
 
 	const PORTFOLIO_ACTIONS = [
@@ -123,8 +124,8 @@
 		}},
 		async mounted(){
 			this.profile = await ApiService.getUser(this.$route.params.user);
-			if(!this.profile) return this.$router.push('/404');
-			ApiService.setFeedContents({profile:this.$route.params.user})
+			if(!this.profile) return this.$router.replace('/404');
+			ApiService.setFeedContents({profile:this.profile.id})
 		},
 		computed:{
 			...mapState([
@@ -141,6 +142,16 @@
 				`.trim();
 			}
 		},
+		methods:{
+			logout(){
+				this.setUser(null);
+				ApiService.clearToken();
+				this.$router.push('/');
+			},
+			...mapActions([
+				'setUser',
+			])
+		}
 	}
 </script>
 
@@ -235,6 +246,16 @@
 						display:inline-block;
 						margin-right:10px;
 						cursor: pointer;
+						color:var(--text-secondary);
+						opacity:0.5;
+
+						transition: all 0.2s ease;
+						transition-property: opacity, color;
+
+						&:hover {
+							opacity:1;
+							color:var(--text-primary);
+						}
 					}
 
 					button {

@@ -46,6 +46,7 @@ const METHODS = {
     safer(){
         const safer = this.safe();
         delete safer.auth;
+        delete safer.email;
         return safer;
     },
 };

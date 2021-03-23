@@ -24,7 +24,10 @@ module.exports = class UserService {
             const user = new User({email});
             const index = await ORM.get(user.emailIndex()).catch(() => null);
             if(!index) return null;
-            return ORM.get(index, User);
+            return ORM.get(index, User).catch(err => {
+	            console.error("Get by email error: ", err);
+	            return null;
+            });
         } catch(e){
             console.error('User service get error', e);
             return null;
@@ -34,7 +37,10 @@ module.exports = class UserService {
     static async getById(id){
         try {
             const user = new User({id});
-            return ORM.get(user.index(), User);
+            return ORM.get(user.index(), User).catch(err => {
+	            console.error("User get by id error: ", err);
+	            return null;
+            });
         } catch(e){
             console.error('User service get by id error', e);
             return null;
@@ -43,7 +49,10 @@ module.exports = class UserService {
 
     static async getByIndex(index){
         try {
-            return ORM.get(index, User);
+            return ORM.get(index, User).catch(err => {
+	            console.error("User get by index error: ", err);
+	            return null;
+            });
         } catch(e){
             console.error('User service get by id error', e);
             return null;
@@ -53,20 +62,5 @@ module.exports = class UserService {
     static async totalUsers(){
         return ORM.query(`SELECT COUNT(*) FROM BUCKET_NAME WHERE doc_type = 'user'`);
     }
-
-	static async addWealth(user_index){
-		const user = await this.getByIndex(user_index);
-		if(!user){
-			console.error("Could not get user to add wealth", user_index);
-			return;
-		}
-
-		await ORM.getBucket().mutateIn(user.index(), [
-			couchbase.MutateInSpec.increment("wealth", 1),
-		]).catch(err => {
-			console.error("Did not add wealth", err);
-			return false;
-		})
-	}
 
 }

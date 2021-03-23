@@ -48,6 +48,7 @@
 						case 1: value = '87%'; break;
 						case 2: value = '$1.2m'; break;
 						case 3: value = '+214%'; break;
+						case 4: value = '$480k'; break;
 					}
 
 					return [this.optionToText(option), value]

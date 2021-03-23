@@ -11,7 +11,7 @@
 			I just traded <b>{{trade.from.amount}} {{trade.from.asset}}</b> for <b>{{trade.to.amount}} {{trade.to.asset}}</b>
 		</section>
 		<section class="conversion" v-if="trade.sandboxed">
-			I thought about trading <b>{{trade.from.amount}} {{trade.from.asset}}</b> for <b>{{trade.to.amount}} {{trade.to.asset}}</b>
+			I'm thinking about trading <b>{{trade.from.amount}} {{trade.from.asset}}</b> for <b>{{trade.to.amount}} {{trade.to.asset}}</b>
 		</section>
 
 	</section>

@@ -61,7 +61,6 @@ const GET = (route, api_key = false) => fetch(`${HOST}/${route}`, {
 const regenUser = async () => {
 	const user = await ApiService.getSelfUser();
 	if(!user) return false;
-	console.log('user', user);
 
 	store.dispatch('setUser', user);
 };
@@ -98,7 +97,6 @@ const ApiService = {
 			pass,
 		}).then(async _token => {
 			if(_token) {
-				console.log('token', _token);
 				token = _token;
 				localStorage.setItem('token', token);
 
@@ -121,11 +119,19 @@ const ApiService = {
 	async touchUser(){
 		return GET(`users/touch`);
 	},
+	async getContent(id){
+		return GET(`contents/${id}`);
+	},
 	async setFeedContents(options = {}){
 		const feed = await POST('contents/feed', options);
-		console.log('feed', feed);
 		if(feed) store.dispatch('setContents', feed);
 	},
+	async postComment(comment){
+		return POST(`comments`, comment);
+	},
+	async getComments(parent){
+		return GET(`comments/${parent}`);
+	}
 }
 
 module.exports = ApiService;

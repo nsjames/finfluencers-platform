@@ -43,12 +43,15 @@ const createModel = (name, schema = {}, methods = {}, ignored = []) => {
                 if(methods.constructor) methods.constructor(json);
 
                 // Initializes Databased extension
-                super(name.toLowerCase());
+                super(name.toLowerCase(), json.hasOwnProperty('created_at') ? json.created_at : null);
 
                 // Adds properties and methods to class
 	            ignored.map(prop => this[prop] = json[prop]);
                 Object.keys(schema).map(prop => this[prop] = json[prop]);
                 Object.keys(methods).map(method => method === 'constructor' ? null : this[method] = methods[method]);
+
+                if(json.hasOwnProperty('created_at')) this.created_at = json.created_at;
+                if(json.hasOwnProperty('doc_type')) this.doc_type = json.doc_type;
             }
 
         }})[name];

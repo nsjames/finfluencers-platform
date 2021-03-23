@@ -87,7 +87,6 @@ module.exports = class UserController {
 
     static async find(name){
 	    const users = await ORM.query(`SELECT * FROM BUCKET_NAME WHERE doc_type = 'user' AND name = '${name}'`, User);
-	    console.log(name, users);
 	    if(users.length) return users[0].safer();
 	    return null;
     }

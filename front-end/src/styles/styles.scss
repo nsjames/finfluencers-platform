@@ -27,13 +27,14 @@ body {
 .light {
   --background-color:#fff;
   --highlight:#8282F3;
+  --highlight-opaque: rgba(130, 130, 243, 0.3);
   --text-primary: #10101F;
   --text-secondary: #9F9FA5;
   --nav-shadow:0 4px 44px rgba(34, 34, 78, 0.10);
   --nav-background:#fff;
   --soft-shadow:0 4px 44px rgba(34, 34, 78, 0.10);
   --hint-bg:#fff;
-  --graph-bg: rgba(130, 130, 243, 0.05);
+  --graph-bg: #f9f9fe;
   --graph-line-0:#CFFFDC;
   --graph-line-1:#CECEFE;
   --graph-line-mine:rgba(0,0,0,0.05);
@@ -49,13 +50,14 @@ body {
 .dark {
   --background-color:#10101f;
   --highlight:#8282F3;
+  --highlight-opaque: rgba(130, 130, 243, 0.3);
   --text-primary: #F2F2F2;
   --text-secondary: #9F9FA5;
   --nav-shadow:0 8px 20px rgba(0,0,0,0.4);
   --nav-background:linear-gradient(180deg, #393969 0%, #303058 5%, #212140 70%, #2a2a50 95%, #3a3a6e 100%);
   --soft-shadow:0 0 25px 1px rgba(130, 130, 243, 0.05), 0 0 15px 1px rgba(130, 130, 243, 0.05), inset 0 0 0 3px var(--background-color), inset 0 0 0 5px rgba(130, 130, 243, 0.25);
   --hint-bg: #212140;
-  --graph-bg: rgba(130, 130, 243, 0.05);
+  --graph-bg: #161629;
   --graph-line-0:#CFFFDC;
   --graph-line-1:#CECEFE;
   --graph-line-mine:rgba(255,255,255,0.1);

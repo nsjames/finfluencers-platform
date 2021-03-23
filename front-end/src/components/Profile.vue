@@ -1,8 +1,8 @@
 <template>
 	<section class="profile">
-		<figure class="avatar" @click="$router.push(user ? `/profile/${user.name}` : '/404')" :style="{'width':`${size || 36}px`, 'height':`${size || 36}px`}"></figure>
+		<figure class="avatar" @click="goToProfile" :style="{'width':`${size || 36}px`, 'height':`${size || 36}px`}"></figure>
 		<section class="details">
-			<figure class="name">{{user ? user.name : 'No username'}}</figure>
+			<figure class="name" @click="goToProfile">{{user ? user.name : 'No username'}}</figure>
 			<figure class="wealth">{{parseFloat(user ? user.wealth : 0).toFixed(2)}}% WS</figure>
 		</section>
 	</section>
@@ -10,7 +10,12 @@
 
 <script>
 	export default {
-		props:['size', 'user']
+		props:['size', 'user'],
+		methods:{
+			goToProfile(){
+				this.$router.replace(this.user ? `/profile/${this.user.name}` : '/404');
+			}
+		}
 	}
 </script>
 
@@ -21,7 +26,7 @@
 		padding-right:20px;
 
 		.avatar {
-			background:red;
+			background:var(--graph-bg);
 			border-radius:50%;
 			margin-right:15px;
 			cursor: pointer;

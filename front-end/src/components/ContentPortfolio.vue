@@ -29,6 +29,7 @@
 		computed:{
 			...mapState([
 				'user',
+				'theme',
 			]),
 			viewedPortfolio(){
 				return [...Array(20).keys()].map((i) => Math.round(Math.random() * 180 * i) + 500 * i)
@@ -47,6 +48,7 @@
 						case 1: value = '87%'; break;
 						case 2: value = '$1.2m'; break;
 						case 3: value = '+214%'; break;
+						case 4: value = '$480k'; break;
 					}
 
 					return [portfolioOptionToText(id), value]
@@ -62,9 +64,12 @@
 		background:var(--graph-bg);
 		border-radius:var(--radius);
 		text-align:left;
+		position: relative;
 
 		.totals {
 			padding:30px;
+			position: relative;
+			z-index:3;
 
 			span {
 				display:block;
@@ -94,8 +99,7 @@
 					i {
 						margin-right:10px;
 						width:15%;
-						height:2px;
-						background:var(--text-secondary);
+						border:2px dashed var(--text-secondary);
 						position: relative;
 						opacity:0.4;
 					}
@@ -106,6 +110,7 @@
 		.graphs {
 			position: relative;
 			height:130px;
+			z-index:1;
 
 			.graph {
 				position:absolute;
@@ -123,6 +128,8 @@
 
 		.details {
 			padding:30px;
+			position: relative;
+			z-index:3;
 
 			display:flex;
 			justify-content: space-between;

@@ -2,7 +2,7 @@
 	<section class="content-prediction">
 
 		<section class="details">
-			<Asset />
+			<Asset :symbol="prediction.asset" />
 			<section class="info">
 				<figure class="asset">{{prediction.asset}}</figure>
 				<figure class="price">${{prediction.price}}</figure>
@@ -28,12 +28,16 @@
 
 <style lang="scss" scoped>
 	.content-prediction {
+		position: relative;
+		z-index:1;
 
 		.details {
 			display:flex;
 			align-items: center;
 			margin-bottom:20px;
 			padding:10px;
+			position: relative;
+			z-index:2;
 
 			.info {
 				margin-left:20px;

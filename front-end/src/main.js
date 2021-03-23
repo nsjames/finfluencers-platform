@@ -20,6 +20,7 @@ Vue.component('Asset', () => import('./components/Asset.vue'));
 Vue.component('Logo', () => import('./components/svgs/Logo.vue'));
 Vue.component('Loader', () => import('./components/Loader.vue'));
 Vue.component('Labels', () => import('./components/Labels.vue'));
+Vue.component('PostComment', () => import('./components/PostComment.vue'));
 
 new Vue({
 	router,

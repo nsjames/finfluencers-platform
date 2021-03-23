@@ -50,7 +50,9 @@ module.exports = class AuthenticationService {
     static async getToken(user_index){
         const index = await ORM.get((new AuthToken({user_index})).userIndex()).catch(() => null);
         if(!index) return null;
-        return ORM.get(index, AuthToken);
+        return ORM.get(index, AuthToken).catch(err => {
+	        return null;
+        });
     }
 
     static async removeToken(user_index, ip){

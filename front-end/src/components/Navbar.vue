@@ -52,7 +52,6 @@
 				this.setSpecificTheme(theme);
 			},
 			setSpecificTheme(theme){
-				console.log('setting theme', theme);
 				this.setTheme(theme);
 				localStorage.setItem('theme', theme);
 				document.documentElement.className = theme;
