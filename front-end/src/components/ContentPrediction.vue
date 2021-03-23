@@ -48,6 +48,7 @@
 				.price {
 					color:var(--highlight);
 					font-weight: bold;
+					margin-left:10px;
 				}
 
 				.asset {

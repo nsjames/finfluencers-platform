@@ -28,7 +28,7 @@
 			</section>
 
 			<section class="portfolio-container">
-				<label class="feed-title">{{isYourProfile ? 'Your' : `${profile.name}'s`}} feed</label>
+				<label>{{isYourProfile ? 'Your' : `${profile.name}'s`}} current portfolio</label>
 				<section class="portfolio">
 					<ContentPortfolio :wealth="parseFloat(profile.wealth).toFixed(2)" :details="[
 					['Saved versus earned','84%'],
@@ -135,6 +135,7 @@
 				return this.user && this.user.id === this.profile.id;
 			},
 			bannerImage(){
+				return null;
 				return `
 				https://images.unsplash.com/photo-1593642634524-b40b5baae6bb?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1489&q=80
 				`.trim();
@@ -147,7 +148,7 @@
 
 	.profile {
 		$avatar:150px;
-		$banner:300px;
+		$banner:200px;
 		$corner:60px;
 
 		.banner {
@@ -156,8 +157,10 @@
 			top:-20px;
 			left:-50%;
 			right:-50%;
+			background-color:var(--graph-bg);
 			background-position: center;
 			background-size: cover;
+			box-shadow:inset 0 -80px 120px rgba(0,0,0,0.06);
 			z-index:-1;
 
 			&:after {
@@ -199,7 +202,7 @@
 			}
 		}
 		.banner-placeholder {
-			height:#{$banner};
+			height:#{$banner - 22px};
 		}
 
 		.avatar {
@@ -209,6 +212,7 @@
 			height:$avatar;
 			margin-top:-#{$avatar/2 + $banner/4};
 			margin-left:-#{$avatar/3};
+			background-color:var(--graph-bg);
 			background-position: center;
 			background-size: cover;
 		}
@@ -266,7 +270,7 @@
 		}
 
 		.portfolio-container {
-			margin-top:40px;
+			margin-top:60px;
 			text-align:left;
 
 			label {

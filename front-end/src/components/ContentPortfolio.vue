@@ -85,17 +85,19 @@
 				&:nth-child(3){
 					font-size: 11px;
 					color:var(--text-secondary);
-					margin-top:10px;
 					font-weight: bold;
+					margin-top:15px;
 					display:flex;
 					align-items: center;
+					opacity:0.5;
 
 					i {
 						margin-right:10px;
-						width:57px;
+						width:15%;
 						height:2px;
 						background:var(--text-secondary);
-						opacity:0.2;
+						position: relative;
+						opacity:0.4;
 					}
 				}
 			}
