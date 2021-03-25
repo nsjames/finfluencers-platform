@@ -1,6 +1,6 @@
 <template>
 	<section class="post-portfolio">
-		<ContentPortfolio :wealth="parseFloat(user.wealth).toFixed(2)" :details="formattedSelectedOptions" />
+		<ContentPortfolio :portfolio="content.data" :details="formattedSelectedOptions" />
 
 		<section style="margin-top:30px;">
 			<label>Pick your stats</label>
@@ -45,10 +45,8 @@
 					let value;
 					switch(option){
 						// TODO:
-						case 1: value = '87%'; break;
-						case 2: value = '$1.2m'; break;
-						case 3: value = '+214%'; break;
-						case 4: value = '$480k'; break;
+						case 1: value = '$1.2m'; break;
+						case 2: value = '$480k'; break;
 					}
 
 					return [this.optionToText(option), value]

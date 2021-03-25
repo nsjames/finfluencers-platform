@@ -43,7 +43,6 @@ describe('User flow', () => {
             const content = new Content();
 	        content.text = 'This is just some test content';
 	        content.user_id = user.id;
-	        content.wealth = user.wealth;
 	        console.log('content', content);
 
 

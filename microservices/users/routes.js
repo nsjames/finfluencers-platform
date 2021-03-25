@@ -31,7 +31,7 @@ module.exports = () => {
     });
 
     routes.get('/user/:name', AuthenticationService.validate, async (req, res) => {
-        const user = await UserController.find(req.params.name);
+        const user = await UserController.find(decodeURIComponent(req.params.name));
         if(user) res.json(Results.success(user));
         else res.json(Results.error(ERROR_TYPES.DATABASE, `User (${req.params.name}) could not be found`))
     });

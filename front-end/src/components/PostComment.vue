@@ -3,7 +3,7 @@
 		<section v-if="comment">
 			<textarea v-model="comment.text" :disabled="posting" :placeholder="placeholder"></textarea>
 			<i v-if="reply" class="cancel fas fa-times" @click="$emit('posted', null)"></i>
-			<button @click="post" v-if="!posting">Post</button>
+			<button @click="post" v-if="!posting">Comment</button>
 			<button v-if="posting">
 				<i class="fas fa-spin fa-spinner"></i>
 			</button>
@@ -16,7 +16,7 @@
 	import * as ApiService from "../services/ApiService";
 
 	export default {
-		props:['parent', 'reply'],
+		props:['parent', 'topLevelParent', 'reply'],
 		name: "PostComment",
 		data(){return {
 			comment:null,
@@ -25,8 +25,8 @@
 		mounted(){
 			this.comment = new CommentModel();
 			this.comment.parent_index = this.parent;
+			this.comment.top_level_parent_index = this.topLevelParent;
 			this.comment.text = '';
-			console.log('comment', this.comment);
 		},
 		computed:{
 			placeholder(){
@@ -50,26 +50,12 @@
 		width:100%;
 		text-align: right;
 
-		textarea {
-			background:transparent;
-			padding:20px;
-			width:100%;
-			resize: vertical;
-			outline:0;
-			min-height:150px;
-			font-size: 16px;
-			color:var(--text-primary);
-			border-radius:var(--radius);
-			position: relative;
-			border:1px solid var(--highlight-opaque);
-		}
-
 		button {
 			cursor: pointer;
 			outline:0;
 			border:0;
 			padding:10px 40px;
-			font-size: 14px;
+			font-size: 11px;
 			font-weight: bold;
 			color:#101010;
 			background:var(--colorful-button);

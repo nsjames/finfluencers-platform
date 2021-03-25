@@ -25,33 +25,32 @@
 			<PostPortfolio v-if="content.type === CONTENT_TYPE.PORTFOLIO" :content="content" />
 		</transition>
 
-		<transition name="sandbox" mode="out-in">
+		<transition-group name="sandbox" mode="out-in">
 			<section key="sandbox" class="sandbox" v-if="canSandbox">
 				<section>
 					<input type="checkbox" v-model="content.data.sandboxed" />
 					<span>Sandbox</span>
 				</section>
 				<p>
-					Sandboxing is a way to train your financial decision making muscle. Your sandboxed actions will not impact your profile, or modify your portfolio.
-					Instead, it is a way for you to branch your portfolio into theoretical directions, so that you can experiment
-					with different ways to grow your wealth.
+					Sandboxing is a way to train your financial decision making muscles without impacting your profile in any way.
+					It is a way for you to experiment with different approaches to portfolio growth.
 				</p>
 			</section>
 			<section key="CONTENT_TYPE.ADVICE" class="advice-warning" v-if="content.type === CONTENT_TYPE.ADVICE">
 				<b>Advice on finfluencers is crowd-sourced</b>. Do your own research along with advice you are given,
-				and make sure you are accepting advice from users who not only have proven track records, but also a
-				higher wealth score than you. If you accept advice from people with lower scores, you may be harming yourself
-				by following their bad habits.
+				and make sure you are accepting advice from users who have proven track records. Asking for advice has no
+				impact on your portfolio, influence, or findicator.
 			</section>
 			<section key="CONTENT_TYPE.KNOWLEDGE" class="advice-warning" v-if="content.type === CONTENT_TYPE.KNOWLEDGE">
-				Giving advice has the potential for large impact on your wealth score; but it goes both ways.
-				If you give good advice, you'll gain a considerable amount of wealth points.
-				If you give bad advice, it will stick with you for a while and you'll have to do twice as much to raise your wealth score.
+				Sharing your knowledge only impacts your influence.
 			</section>
 			<section key="CONTENT_TYPE.PREDICTION" class="advice-warning" v-if="content.type === CONTENT_TYPE.PREDICTION">
-				Predictions greatly impact your wealth score. Getting predictions consistently right will net you highly positive influence in the finance space.
+				Predictions impact your findicator and influence scores but not your portfolio.
 			</section>
-		</transition>
+			<section key="CONTENT_TYPE.TRADE" class="advice-warning" v-if="content.type === CONTENT_TYPE.TRADE && !content.data.sandboxed">
+				Investments impact your findicator, and portfolio values.
+			</section>
+		</transition-group>
 	</section>
 </template>
 
@@ -77,9 +76,9 @@
 		},
 		[CONTENT_TYPE.TRADE]:{
 			id:CONTENT_TYPE.TRADE,
-			text:'Share a trade',
+			text:'Share an investment',
 			image:'',
-			placeholder:'What made you do this trade?',
+			placeholder:'What made you do this investment/trade?',
 		},
 		// [CONTENT_TYPE.DECISION]:{
 		// 	id:CONTENT_TYPE.DECISION,
@@ -142,6 +141,10 @@
 					this.posting = true;
 					this.content.user_id = this.user.id;
 
+					if(this.content.data && this.content.data.hasOwnProperty('date')){
+						this.content.data.date = +new Date(this.content.data.date);
+					}
+
 					await new Promise(r => setTimeout(r, 1000));
 					const posted = await ApiService.postContent(this.content);
 					console.log('content', this.content);
@@ -176,9 +179,18 @@
 					case CONTENT_TYPE.KNOWLEDGE:
 					case CONTENT_TYPE.ADVICE:
 						this.content.data = null; break;
-					case CONTENT_TYPE.TRADE: this.content.data = new TradeContent(); break;
-					case CONTENT_TYPE.PREDICTION: this.content.data = new PredictionContent(); break;
-					case CONTENT_TYPE.PORTFOLIO: this.content.data = new PortfolioContent(); break;
+					case CONTENT_TYPE.TRADE:
+						this.content.data = new TradeContent();
+						this.content.data.from.asset = 'USD';
+						break;
+					case CONTENT_TYPE.PREDICTION:
+						this.content.data = new PredictionContent();
+						this.content.data.date = new Date();
+						break;
+					case CONTENT_TYPE.PORTFOLIO:
+						this.content.data = new PortfolioContent();
+						this.content.data.snapshot = this.user.snapshot;
+						break;
 				}
 			}
 		}
@@ -263,31 +275,11 @@
 
 		.post-text {
 			width:100%;
-			min-height:140px;
-			box-shadow:var(--soft-shadow);
 			position: relative;
 			margin:20px 0;
-			border-radius:var(--radius);
-			background:var(--background-color);
 
 
 			transition: box-shadow 0.5s ease;
-
-			textarea {
-				background:transparent;
-				position: absolute;
-				top:0;
-				bottom:0;
-				left:0;
-				right:0;
-				padding:30px;
-				width:100%;
-				resize: none;
-				border:0;
-				outline:0;
-				font-size: 16px;
-				color:var(--text-primary);
-			}
 		}
 
 		.actions {

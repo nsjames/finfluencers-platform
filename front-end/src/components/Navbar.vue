@@ -2,7 +2,7 @@
 	<section>
 		<nav>
 			<transition mode="out-in" name="slide-left">
-				<section key="nav-logo" v-if="!searching" class="logo" @click="$router.push('/explore')">
+				<section key="nav-logo" v-if="!searching" class="logo" @click="goToExplore">
 					<Logo />
 				</section>
 				<section key="nav-searchbar" v-if="searching" class="search-bar">
@@ -32,6 +32,7 @@
 <script>
 	import {mapActions, mapState} from "vuex";
 	import Popup, {Popups} from "../models/Popup";
+	import {EventBus} from "../services/EventBus";
 
 	export default {
 		data(){return {
@@ -55,6 +56,10 @@
 				this.setTheme(theme);
 				localStorage.setItem('theme', theme);
 				document.documentElement.className = theme;
+			},
+			goToExplore(){
+				if(this.$route.name === 'Explore') EventBus.$emit('refresh-explore');
+				else this.$router.push('/explore');
 			},
 			...mapActions([
 				'setTheme'

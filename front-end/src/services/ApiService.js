@@ -60,6 +60,7 @@ const GET = (route, api_key = false) => fetch(`${HOST}/${route}`, {
 
 const regenUser = async () => {
 	const user = await ApiService.getSelfUser();
+	console.log('self user', user);
 	if(!user) return false;
 
 	store.dispatch('setUser', user);
@@ -131,6 +132,9 @@ const ApiService = {
 	},
 	async getComments(parent){
 		return GET(`comments/${parent}`);
+	},
+	interactContent(content, type){
+		return POST(`contents/interact/${content.id}`, {type});
 	}
 }
 

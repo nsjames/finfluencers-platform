@@ -36,7 +36,7 @@ module.exports = class UserController {
 
             // Setting unique-id
             user.id = uuid();
-            while(!!await UserService.getById(user.id).catch((() => false))) user.id = uuid();
+            while(!!await UserService.getById(user.id, true).catch((() => false))) user.id = uuid();
 
             if(!await UserService.insert(user).catch(() => false)){
                 return results.error(results.ERROR_TYPES.DATABASE, "Could not create the user");
@@ -86,8 +86,8 @@ module.exports = class UserController {
     }
 
     static async find(name){
-	    const users = await ORM.query(`SELECT * FROM BUCKET_NAME WHERE doc_type = 'user' AND name = '${name}'`, User);
-	    if(users.length) return users[0].safer();
+	    const users = await ORM.query(`SELECT id FROM BUCKET_NAME WHERE doc_type = 'user' AND name = '${name}'`);
+	    if(users.length) return (await UserService.getById(users[0].id)).safer();
 	    return null;
     }
 

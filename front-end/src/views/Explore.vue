@@ -1,5 +1,5 @@
 <template>
-	<section class="home">
+	<section class="explore">
 
 		<PostContent />
 
@@ -16,6 +16,7 @@
 	import Content from '../components/Content';
 	import {mapState} from "vuex";
 	import * as ApiService from "../services/ApiService";
+	import {EventBus} from "../services/EventBus";
 
 	export default {
 		components:{
@@ -29,14 +30,24 @@
 			])
 		},
 		mounted(){
-			ApiService.setFeedContents()
+			this.loadFeed();
+			EventBus.$on('refresh-explore', this.loadFeed);
+		},
+		destroyed(){
+			EventBus.$off('refresh-explore', this.loadFeed)
+		},
+		methods:{
+			loadFeed(){
+				return ApiService.setFeedContents();
+			}
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
 
-	.home {
+	.explore {
+		padding-bottom:150px;
 
 	}
 </style>

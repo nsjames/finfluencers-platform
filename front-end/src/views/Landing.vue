@@ -70,7 +70,7 @@
 	import * as ApiService from "../services/ApiService";
 
 	const checklist = [
-		'Join like-minded people just learning how to grow their wealth',
+		'Join like-minded people just learning how to grow their portfolios',
 		'Track investing trends from all financial worlds',
 		'Share and gather financial intelligence',
 		'Become a financial influencer',

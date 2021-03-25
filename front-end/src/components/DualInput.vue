@@ -1,20 +1,26 @@
 <template>
 	<section class="dual-input">
 		<figure class="bg"></figure>
-		<input :placeholder="placeholderA" v-model="inputValueA" />
-		<input :placeholder="placeholderB" v-model="inputValueB" />
+		<input :type="typeA || 'text'" :placeholder="placeholderA" v-model="inputValueA" />
+		<input :type="typeB || 'text'" :placeholder="placeholderB" v-model="inputValueB" />
 	</section>
 </template>
 
 <script>
 	export default {
-		props:['placeholderA', 'valueA', "placeholderB", "valueB"],
+		props:['placeholderA', 'valueA', "placeholderB", "valueB", 'typeA', 'typeB'],
 		name: "DualInput",
 		data(){return {
 			inputValueA:'',
 			inputValueB:'',
 			changingInput:false,
 		}},
+		mounted(){
+			this.changingInput = true;
+			this.inputValueA = this.valueA;
+			this.inputValueB = this.valueB;
+			this.changingInput = false;
+		},
 		watch:{
 			'inputValueA'(){
 				if(this.changingInput) return;

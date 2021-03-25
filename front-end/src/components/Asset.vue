@@ -1,7 +1,7 @@
 <template>
 	<section class="asset-bubble">
 		<figure class="icon">
-			<span v-if="symbol">{{(symbol).slice(0, 4)}}</span>
+			<span v-if="symbol">{{(symbol).slice(0, 7)}}</span>
 		</figure>
 	</section>
 </template>

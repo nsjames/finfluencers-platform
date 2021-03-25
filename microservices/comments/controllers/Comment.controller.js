@@ -13,14 +13,23 @@ const prepareComment = async comments => {
 		if(!users[comment.user_id]) return;
 		comment.user = users[comment.user_id].safer();
 	}));
-}
+};
 
 module.exports = class CommentController {
 
     static async post(comment, user){
+
+	    const checkParent = async (parentType, parentId) => {
+		    let found;
+		    switch(parentType){
+			    case 'content': found = await ContentService.getById(parentId); break;
+			    case 'comment': found = await this.getById(parentId); break;
+		    }
+		    return !!found;
+	    };
+
 	    try {
 	    	comment.user_id = user.id;
-		    comment.commentCount = 0;
 
 		    let id = uuid();
 		    while(!!await CommentController.getById(id).catch((() => false))) id = uuid();
@@ -29,23 +38,16 @@ module.exports = class CommentController {
 		    comment = new Comment(comment);
 		    comment.created_at = +new Date();
 
-		    let found;
-		    switch(comment.parentType()){
-			    case 'content': found = await ContentService.getById(comment.parentId()); break;
-			    case 'comment': found = await this.getById(comment.parentId()); break;
-		    }
+			if(!await checkParent(comment.parentType(), comment.parentId())){
+				return {error:"Could not find comment's parent"};
+			}
 
-		    if(!found) return {error:"Could not find comment's parent"};
-
+			if(!await checkParent(comment.topLevelParentType(), comment.topLevelParentId())){
+				return {error:"Could not find comment's parent"};
+			}
 		    // TODO: Post to blockchain
 
 		    const posted = await ORM.insert(comment);
-
-		    // Incrementing quick-access counters
-		    switch(comment.parentType()){
-			    case 'content': await ContentService.incrementCommentCount(comment.parentId()); break;
-			    case 'comment': await this.incrementCommentCount(comment.parentId()); break;
-		    }
 
 		    comment.user = user.safer();
 
@@ -68,7 +70,6 @@ module.exports = class CommentController {
     	const comments = await ORM.query(`SELECT * FROM BUCKET_NAME WHERE doc_type = 'comment' AND parent_index = '${parent_index}' ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}`, Comment);
 
     	await prepareComment(comments);
-	    console.log('comments', comments);
 	    await Promise.all(comments.map(async comment => {
 	    	comment.comments = await this.getCommentChain(`comment:${comment.id}`, 5);
 	    }));
@@ -76,16 +77,8 @@ module.exports = class CommentController {
     	return comments;
     }
 
-	static async incrementCommentCount(id){
-    	const comment = new Comment({id});
-		return ORM.getBucket().mutateIn(comment.index(), [
-			couchbase.MutateInSpec.increment("commentCount", 1),
-		]).catch(err => {
-			console.error("increment comments error", id, err);
-			return false;
-		}).then(x => {
-			return true;
-		});
+	static async getInteractions(){
+
 	}
 
 }

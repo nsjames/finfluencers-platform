@@ -61,7 +61,7 @@
 							code right away just sit tight.
 						</section>
 
-						<input class="vip" v-model="code" placeholder="Access Code" />
+						<input autocomplete="off" class="vip" v-model="code" placeholder="Access Code" />
 						<section class="vip-access">
 							<section>
 								Think you deserve access? <a href="mailto:test@test.com">Email us and tell us why.</a>
@@ -78,11 +78,11 @@
 							from an entire financial sandbox and playground.
 						</section>
 
-						<input placeholder="Choose your username" v-model="name" />
-						<input placeholder="Enter your email" v-model="email" />
+						<input autocomplete="off" placeholder="Choose your username" v-model="name" />
+						<input autocomplete="off" placeholder="Enter your email" v-model="email" />
 						<section class="split-inputs">
-							<input placeholder="Password" type="password" v-model="password" />
-							<input placeholder="Re-type password" type="password" v-model="passwordConfirm" />
+							<input autocomplete="new-password" placeholder="Password" type="password" v-model="password" />
+							<input autocomplete="new-password" placeholder="Re-type password" type="password" v-model="passwordConfirm" />
 						</section>
 						<button @click="register">Create account</button>
 

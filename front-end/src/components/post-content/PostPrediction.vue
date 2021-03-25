@@ -1,23 +1,25 @@
 <template>
 	<section class="post-prediction">
-		<label>Token and target</label>
+		<label>Asset and target</label>
 		<section style="display:flex">
 			<!--<DropdownInput style="flex:1;" :options="[1,1,1]" :selected="'Hello'" :value="'1.0'" placeholder="1.0" v-on:changed="x => content.data.price = x" />-->
 			<DualInput style="flex:1;"
-			           :value-b="content.data.asset" :placeholder-b="'TICKER'"
+			           :value-b="content.data.asset" :placeholder-b="'ASSET'"
 			           :value-a="content.data.price" :placeholder-a="'$100.00'"
 			           v-on:changedb="x => content.data.asset = x"
 			           v-on:changeda="x => content.data.price = x"
 			/>
 			<section class="target-date">
-				<i class="far fa-calendar-alt"></i>
-				<span>Select Date</span>
+				<VueDatePicker v-model="content.data.date" attach=".target-date .picker-attach" :min-date="new Date()" />
+				<div class="picker-attach"></div>
 			</section>
+
 		</section>
 	</section>
 </template>
 
 <script>
+
 	export default {
 		props:['content'],
 	}
@@ -47,12 +49,12 @@
 			border-radius:var(--radius);
 			font-size: 20px;
 			cursor: pointer;
+			position: relative;
 
-			span {
-				font-size: 14px;
-				margin-left:20px;
-				color:var(--text-secondary);
-				font-weight: bold;
+			.picker-attach {
+				position: absolute;
+				left:0;
+				top:35px;
 			}
 		}
 	}

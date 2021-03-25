@@ -54,11 +54,11 @@
 <style lang="scss" scoped>
 	.dropdown {
 		position: relative;
-		box-shadow:var(--soft-shadow);
 
 
 		> .selected {
 			height:60px;
+			box-shadow:var(--soft-shadow);
 			background:var(--background-color);
 			border-radius:var(--radius);
 			display:flex;
@@ -114,9 +114,9 @@
 		}
 
 		&.transparent {
-			box-shadow:none;
 
 			> .selected {
+				box-shadow:none;
 				background:transparent;
 			}
 

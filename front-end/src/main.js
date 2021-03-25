@@ -2,7 +2,11 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import VueDatePicker from '@mathieustan/vue-datepicker';
+import '@mathieustan/vue-datepicker/dist/vue-datepicker.min.css';
+import formatNumber from './util/formatNumber'
 
+Vue.use(VueDatePicker);
 
 import "./styles/styles.scss"
 
@@ -21,6 +25,12 @@ Vue.component('Logo', () => import('./components/svgs/Logo.vue'));
 Vue.component('Loader', () => import('./components/Loader.vue'));
 Vue.component('Labels', () => import('./components/Labels.vue'));
 Vue.component('PostComment', () => import('./components/PostComment.vue'));
+
+Vue.mixin({
+	methods: {
+		formatNumber,
+	},
+})
 
 new Vue({
 	router,

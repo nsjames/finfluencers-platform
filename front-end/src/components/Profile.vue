@@ -3,7 +3,7 @@
 		<figure class="avatar" @click="goToProfile" :style="{'width':`${size || 36}px`, 'height':`${size || 36}px`}"></figure>
 		<section class="details">
 			<figure class="name" @click="goToProfile">{{user ? user.name : 'No username'}}</figure>
-			<figure class="wealth">{{parseFloat(user ? user.wealth : 0).toFixed(2)}}% WS</figure>
+			<figure class="potential">{{parseFloat(user ? user.snapshot.potential : 0).toFixed(2)}}</figure>
 		</section>
 	</section>
 </template>
@@ -47,11 +47,13 @@
 				}
 			}
 
-			.wealth {
-				font-size: 13px;
+			.potential {
+				font-size: 11px;
 				color:var(--text-secondary);
 				font-weight: bold;
 				font-family: var(--secondary-font);
+				opacity:0.5;
+				margin-top:2px;
 			}
 		}
 	}

@@ -12,7 +12,6 @@
 			<Labels :labels="labels" />
 
 			<ContentPortfolio v-if="isPortfolio" class="portfolio" :portfolio="content.data"
-				:wealth="parseFloat(content.data.wealth).toFixed(2)"
 				:show-comparison="user && user.id !== content.user_id" />
 			<ContentTrade v-if="isTrade" :trade="content.data" />
 			<ContentPrediction v-if="isPrediction" :prediction="content.data" :created-at="content.created_at" />
@@ -22,13 +21,9 @@
 			</section>
 
 			<section class="actions">
-				<section>
-					<i class="fas fa-chevron-up"></i>
-					<span>0</span>
-				</section>
-				<section>
-					<i class="fas fa-chevron-down"></i>
-					<span>0</span>
+				<section @click="heart">
+					<i class="fa-heart" :class="hasLiked ? 'fas' : 'far'"></i>
+					<span>{{content.trackers ? content.trackers.hearts || 0 : 0}}</span>
 				</section>
 				<!--<section>-->
 					<!--<i class="fas fa-retweet"></i>-->
@@ -36,7 +31,7 @@
 				<!--</section>-->
 				<section @click="goToContent" v-if="!hideCommentsButton">
 					<i class="far fa-comment"></i>
-					<span>{{content.commentCount}}</span>
+					<span>{{content.trackers ? content.trackers.comments || 0 : 0}}</span>
 				</section>
 				<!--<section>-->
 					<!--<i class="fas fa-money-bill"></i>-->
@@ -50,8 +45,10 @@
 
 <script>
 	import {CONTENT_TYPE} from "@finfluencers/shared/models/ContentType";
+	import {INTERACTION_TYPE} from "@finfluencers/shared/models/InteractionType";
 	import ago from '../util/ago'
 	import {mapActions, mapState} from "vuex";
+	import * as ApiService from "../services/ApiService";
 
 	export default {
 		props:['content', 'hideCommentsButton'],
@@ -74,6 +71,12 @@
 			labels(){
 				return (this.isSandboxed ? ['Sandboxed'] : []).concat(this.content.tags)
 			},
+			hasLiked(){
+				if(!this.content.interactions) return false;
+				return !!this.content.interactions.find(x => {
+					return x.type === INTERACTION_TYPE.HEART;
+				});
+			}
 		},
 		methods:{
 			removeSelfPosted(){
@@ -84,6 +87,21 @@
 				this.setContent(this.content);
 				this.$router.push(`/content/${this.content.id}`);
 			},
+			async heart(){
+				const interaction = await ApiService.interactContent(this.content, INTERACTION_TYPE.HEART);
+				console.log('interaction', interaction);
+				if(interaction){
+					if(interaction.hasOwnProperty('id')){
+						if(!this.content.interactions) this.content.interactions = [];
+						this.content.interactions.push(interaction);
+						this.content.trackers.hearts += 1;
+					} else {
+						this.content.interactions = this.content.interactions.filter(x => x.type !== INTERACTION_TYPE.HEART);
+						this.content.trackers.hearts -= 1;
+					}
+
+				}
+			},
 			...mapActions([
 				'setContent'
 			])
@@ -93,7 +111,7 @@
 
 <style lang="scss" scoped>
 	.content {
-		margin-bottom:30px;
+		margin-bottom:80px;
 		padding:20px 0;
 		border-radius:var(--radius);
 
@@ -157,10 +175,19 @@
 					display:flex;
 					align-items: center;
 
+					i {
+						&.fa-heart {
+							&.fas {
+								color:var(--highlight);
+								opacity:0.3;
+							}
+						}
+					}
+
 					&:hover {
 						i {
 							color:var(--highlight);
-							opacity:1;
+							opacity:1 !important;
 						}
 					}
 				}

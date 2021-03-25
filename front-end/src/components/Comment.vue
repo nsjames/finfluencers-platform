@@ -3,7 +3,7 @@
 		<section class="header">
 			<Profile :user="comment.user" />
 			<section class="ago">{{timeAgo}} ago</section>
-			<section class="op">OP</section>
+			<section class="op" v-if="topLevelPoster === user.id">OP</section>
 		</section>
 		<section class="details">
 			<figure class="line"><figure></figure></figure>
@@ -11,23 +11,16 @@
 				<figure class="text">{{comment.text}}</figure>
 
 				<section class="actions">
-					<section>
-						<i class="fas fa-chevron-up"></i>
-						<span>0</span>
-					</section>
-					<section>
-						<i class="fas fa-chevron-down"></i>
-						<span>0</span>
-					</section>
 					<section @click="commenting = !commenting">
-						<i class="far fa-comment"></i>
+						<i class="fas fa-reply"></i>
 						<span style="font-weight: 400;">Reply</span>
 					</section>
 				</section>
 
-				<Comment v-for="child in comment.comments" :key="child.id" :comment="child" :child="true" />
+				<PostComment class="reply" v-if="commenting" :parent="asParent" :top-level-parent="parent" v-on:posted="postedComment" :reply="true" />
 
-				<PostComment class="reply" v-if="commenting" :parent="asParent" v-on:posted="postedComment" :reply="true" />
+				<Comment v-for="child in comment.comments" :key="child.id" :comment="child" :child="true" :parent="parent" />
+
 			</section>
 		</section>
 	</section>
@@ -40,7 +33,7 @@
 	import Comment from './Comment';
 
 	export default {
-		props:['comment', 'child'],
+		props:['comment', 'child', 'topLevelPoster', 'parent'],
 		name: "Comment",
 		components:{
 			Comment
@@ -145,24 +138,25 @@
 						margin-right:40px;
 						display:flex;
 						align-items: center;
+						color:var(--text-secondary);
+						opacity:0.2;
+
+						transition: all 0.2s ease;
+						transition-property: opacity, color;
 
 						&:hover {
+							color:var(--highlight);
+							opacity:1;
 
-							i {
-								color:var(--highlight);
-								opacity:1;
-							}
 						}
 					}
 
 					i {
 						padding:10px;
-						color:var(--text-secondary);
 						margin-bottom:-10px;
-						opacity:0.2;
 						transition: all 0.1s ease;
 						transition-property: opacity, color;
-						font-size: 24px;
+						font-size: 16px;
 
 						&:first-child {
 							margin-left:-10px;
@@ -170,9 +164,8 @@
 					}
 
 					span {
-						font-size: 14px;
-						font-weight: bold;
-						color:var(--text-primary);
+						font-size: 11px;
+						font-weight: bold !important;
 						padding-top:9px;
 					}
 				}

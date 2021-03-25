@@ -23,23 +23,30 @@ module.exports = () => {
 
     routes.post('/feed', AuthenticationService.validate, async (req, res) => {
         const options = req.body || {};
-        console.log('options', options);
 
         let profile = options.hasOwnProperty('profile') ? !!options.profile : false;
         const feed = profile
-	        ? await FeedController.profile(options)
-	        : await FeedController.explore(options);
+	        ? await FeedController.profile(options, req.user)
+	        : await FeedController.explore(options, req.user);
 
         if(feed) return res.json(Results.success(feed));
         return res.json(Results.error(ERROR_TYPES.DATABASE, "Could not fetch feed"))
     });
 
     routes.get('/:id', AuthenticationService.validate, async (req, res) => {
-        let content = await FeedController.getContent(req.params.id);
+        let content = await FeedController.getContent(req.params.id, req.user);
 
         if(content) return res.json(Results.success(content));
         return res.json(Results.error(ERROR_TYPES.DATABASE, "Could not find content"))
     });
+
+	routes.post('/interact/:id', AuthenticationService.validate, async (req, res) => {
+		const {type} = req.body || {};
+		const interaction = await ContentService.interact(req.params.id, type, req.user);
+
+		if(!interaction.hasOwnProperty('error')) res.json(Results.success(interaction));
+		else res.json(Results.error(null, "Could not post content: "+interaction.error));
+	});
 
     return routes;
 };

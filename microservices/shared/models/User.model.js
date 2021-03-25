@@ -7,7 +7,6 @@ const FIELDS = {
     name:'string',
     email:'string',
     auth:'object',
-    wealth:'number',
     public_key:'string',
     graphics:'any',
 };
@@ -26,9 +25,6 @@ const METHODS = {
             json.email = '';
             json.auth = null;
         }
-        if(!json.hasOwnProperty('wealth') || json.wealth === null) {
-            json.wealth = 0;
-        }
         if(!json.hasOwnProperty('public_key') || !json.public_key) {
             json.public_key = '';
         }
@@ -40,7 +36,7 @@ const METHODS = {
             name:this.name,
             email:this.email,
             auth:auth.safe(),
-	        wealth:this.wealth,
+	        snapshot:this.snapshot || {},
         }
     },
     safer(){
@@ -51,4 +47,4 @@ const METHODS = {
     },
 };
 
-module.exports = createModel('User', FIELDS, METHODS);
+module.exports = createModel('User', FIELDS, METHODS, ['snapshot']);

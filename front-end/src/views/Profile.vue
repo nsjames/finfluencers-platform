@@ -16,23 +16,23 @@
 				<section>
 					<figure class="name">{{profile.name}}</figure>
 					<figure class="overview">
-						<span>{{parseFloat(profile.wealth).toFixed(2)}}% WS</span>
-						<span>2.3k followers</span>
-						<span>1.1m posts</span>
+						<span>{{parseFloat(profile.snapshot.potential).toFixed(2)}} Findicator</span>
+						<span>{{parseInt(profile.snapshot.influence)}} Finfluence</span>
+						<span>2.3k subscribers</span>
 					</figure>
 				</section>
 				<section>
 					<i v-if="isYourProfile" class="fas fa-cog"></i>
 					<i v-if="isYourProfile" @click="logout" class="fas fa-power-off"></i>
-					<button v-if="!isYourProfile">Follow</button>
+					<button v-if="!isYourProfile">Subscribe</button>
 				</section>
 			</section>
 
 			<section class="portfolio-container">
 				<label>{{isYourProfile ? 'Your' : `${profile.name}'s`}} current portfolio</label>
 				<section class="portfolio">
-					<ContentPortfolio :wealth="parseFloat(profile.wealth).toFixed(2)" :details="[
-					['Saved versus earned','84%'],
+					<ContentPortfolio :portfolio="{snapshot:profile.snapshot}" :details="[
+					// ['Saved versus earned','84%'],
 				]" :show-comparison="!isYourProfile" />
 				</section>
 			</section>
@@ -43,7 +43,7 @@
 					<p>
 						The more information you add to your portfolio, the better the advice you will get from
 						users on finfluencers. We also use your portfolio data to show you content which is slightly
-						above your current wealth score, so that you can progress gradually.
+						above your current findicator score, so that you can progress gradually.
 						<br />
 						<br />
 						<b>
@@ -123,9 +123,7 @@
 			PORTFOLIO_ACTIONS,
 		}},
 		async mounted(){
-			this.profile = await ApiService.getUser(this.$route.params.user);
-			if(!this.profile) return this.$router.replace('/404');
-			ApiService.setFeedContents({profile:this.profile.id})
+			this.load();
 		},
 		computed:{
 			...mapState([
@@ -143,6 +141,12 @@
 			}
 		},
 		methods:{
+			async load(){
+				this.profile = await ApiService.getUser(this.$route.params.user);
+				console.log('profile', this.profile);
+				if(!this.profile) return this.$router.replace('/404');
+				ApiService.setFeedContents({profile:this.profile.id})
+			},
 			logout(){
 				this.setUser(null);
 				ApiService.clearToken();
@@ -151,6 +155,11 @@
 			...mapActions([
 				'setUser',
 			])
+		},
+		watch:{
+			'$route.params.user'(){
+				this.load();
+			}
 		}
 	}
 </script>
@@ -158,6 +167,8 @@
 <style lang="scss" scoped>
 
 	.profile {
+		padding-bottom:150px;
+
 		$avatar:150px;
 		$banner:200px;
 		$corner:60px;

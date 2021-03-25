@@ -1,17 +1,14 @@
-const {CONTENT_TYPE} = require("./ContentType");
-
 const {createModel} = require('../utils/models.util');
 const {sha256} = require('../utils/crypto.util');
-const {getOrDefault} = require('../utils/getOrDefaultProp');
 
 
 const FIELDS = {
     id:'string',
     user_id:'string',
+    parent_index:'string',
+    parent_owner_id:'string',
     type:'number',
     data:'any',
-    text:'object',
-    tags:'any',
 };
 
 const METHODS = {
@@ -19,8 +16,8 @@ const METHODS = {
         return this.rawIndex(this.id);
     },
     constructor(json){
-        if(!json.hasOwnProperty('tags') || !json.tags) json.tags = [];
+        if(!json.hasOwnProperty('type') || !json.type) json.type = 0;
     },
 };
 
-module.exports = createModel('Content', FIELDS, METHODS, ['user', 'interactions', 'trackers']);
+module.exports = createModel('Interaction', FIELDS, METHODS);
