@@ -25,7 +25,7 @@ Finance, finally fun.
 
 ### ENV settings
 - Go to `./runner` and copy `runner_env.example.js` to `runner_env.js`
-- Modify the contents of that file to match your couchbase user/bucket settings and bucket name
+- Modify the contents of that file to match your couchbase user/bucket settings
 
 
 ## Installation
