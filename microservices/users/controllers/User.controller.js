@@ -40,7 +40,10 @@ module.exports = class UserController {
             user.id = uuid();
             while(!!await UserService.getById(user.id, true).catch((() => false))) user.id = uuid();
 
-            if(!await UserService.insert(user).catch(() => false)){
+            if(!await UserService.insert(user).catch(err => {
+            	console.error("Error creating user", err);
+            	return null;
+            })){
                 return results.error(results.ERROR_TYPES.DATABASE, "Could not create the user");
             }
 
