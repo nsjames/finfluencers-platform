@@ -5,7 +5,7 @@
 			<Asset :symbol="prediction.asset" />
 			<section class="info">
 				<figure class="asset">{{prediction.asset}}</figure>
-				<figure class="price">${{prediction.price}}</figure>
+				<figure class="price">${{formatNumber(prediction.price)}}</figure>
 				<figure class="duration">{{duration}} day prediction ({{new Date(prediction.date).toLocaleDateString()}})</figure>
 			</section>
 		</section>

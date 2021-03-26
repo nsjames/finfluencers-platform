@@ -31,7 +31,6 @@
 
 <script>
 	import {mapActions, mapState} from "vuex";
-	import Popup, {Popups} from "../models/Popup";
 	import {EventBus} from "../services/EventBus";
 
 	export default {

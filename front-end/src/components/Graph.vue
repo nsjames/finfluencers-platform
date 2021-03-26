@@ -20,7 +20,7 @@
 
 
 	export default {
-		props:['hovering', 'height', 'dataArr', 'noAnimations', 'secondary'],
+		props:['hovering', 'height', 'dataArr', 'secondary'],
 		data(){return {
 			chart:null,
 			graphSet:false,
@@ -65,7 +65,7 @@
 					},
 					options: {
 						animation: {
-							duration: this.noAnimations ? 0 : 800
+							duration: 0
 						},
 						responsive: true,
 						maintainAspectRatio: false,
@@ -73,8 +73,8 @@
 							padding: {
 								left:-10,
 								right:-10,
-								top:0,
-								bottom:0,
+								top:10,
+								bottom:10,
 							}
 						},
 						scales: {

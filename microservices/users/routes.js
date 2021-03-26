@@ -31,7 +31,7 @@ module.exports = () => {
     });
 
     routes.get('/user/:name', AuthenticationService.validate, async (req, res) => {
-        const user = await UserController.find(decodeURIComponent(req.params.name));
+        const user = await UserController.find(decodeURIComponent(req.params.name), req.user);
         if(user) res.json(Results.success(user));
         else res.json(Results.error(ERROR_TYPES.DATABASE, `User (${req.params.name}) could not be found`))
     });
@@ -46,6 +46,14 @@ module.exports = () => {
         const touched = await UserController.touch(req.user, true);
         if(touched) res.json(Results.success(true));
         else res.json(Results.error(null, "Could not quit validation connection"));
+    });
+
+    routes.get('/subscribe/:id', AuthenticationService.validate, async (req, res) => {
+        const subscribed = await UserController.subscribe(req.params.id, req.user);
+        console.log('subscribed', subscribed);
+
+	    if(!subscribed.hasOwnProperty('error')) res.json(Results.success(subscribed));
+	    else res.json(Results.error(null, "Could not post content: "+subscribed.error));
     });
 
     return routes;

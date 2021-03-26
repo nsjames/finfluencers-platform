@@ -25,6 +25,7 @@
 	import {mapActions, mapState} from "vuex";
 	import * as ApiService from "../services/ApiService";
 	import CommentModel from '@finfluencers/shared/models/Comment.model';
+	import {EventBus} from "../services/EventBus";
 
 	export default {
 		components:{
@@ -40,15 +41,21 @@
 				'content',
 			])
 		},
-		mounted(){
-			this.load();
+		beforeMount(){
+			EventBus.$emit('loading', true);
+		},
+		async mounted(){
+			await this.load();
+			EventBus.$emit('loading', false);
 		},
 		methods:{
-			load(){
+			async load(){
 				this.comment = new CommentModel();
 				this.comment.parent_index = `content:${this.$route.params.id}`;
-				this.checkContent();
-				this.getComments();
+				await Promise.all([
+					this.checkContent(),
+					this.getComments()
+				]);
 			},
 			async getComments(){
 				const comments = await ApiService.getComments(`content:${this.$route.params.id}`);

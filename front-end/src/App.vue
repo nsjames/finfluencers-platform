@@ -51,10 +51,12 @@
 			document.documentElement.className = 'dark';
 			document.addEventListener('click', this.clickAnywhere);
 			EventBus.$on('opened-dropdown', this.openedDropdown);
+			EventBus.$on('loading', this.catchLoading);
 		},
 		destroyed(){
 			document.removeEventListener('click', this.clickAnywhere);
 			EventBus.$off('opened-dropdown', this.openedDropdown);
+			EventBus.$off('loading', this.catchLoading);
 		},
 		computed:{
 			...mapState([
@@ -69,6 +71,9 @@
 			}
 		},
 		methods:{
+			catchLoading(loading){
+				this.loading = loading;
+			},
 			openedDropdown(id){
 				this.lastDropdownId = id;
 			},
@@ -91,7 +96,7 @@
 					this.routeTransition = 'route-change-landing';
 					setTimeout(() => {
 						this.loading = false;
-					}, 1500);
+					}, 500);
 				}
 			}
 		}
@@ -113,7 +118,7 @@
 
 		transition:all 1s ease;
 		transition-property: max-width, padding;
-		transition-delay: 1.5s;
+		transition-delay: 0.5s;
 
 		&.no-scroll {
 			overflow:hidden;
@@ -122,7 +127,7 @@
 
 		&.limited {
 			max-width:var(--max-width);
-			transition-delay:1.5s;
+			transition-delay:0.5s;
 			padding:0 30px;
 		}
 
@@ -162,7 +167,7 @@
 			bottom:0;
 			left:0;
 			right:0;
-			z-index:999999999999;
+			z-index:var(--loader-index);
 			background:var(--background-color);
 			color:var(--text-primary);
 			display:flex;
@@ -174,7 +179,7 @@
 			opacity:0;
 			visibility: hidden;
 
-			transition: all 0.5s ease;
+			transition: all 0.8s ease;
 			transition-property: opacity, visibility;
 
 			&.show {
@@ -210,7 +215,7 @@
 		}
 		.route-change-landing-enter {
 			opacity:0;
-			transition-delay: 1s;
+			transition-delay: 0.5s;
 		}
 		.route-change-landing-leave-to {
 			transition: opacity 0s ease;

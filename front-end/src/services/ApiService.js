@@ -81,10 +81,10 @@ const ApiService = {
 		const hash = sha256(code);
 		return GET(`users/find-code/${hash}`)
 	},
-	register:async(email, password, code) => {
+	register:async(name, email, password, code) => {
 		return POST('users/register', {
 			email,
-			name:email.split('@')[0],
+			name,
 			auth:{type:1, data:password},
 			code,
 		}).then(x => {
@@ -135,6 +135,9 @@ const ApiService = {
 	},
 	interactContent(content, type){
 		return POST(`contents/interact/${content.id}`, {type});
+	},
+	subscribe(user_id){
+		return GET(`users/subscribe/${user_id}`);
 	}
 }
 

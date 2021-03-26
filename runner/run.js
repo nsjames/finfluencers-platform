@@ -22,7 +22,6 @@ const [
 const MODE = '';
 
 let servers = [];
-
 (async () => {
     Object.keys(env).map(key => {
         // Some env variables are stringified JSON
@@ -60,7 +59,6 @@ let servers = [];
                 server,
             }
         }));
-
 
 	    const loadBalancerRouting = () => {
 		    const routes = Router();

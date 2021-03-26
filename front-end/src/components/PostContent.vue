@@ -25,7 +25,7 @@
 			<PostPortfolio v-if="content.type === CONTENT_TYPE.PORTFOLIO" :content="content" />
 		</transition>
 
-		<transition-group name="sandbox" mode="out-in">
+		<transition name="sandbox" mode="out-in">
 			<section key="sandbox" class="sandbox" v-if="canSandbox">
 				<section>
 					<input type="checkbox" v-model="content.data.sandboxed" />
@@ -36,6 +36,9 @@
 					It is a way for you to experiment with different approaches to portfolio growth.
 				</p>
 			</section>
+		</transition>
+
+		<transition name="sandbox" mode="out-in">
 			<section key="CONTENT_TYPE.ADVICE" class="advice-warning" v-if="content.type === CONTENT_TYPE.ADVICE">
 				<b>Advice on finfluencers is crowd-sourced</b>. Do your own research along with advice you are given,
 				and make sure you are accepting advice from users who have proven track records. Asking for advice has no
@@ -50,7 +53,7 @@
 			<section key="CONTENT_TYPE.TRADE" class="advice-warning" v-if="content.type === CONTENT_TYPE.TRADE && !content.data.sandboxed">
 				Investments impact your findicator, and portfolio values.
 			</section>
-		</transition-group>
+		</transition>
 	</section>
 </template>
 

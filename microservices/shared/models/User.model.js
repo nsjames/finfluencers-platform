@@ -47,4 +47,4 @@ const METHODS = {
     },
 };
 
-module.exports = createModel('User', FIELDS, METHODS, ['snapshot']);
+module.exports = createModel('User', FIELDS, METHODS, ['snapshot', 'interactions']);

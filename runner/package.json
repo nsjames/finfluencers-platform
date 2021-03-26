@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^8.2.0",
+    "couchbase": "^3.0.7",
     "isomorphic-fetch": "^3.0.0"
   },
   "devDependencies": {

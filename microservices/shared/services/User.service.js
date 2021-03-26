@@ -1,10 +1,19 @@
 const UserSnapshot = require("../models/UserSnapshot");
+const {INTERACTION_TYPE} = require('../models/InteractionType');
 
 const ORM = require('../orm');
 const User = require('../models/User.model');
+const Interaction = require('../models/Interaction.model');
 const couchbase = require('couchbase');
 
+const INTERACTIONS_QUERY = (fetchedUser, fetchingUser) =>
+	`SELECT * FROM BUCKET_NAME WHERE doc_type = 'interaction' AND parent_index = 'user:${fetchedUser.id}' AND user_id = '${fetchingUser.id}'`;
+
 module.exports = class UserService {
+
+	static async prepareUser(fetchedUser, fetchingUser){
+		fetchedUser.interactions = await ORM.query(INTERACTIONS_QUERY(fetchedUser, fetchingUser), Interaction);
+	}
 
     static async insert(user){
         if(!user instanceof User) throw "user param must be an instance of User";
@@ -53,9 +62,15 @@ module.exports = class UserService {
         }
     }
 
+    static async exists(id){
+        return ORM.exists((new User({id})).index());
+    }
+
     static async buildSnapshot(user){
         user.snapshot = new UserSnapshot();
+        // TODO: Potential and portfolio value
         user.snapshot.influence = await ORM.query(`SELECT COUNT(*) FROM BUCKET_NAME WHERE doc_type = 'interaction' AND parent_owner_id = '${user.id}'`);
+	    user.snapshot.subscribers = await ORM.query(`SELECT COUNT(*) FROM BUCKET_NAME WHERE doc_type = 'interaction' AND parent_owner_id = '${user.id}' AND type = ${INTERACTION_TYPE.SUBSCRIBE}`)
     }
 
     static async totalUsers(){

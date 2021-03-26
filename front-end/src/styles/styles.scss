@@ -32,7 +32,8 @@ input[type=number] {
   --max-width:960px;
   --radius:10px;
 
-  --nav-index:10000;
+  --nav-index:1000000;
+  --loader-index:999999;
   --secondary-font:'Roboto', sans-serif;
 }
 
@@ -72,8 +73,8 @@ input[type=number] {
   --soft-shadow:0 0 25px 1px rgba(130, 130, 243, 0.05), 0 0 15px 1px rgba(130, 130, 243, 0.05), inset 0 0 0 3px var(--background-color), inset 0 0 0 5px rgba(130, 130, 243, 0.25);
   --hint-bg: #212140;
   --graph-bg: #161629;
-  --graph-line-0:#CFFFDC;
-  --graph-line-1:#CECEFE;
+  --graph-line-0: rgba(207, 0, 220, 0.1);
+  --graph-line-1:#8282F3;
   --graph-line-mine:rgba(255,255,255,0.1);
   --landing-button: #ffffff;
   --colorful-button:linear-gradient(101.18deg, #CFFFDC 41.75%, #CECEFE 79.62%);

@@ -1,6 +1,8 @@
 const {results, ORM, authentication, uuid, SALT, couchbase} = require('@finfluencers/shared');
 const {sha256} = require('@finfluencers/shared/utils/crypto.util');
 const User = require('@finfluencers/shared/models/User.model');
+const Interaction = require('@finfluencers/shared/models/Interaction.model');
+const {INTERACTION_TYPE} = require('@finfluencers/shared/models/InteractionType');
 const UserService = require('@finfluencers/shared/services/User.service');
 const BlockchainService = require('@finfluencers/shared/services/Blockchain.service');
 
@@ -85,10 +87,43 @@ module.exports = class UserController {
 	    });
     }
 
-    static async find(name){
+    static async find(name, user){
 	    const users = await ORM.query(`SELECT id FROM BUCKET_NAME WHERE doc_type = 'user' AND name = '${name}'`);
-	    if(users.length) return (await UserService.getById(users[0].id)).safer();
+	    if(users.length) {
+	        const fetched = (await UserService.getById(users[0].id)).safer();
+	        await UserService.prepareUser(fetched, user);
+	        return fetched;
+	    }
 	    return null;
     }
+
+	static async subscribe(id, user){
+		// TODO: Add blockchain here
+
+		const parent_index = `user:${id}`;
+
+		if(!await UserService.exists(id))
+		    return {error:"The user you are trying to subscribe to does not exist"};
+
+		const interaction = new Interaction({
+			// Will fail to insert this if previous interaction already exists
+			id:sha256(`${parent_index}:${user.id}:${INTERACTION_TYPE.SUBSCRIBE}`),
+			user_id:user.id,
+			parent_index,
+			parent_owner_id:id,
+			type:INTERACTION_TYPE.SUBSCRIBE,
+			data:null,
+		});
+
+		if(await ORM.exists(interaction.index())){
+			await ORM.remove(interaction.index());
+			return {};
+		}
+
+		const saved = await ORM.insert(interaction).catch(() => null);
+		if(!saved) return {error:"Error saving interaction"};
+
+		return interaction;
+	}
 
 }

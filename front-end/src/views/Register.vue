@@ -166,7 +166,7 @@
 				if(this.password !== this.passwordConfirm)
 					return Snackbar.error("Password confirmation does not match password");
 
-				const result = await ApiService.register(this.email, this.password, this.code);
+				const result = await ApiService.register(this.name, this.email, this.password, this.code);
 				if(result) this.$router.push('/explore');
 
 

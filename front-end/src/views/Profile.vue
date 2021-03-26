@@ -1,30 +1,43 @@
 <template>
 	<section>
-		<section class="profile" v-if="profile">
+		<section class="profile" v-if="profile"> <!-- :class="{'editable':isYourProfile}" -->
 
-			<section class="banner" :style="`background-image:url(${bannerImage})`">
+			<section class="banner">
+				<figure class="image" :style="`background-image:url(${bannerImage})`"></figure>
 				<section class="corners">
 					<div></div>
 					<div></div>
 				</section>
+				<!--<figure class="edit" v-if="isYourProfile">-->
+					<!--<div>-->
+						<!--<i class="fas fa-image"></i> Click your header or profile image to edit it-->
+					<!--</div>-->
+				<!--</figure>-->
 			</section>
 			<figure class="banner-placeholder"></figure>
 
-			<figure class="avatar" :style="`background-image:url(${bannerImage})`"></figure>
+			<figure class="avatar">
+				<!--<figure class="image" :style="`background-image:url(${bannerImage})`"></figure>-->
+				<img class="image" :src="`data:image/png;base64, ${identicon(profile.name)}`" />
+			</figure>
 
 			<section class="header">
 				<section>
 					<figure class="name">{{profile.name}}</figure>
 					<figure class="overview">
-						<span>{{parseFloat(profile.snapshot.potential).toFixed(2)}} Findicator</span>
-						<span>{{parseInt(profile.snapshot.influence)}} Finfluence</span>
-						<span>2.3k subscribers</span>
+						<span>Findicator <b>{{parseFloat(profile.snapshot.potential).toFixed(2)}}</b></span>
+						<span>Finfluence <b>{{parseInt(profile.snapshot.influence)}}</b></span>
+						<span>Subscribers <b>{{parseInt(profile.snapshot.subscribers)}}</b></span>
 					</figure>
 				</section>
 				<section>
 					<i v-if="isYourProfile" class="fas fa-cog"></i>
 					<i v-if="isYourProfile" @click="logout" class="fas fa-power-off"></i>
-					<button v-if="!isYourProfile">Subscribe</button>
+					<button v-if="!isYourProfile" @click="subscribe">
+						<span v-if="!isSubscribed && !subscribing">Subscribe</span>
+						<span v-if="isSubscribed && !subscribing">Unsub</span>
+						<i class="fas fa-spin fa-spinner" v-if="subscribing"></i>
+					</button>
 				</section>
 			</section>
 
@@ -77,6 +90,9 @@
 	import Content from '../components/Content';
 	import {mapActions, mapState} from "vuex";
 	import * as ApiService from "../services/ApiService";
+	import {INTERACTION_TYPE} from "@finfluencers/shared/models/InteractionType";
+	import {EventBus} from "../services/EventBus";
+	import identicon from '../util/identicon';
 
 	const PORTFOLIO_ACTIONS = [
 		{
@@ -121,9 +137,14 @@
 		data(){return {
 			profile:null,
 			PORTFOLIO_ACTIONS,
+			subscribing:false,
 		}},
+		beforeMount(){
+			EventBus.$emit('loading', true);
+		},
 		async mounted(){
-			this.load();
+			await this.load();
+			EventBus.$emit('loading', false);
 		},
 		computed:{
 			...mapState([
@@ -132,6 +153,9 @@
 			]),
 			isYourProfile(){
 				return this.user && this.user.id === this.profile.id;
+			},
+			isSubscribed(){
+				return this.profile.interactions.find(x => x.type === INTERACTION_TYPE.SUBSCRIBE)
 			},
 			bannerImage(){
 				return null;
@@ -145,13 +169,20 @@
 				this.profile = await ApiService.getUser(this.$route.params.user);
 				console.log('profile', this.profile);
 				if(!this.profile) return this.$router.replace('/404');
-				ApiService.setFeedContents({profile:this.profile.id})
+				await ApiService.setFeedContents({profile:this.profile.id})
 			},
 			logout(){
 				this.setUser(null);
 				ApiService.clearToken();
 				this.$router.push('/');
 			},
+			async subscribe(){
+				this.subscribing = true;
+				const subscribed = await ApiService.subscribe(this.profile.id);
+				if(subscribed) this.profile = await ApiService.getUser(this.$route.params.user);
+				this.subscribing = false;
+			},
+			identicon,
 			...mapActions([
 				'setUser',
 			])
@@ -173,17 +204,76 @@
 		$banner:200px;
 		$corner:60px;
 
+		.banner, .avatar {
+
+			.image {
+				width:100%;
+				height:100%;
+				background-position: center;
+				background-size: cover;
+				opacity:1;
+				transition: opacity 0.2s ease;
+			}
+		}
+
+		.avatar {
+			background:var(--colorful-button);
+			.image {
+				width:50%;
+				height:50%;
+			}
+		}
+
+
+		&.editable {
+			.banner, .avatar {
+				background-color:rgba(0,0,0,0.2);
+				.image {
+					cursor: pointer;
+
+
+					&:hover {
+						opacity:0;
+					}
+				}
+			}
+		}
+
 		.banner {
 			height:#{$banner + $corner*2};
 			position:absolute;
 			top:-20px;
 			left:-50%;
 			right:-50%;
-			background-color:var(--graph-bg);
-			background-position: center;
-			background-size: cover;
 			box-shadow:inset 0 -80px 120px rgba(0,0,0,0.06);
-			z-index:-1;
+			z-index:0;
+			overflow: hidden;
+
+			.edit {
+				position:absolute;
+				bottom:80px;
+				left:0;
+				right:0;
+				font-size: 14px;
+				pointer-events: none;
+
+				transition: color 0.2s ease;
+
+				div {
+					background:var(--highlight);
+					color:#fff;
+					display:table;
+					margin:0 auto;
+					padding:10px 20px;
+					border-radius:50px;
+					box-shadow:0 3px 10px rgba(0,0,0,0.2);
+
+					i {
+						margin-right:15px;
+					}
+				}
+
+			}
 
 			&:after {
 				content:'';
@@ -204,6 +294,7 @@
 				right:$corner;
 				height:$corner;
 				background:var(--background-color);
+				z-index:2;
 
 				div {
 					border-radius:50%;
@@ -228,15 +319,23 @@
 		}
 
 		.avatar {
+			position: relative;
+			z-index:2;
 
 			border-radius:50%;
 			width:$avatar;
 			height:$avatar;
 			margin-top:-#{$avatar/2 + $banner/4};
 			margin-left:-#{$avatar/3};
-			background-color:var(--graph-bg);
-			background-position: center;
-			background-size: cover;
+
+			display:flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 48px;
+			color:var(--text-primary);
+			overflow: hidden;
+
+			transform:rotateZ(-30deg);
 		}
 
 		.header {
@@ -254,6 +353,7 @@
 						font-size: 22px;
 						padding:10px;
 						margin-top:5px;
+						vertical-align: sub;
 						display:inline-block;
 						margin-right:10px;
 						cursor: pointer;
@@ -270,16 +370,22 @@
 					}
 
 					button {
-						background:var(--landing-button);
-						color:var(--background-color);
+						background:var(--colorful-button);
+						color:#101010;
 						border-radius:50px;
-						padding:14px 40px;
+						padding:0 10px;
+						height:40px;
+						width:150px;
 						outline:0;
 						border:0;
 						font-size: 14px;
 						font-weight: bold;
 						margin-top:30px;
 						cursor: pointer;
+
+						i {
+							font-size: 14px;
+						}
 					}
 				}
 			}
@@ -297,6 +403,14 @@
 					margin-right:40px;
 					color:var(--text-secondary);
 					font-size: 14px;
+
+					b {
+						margin-left:3px;
+						border:2px solid var(--highlight);
+						padding:4px 15px 5px;
+						border-radius:50px;
+						color:var(--highlight);
+					}
 				}
 			}
 		}
@@ -410,5 +524,11 @@
 			}
 		}
 
+	}
+
+	.dark {
+		.banner {
+			background:rgba(0,0,0,0.25);
+		}
 	}
 </style>

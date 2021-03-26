@@ -50,6 +50,7 @@
 			font-size: 20px;
 			cursor: pointer;
 			position: relative;
+			color:var(--text-primary);
 
 			.picker-attach {
 				position: absolute;

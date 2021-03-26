@@ -29,9 +29,13 @@
 				'contents',
 			])
 		},
-		mounted(){
-			this.loadFeed();
+		beforeMount(){
+			EventBus.$emit('loading', true);
+		},
+		async mounted(){
 			EventBus.$on('refresh-explore', this.loadFeed);
+			await this.loadFeed();
+			EventBus.$emit('loading', false);
 		},
 		destroyed(){
 			EventBus.$off('refresh-explore', this.loadFeed)

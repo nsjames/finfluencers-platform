@@ -34,7 +34,7 @@
 			overflow: hidden;
 			background-size:cover;
 			background-position: center;
-			background:rgba(0,0,0,0.05);
+			background:rgba(0,0,0,0.03);
 
 			display:flex;
 			align-items: center;

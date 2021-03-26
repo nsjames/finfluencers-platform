@@ -23,7 +23,7 @@
 			<section class="actions">
 				<section @click="heart">
 					<i class="fa-heart" :class="hasLiked ? 'fas' : 'far'"></i>
-					<span>{{content.trackers ? content.trackers.hearts || 0 : 0}}</span>
+					<span>{{(content.trackers ? content.trackers.hearts || 0 : 0) + (unhearting ? -1 : hearting ? 1 : 0)}}</span>
 				</section>
 				<!--<section>-->
 					<!--<i class="fas fa-retweet"></i>-->
@@ -57,6 +57,10 @@
 			ContentTrade:() => import('./ContentTrade'),
 			ContentPrediction:() => import('./ContentPrediction'),
 		},
+		data(){return {
+			hearting:false,
+			unhearting:false,
+		}},
 		computed:{
 			...mapState([
 				'user',
@@ -72,6 +76,8 @@
 				return (this.isSandboxed ? ['Sandboxed'] : []).concat(this.content.tags)
 			},
 			hasLiked(){
+				if(this.hearting) return true;
+				if(this.unhearting) return false;
 				if(!this.content.interactions) return false;
 				return !!this.content.interactions.find(x => {
 					return x.type === INTERACTION_TYPE.HEART;
@@ -88,7 +94,11 @@
 				this.$router.push(`/content/${this.content.id}`);
 			},
 			async heart(){
+				if(!this.hasLiked) this.hearting = true;
+				if(!this.hearting && this.hasLiked) this.unhearting = true;
 				const interaction = await ApiService.interactContent(this.content, INTERACTION_TYPE.HEART);
+				this.hearting = false;
+				this.unhearting = false;
 				console.log('interaction', interaction);
 				if(interaction){
 					if(interaction.hasOwnProperty('id')){
