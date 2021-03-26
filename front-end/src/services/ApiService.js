@@ -4,8 +4,8 @@ const {Snackbar} = require('../models/Snackbar');
 
 const {sha256} = require('@finfluencers/shared/utils/crypto.util');
 
-console.log('process.env.API_BALANCER', process.env.API_BALANCER);
-const HOST = process.env.API_BALANCER;
+console.log('process.env.API_BALANCER', process.env.VUE_APP_API_BALANCER);
+const HOST = process.env.VUE_APP_API_BALANCER;
 let token = localStorage.getItem('token') || null;
 
 const getHeaders = (api_key = false) => {
