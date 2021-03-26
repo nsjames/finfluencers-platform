@@ -1,10 +1,11 @@
-require('dotenv').config();
+
 const store = require('../store/index').default;
 const {Snackbar} = require('../models/Snackbar');
 
 const {sha256} = require('@finfluencers/shared/utils/crypto.util');
 
-const HOST = process.env.API_BALANCER || 'http://localhost:40406';
+console.log('process.env.API_BALANCER', process.env.API_BALANCER);
+const HOST = process.env.API_BALANCER;
 let token = localStorage.getItem('token') || null;
 
 const getHeaders = (api_key = false) => {

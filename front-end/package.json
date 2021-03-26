@@ -8,8 +8,6 @@
     "tokens": "babel-node --presets es2015 export_tokens_list_for_mock.js"
   },
   "dependencies": {
-    "@ethersproject/address": "^5.0.11",
-    "@ethersproject/solidity": "^5.0.10",
     "@finfluencers/shared": "../microservices/shared",
     "@mathieustan/vue-datepicker": "^0.2.11",
     "buefy": "^0.9.4",
