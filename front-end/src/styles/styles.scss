@@ -32,6 +32,9 @@ input[type=number] {
   --max-width:960px;
   --radius:10px;
 
+  --top-most-index:2000000;
+  --snackbar-index:1000002;
+  --popup-index:1000001;
   --nav-index:1000000;
   --loader-index:999999;
   --secondary-font:'Roboto', sans-serif;
@@ -116,4 +119,72 @@ textarea {
   &:focus {
     border:2px solid var(--highlight);
   }
+}
+
+/*** BEUFY OVERRIDES */
+.b-checkbox.checkbox .control-label {
+  color:var(--text-primary);
+}
+.b-slider.is-primary .b-slider-fill {
+  background: var(--highlight) !important;
+}
+.b-slider .b-slider-track {
+  height: 0.12rem;
+  background:var(--light-line);
+}
+.b-slider .b-slider-thumb-wrapper .b-slider-thumb {
+  border: 2px solid var(--highlight);
+  background:var(--background-color);
+
+  transition: all 0.15s ease;
+  transition-property: box-shadow, transform;
+
+  &:active, &:hover {
+    transform:scale(1.4);
+  }
+}
+.b-slider .b-slider-tick-label {
+  width: 100px;
+  text-align: center;
+  margin-top:6px;
+  font-size: 11px;
+  color:var(--text-secondary);
+
+  b {
+    color:var(--highlight);
+    font-weight: 800;
+  }
+}
+
+.b-checkbox.checkbox input[type=checkbox] + .check {
+  border-color: rgba(147, 147, 147, 0.32);
+
+  &:hover {
+    border-color: rgba(147, 147, 147, 0.32);
+  }
+}
+.b-checkbox.checkbox input[type=checkbox] + .check {
+  border: 2px solid rgba(147, 147, 147, 0.32);
+}
+.b-checkbox.checkbox input[type=checkbox]:focus:checked + .check {
+  border-color: var(--highlight);
+  box-shadow: none;
+}
+.b-checkbox.checkbox input[type=checkbox]:active + .check {
+  border-color: var(--highlight);
+  box-shadow: none;
+}
+.b-checkbox.checkbox input[type=checkbox]:focus + .check {
+  border-color: rgba(147, 147, 147, 0.32);
+  box-shadow: none;
+}
+.b-checkbox.checkbox:hover input[type=checkbox]:not(:disabled) + .check {
+  border-color: var(--highlight);
+  box-shadow: none;
+}
+
+.b-checkbox.checkbox input[type=checkbox]:checked + .check {
+  background: var(--highlight);
+  border-color: var(--highlight);
+  box-shadow:none;
 }

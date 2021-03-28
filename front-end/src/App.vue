@@ -6,7 +6,7 @@
 		<Popups />
 		<figure class="global-background"></figure>
 		<section class="router">
-			<Navbar v-if="notLandingPage" />
+			<Navbar v-if="canShowNavbar" />
 			<ColorBlast v-if="notLandingPage" />
 			<transition :name="routeTransition" mode="out-in">
 				<router-view />
@@ -65,6 +65,9 @@
 			notLandingPage(){
 				return !['/', '/register'].includes(this.$route.fullPath);
 				// return true;
+			},
+			canShowNavbar(){
+				return this.notLandingPage && this.$route.name !== 'Test';
 			},
 			routeName(){
 				return this.$route.name;

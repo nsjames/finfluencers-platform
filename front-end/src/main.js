@@ -5,8 +5,11 @@ import store from './store'
 import VueDatePicker from '@mathieustan/vue-datepicker';
 import '@mathieustan/vue-datepicker/dist/vue-datepicker.min.css';
 import formatNumber from './util/formatNumber'
+import Buefy from 'buefy';
+import 'buefy/dist/buefy.css';
 
 Vue.use(VueDatePicker);
+Vue.use(Buefy);
 
 import "./styles/styles.scss"
 

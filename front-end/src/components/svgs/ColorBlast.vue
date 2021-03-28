@@ -24,6 +24,7 @@
 		position:absolute;
 		left:0;
 		right:0;
+		top:130px;
 		z-index:-1;
 
 		svg {
