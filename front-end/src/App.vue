@@ -1,6 +1,6 @@
 <template>
 	<section id="app" :class="{'limited':notLandingPage, 'no-scroll':loading}">
-		<section class="loader" :class="{'show':loading}">
+		<section class="main-loader" :class="{'show':loading}">
 			<Loader />
 		</section>
 		<Popups />
@@ -101,7 +101,7 @@
 						this.loading = false;
 					}, 500);
 				}
-			}
+			},
 		}
 	}
 </script>
@@ -164,7 +164,7 @@
 			}
 		}
 
-		.loader {
+		.main-loader {
 			position: fixed;
 			top:0;
 			bottom:0;

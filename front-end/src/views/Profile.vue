@@ -25,8 +25,8 @@
 				<section>
 					<figure class="name">{{profile.name}}</figure>
 					<figure class="overview">
-						<span>Findicator <b>{{parseFloat(profile.snapshot.potential).toFixed(2)}}</b></span>
-						<span>Finfluence <b>{{parseInt(profile.snapshot.influence)}}</b></span>
+						<span>Potential <b>{{parseFloat(profile.snapshot.potential).toFixed(2)}}</b></span>
+						<span>Influence <b>{{parseInt(profile.snapshot.influence)}}</b></span>
 						<span>Subscribers <b>{{parseInt(profile.snapshot.subscribers)}}</b></span>
 					</figure>
 				</section>
@@ -56,7 +56,7 @@
 					<p>
 						The more information you add to your portfolio, the better the advice you will get from
 						users on finfluencers. We also use your portfolio data to show you content which is slightly
-						above your current findicator score, so that you can progress gradually.
+						above your current potential score, so that you can progress gradually.
 						<br />
 						<br />
 						<b>

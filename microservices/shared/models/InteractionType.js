@@ -2,5 +2,6 @@ module.exports = {
 	INTERACTION_TYPE:{
 		HEART:0,
 		SUBSCRIBE:1,
+		CONTENT_RESOLUTION:2,
 	}
 };

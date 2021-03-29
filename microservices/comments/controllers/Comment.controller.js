@@ -1,8 +1,11 @@
 const {results, ORM, couchbase} = require('@finfluencers/shared');
 const Comment = require('@finfluencers/shared/models/Comment.model');
+const Interaction = require('@finfluencers/shared/models/Interaction.model');
+const {INTERACTION_TYPE} = require('@finfluencers/shared/models/InteractionType');
 const UserService = require('@finfluencers/shared/services/User.service');
 const ContentService = require('@finfluencers/shared/services/Content.service');
 const uuid = require('@finfluencers/shared/utils/uuid.util');
+const {sha256} = require('@finfluencers/shared/utils/crypto.util');
 
 const prepareComment = async comments => {
 	const users = {};
@@ -45,6 +48,31 @@ module.exports = class CommentController {
 			if(!await checkParent(comment.topLevelParentType(), comment.topLevelParentId())){
 				return {error:"Could not find comment's parent"};
 			}
+
+			if(comment.resolution !== ''){
+				if(comment.topLevelParentType() === 'content'){
+					const content = await ContentService.getById(comment.topLevelParentId());
+					if(content.user_id === user.id){
+						comment.resolution = '';
+					} else {
+						const interaction = new Interaction({
+							// Will fail to insert this if previous interaction already exists
+							id:sha256(`${content.id}:${user.id}:${INTERACTION_TYPE.CONTENT_RESOLUTION}`),
+							user_id:user.id,
+							parent_index:content.id,
+							parent_owner_id:content.user_id,
+							type:INTERACTION_TYPE.CONTENT_RESOLUTION,
+							data:comment.resolution === 'helped' ? 1 : -1,
+						});
+
+						await ORM.upsert(interaction);
+					}
+				} else {
+					comment.resolution = '';
+				}
+			}
+
+
 		    // TODO: Post to blockchain
 
 		    const posted = await ORM.insert(comment);

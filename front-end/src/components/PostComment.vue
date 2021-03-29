@@ -2,11 +2,19 @@
 	<section class="post-comment">
 		<section v-if="comment">
 			<textarea v-model="comment.text" :disabled="posting" :placeholder="placeholder"></textarea>
-			<i v-if="reply" class="cancel fas fa-times" @click="$emit('posted', null)"></i>
-			<button @click="post" v-if="!posting">Comment</button>
-			<button v-if="posting">
-				<i class="fas fa-spin fa-spinner"></i>
-			</button>
+			<section class="actions">
+				<section v-if="canApplyResult">
+					This {{resultType}} <Dropdown :transparent="true" :options="['helped', 'hurt']" :selected="comment.resolution" v-on:selected="x => comment.resolution = x" /> me.
+				</section>
+				<section v-else></section>
+				<section>
+					<i v-if="reply" class="cancel fas fa-times" @click="$emit('posted', null)"></i>
+					<button @click="post" v-if="!posting">Comment</button>
+					<button v-if="posting">
+						<i class="fas fa-spin fa-spinner"></i>
+					</button>
+				</section>
+			</section>
 		</section>
 	</section>
 </template>
@@ -14,9 +22,11 @@
 <script>
 	import CommentModel from '@finfluencers/shared/models/Comment.model';
 	import * as ApiService from "../services/ApiService";
+	import {CONTENT_TYPE} from '@finfluencers/shared/models/ContentType';
+	import {mapState} from "vuex";
 
 	export default {
-		props:['parent', 'topLevelParent', 'reply'],
+		props:['parent', 'topLevelParent', 'reply', 'content'],
 		name: "PostComment",
 		data(){return {
 			comment:null,
@@ -27,10 +37,42 @@
 			this.comment.parent_index = this.parent;
 			this.comment.top_level_parent_index = this.topLevelParent;
 			this.comment.text = '';
+			if(this.canApplyResult) this.comment.resolution = 'helped';
 		},
 		computed:{
+			...mapState([
+				'user',
+			]),
 			placeholder(){
-				return this.reply ? `Reply to the comment above` : 'What are you thinking?'
+				return this.reply ? `Reply to the comment above` : 'Let it all out.'
+			},
+			canApplyResult(){
+				if(this.content.user_id === this.user.id) return false;
+				if(this.topLevelParent !== this.parent) return false;
+				if(this.content){
+					switch(this.content.type){
+						case CONTENT_TYPE.PREDICTION:
+						case CONTENT_TYPE.KNOWLEDGE:
+						case CONTENT_TYPE.TRADE:
+							return true;
+
+						default:
+							break;
+					}
+				}
+				return true;
+			},
+			resultType(){
+				if(this.content){
+					switch(this.content.type){
+						case CONTENT_TYPE.PREDICTION: return 'prediction';
+						case CONTENT_TYPE.KNOWLEDGE: return 'advice';
+						case CONTENT_TYPE.TRADE: return 'investment';
+						default: break;
+					}
+				}
+
+				return '';
 			}
 		},
 		methods:{
@@ -45,7 +87,7 @@
 	}
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 	.post-comment {
 		width:100%;
 		text-align: right;
@@ -54,6 +96,7 @@
 			cursor: pointer;
 			outline:0;
 			border:0;
+			height:44px;
 			padding:10px 40px;
 			font-size: 11px;
 			font-weight: bold;
@@ -62,6 +105,33 @@
 			border-radius: var(--radius);
 			min-width:120px;
 			margin-top:5px;
+		}
+
+		.actions {
+			display:flex;
+			align-items: center;
+
+			> section {
+				flex:1;
+				display:flex;
+				align-items: center;
+				color:var(--text-primary);
+
+				.dropdown {
+					margin:0 -5px;
+
+					.selected {
+						.option {
+							color:var(--highlight) !important;
+							font-weight: bold;
+						}
+					}
+				}
+
+				&:nth-child(2){
+					justify-content: flex-end;
+				}
+			}
 		}
 
 		.cancel {

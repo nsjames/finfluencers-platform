@@ -5,15 +5,20 @@ import store from './store'
 import VueDatePicker from '@mathieustan/vue-datepicker';
 import '@mathieustan/vue-datepicker/dist/vue-datepicker.min.css';
 import formatNumber from './util/formatNumber'
+import VTooltip from 'v-tooltip'
 import Buefy from 'buefy';
 import 'buefy/dist/buefy.css';
 
+
 Vue.use(VueDatePicker);
 Vue.use(Buefy);
+Vue.use(VTooltip);
+
 
 import "./styles/styles.scss"
 
 
+VTooltip.options.defaultClass = 'tooltip'
 Vue.config.productionTip = false
 
 

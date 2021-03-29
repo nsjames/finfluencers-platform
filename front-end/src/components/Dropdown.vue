@@ -10,7 +10,7 @@
 			</figure>
 		</section>
 		<section class="options" v-if="open">
-			<figure class="option" v-for="option in options" @click="select(option)">
+			<figure class="option" v-for="option in options" @click="select(option)" :class="{'selected':typeof selected === 'object' ? selected.id === option.id : selected === option}">
 				<div v-if="isImages" :style="`background-image:url(${typeof option === 'object' ? option.image : option})`"></div>
 				<span>{{typeof option === 'object' ? option.text : option}}</span>
 			</figure>
@@ -106,6 +106,10 @@
 					background:var(--highlight);
 					color:var(--background-color);
 				}
+			}
+
+			&.selected {
+				background:var(--highlight-opaque);
 			}
 		}
 

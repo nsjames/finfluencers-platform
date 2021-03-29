@@ -27,7 +27,7 @@ module.exports = () => {
 
     routes.get('/user', AuthenticationService.validate, async (req, res) => {
         // Can only get your own user
-        res.json(Results.success(req.user.safe()));
+        res.json(Results.success(await UserController.getSelfUser(req.user)));
     });
 
     routes.get('/user/:name', AuthenticationService.validate, async (req, res) => {

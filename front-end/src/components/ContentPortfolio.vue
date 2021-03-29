@@ -2,8 +2,8 @@
 	<section class="post-portfolio">
 
 		<section class="totals">
-			<span>{{parseFloat(portfolio.snapshot.potential).toFixed(2)}}</span>
-			<span>Findicator</span>
+			<span>{{parseInt(portfolio.snapshot.potential)}} / {{parseInt(portfolio.snapshot.influence)}}</span>
+			<span>Potential / Influence</span>
 			<span v-if="showComparison"><i></i> your comparison</span>
 		</section>
 		<section class="graphs">

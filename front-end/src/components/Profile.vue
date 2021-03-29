@@ -5,7 +5,9 @@
 		</figure>
 		<section class="details">
 			<figure class="name" @click="goToProfile">{{user ? user.name : 'No username'}}</figure>
-			<figure class="potential">{{parseFloat(user ? user.snapshot.potential : 0).toFixed(2)}}</figure>
+			<figure class="potential">
+				{{parseInt(user ? user.snapshot.influence : 0)}} Influence
+			</figure>
 		</section>
 	</section>
 </template>
@@ -71,6 +73,7 @@
 				font-family: var(--secondary-font);
 				opacity:0.5;
 				margin-top:2px;
+				display:table;
 			}
 		}
 	}

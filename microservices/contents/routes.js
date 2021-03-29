@@ -45,7 +45,7 @@ module.exports = () => {
 		const interaction = await ContentService.interact(req.params.id, type, req.user);
 
 		if(!interaction.hasOwnProperty('error')) res.json(Results.success(interaction));
-		else res.json(Results.error(null, "Could not post content: "+interaction.error));
+		else res.json(Results.error(null, interaction.error));
 	});
 
     return routes;

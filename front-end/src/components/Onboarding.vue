@@ -69,7 +69,7 @@
 						<section class="graphic">
 							<i class="fas fa-graduation-cap"></i>
 						</section>
-						<h2>Student</h2>
+						<h2>Learn</h2>
 						<p>
 							If you are struggling to take hold of your finances,
 							or just want some great tips, this is for you.
@@ -81,7 +81,7 @@
 						<section class="graphic">
 							<i class="fas fa-bullhorn" style="transform:rotateZ(-20deg);"></i>
 						</section>
-						<h2>Influencer</h2>
+						<h2>Influence</h2>
 						<p>
 							Step up to the plate and take your shot at proving yourself a true financial influencer.
 						</p>
@@ -385,7 +385,15 @@
 				if(this.password !== this.passwordConfirm)
 					return Snackbar.error("Password confirmation does not match password");
 
-				const result = await ApiService.register(this.name, this.email, this.password, this.code);
+				const data = {
+					defaultType:this.defaultAccountType,
+					monthlyIncome:this.monthlyIncome,
+					monthlyExpenses:this.monthlyExpenses,
+					goals:Object.keys(this.goals),
+					strengths:Object.keys(this.strengths),
+				}
+
+				const result = await ApiService.register(this.name, this.email, this.password, this.code, data);
 				if(result) this.$router.push('/explore');
 			},
 			...mapActions([
@@ -515,6 +523,7 @@
 			background: var(--highlight-opaque);
 			padding:10px;
 			border-radius:var(--radius);
+			color:var(--text-primary);
 
 			> section {
 				background:var(--background-color);

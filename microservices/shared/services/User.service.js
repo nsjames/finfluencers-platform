@@ -66,10 +66,16 @@ module.exports = class UserService {
         return ORM.exists((new User({id})).index());
     }
 
+    static async getUserInfluence(user){
+	    const interactionCount = await ORM.query(`SELECT COUNT(*) FROM BUCKET_NAME WHERE doc_type = 'interaction' AND parent_owner_id = '${user.id}'`);
+	    const negativeContentResolutions = await ORM.query(`SELECT COUNT(*) FROM BUCKET_NAME WHERE doc_type = 'interaction' AND parent_owner_id = '${user.id}' AND type = ${INTERACTION_TYPE.CONTENT_RESOLUTION} AND data = -1`);
+	    return interactionCount - (negativeContentResolutions * 2);
+    }
+
     static async buildSnapshot(user){
         user.snapshot = new UserSnapshot();
         // TODO: Potential and portfolio value
-        user.snapshot.influence = await ORM.query(`SELECT COUNT(*) FROM BUCKET_NAME WHERE doc_type = 'interaction' AND parent_owner_id = '${user.id}'`);
+        user.snapshot.influence = await this.getUserInfluence(user);
 	    user.snapshot.subscribers = await ORM.query(`SELECT COUNT(*) FROM BUCKET_NAME WHERE doc_type = 'interaction' AND parent_owner_id = '${user.id}' AND type = ${INTERACTION_TYPE.SUBSCRIBE}`)
     }
 

@@ -7,7 +7,7 @@
 				</section>
 				<section key="nav-searchbar" v-if="searching" class="search-bar">
 					<i class="fas fa-search"></i>
-					<input placeholder="Search" />
+					<input placeholder="What are you looking for?" />
 				</section>
 			</transition>
 			<transition mode="out-in" name="slide-right">
@@ -114,7 +114,7 @@
 			font-size: 18px;
 			cursor: pointer;
 			margin-left:-23px;
-			margin-top:3px;
+			margin-top:0px;
 			display:flex;
 			align-items: center;
 

@@ -1,14 +1,20 @@
 <template>
 	<section class="comment" :class="{'child':child}">
 		<section class="header">
-			<Profile :user="comment.user" />
-			<section class="ago">{{timeAgo}} ago</section>
-			<section class="op" v-if="topLevelPoster === user.id">OP</section>
+			<Profile style="flex:1;" :user="comment.user" />
+			<section style="display:flex; align-items: center;">
+				<section class="op" v-if="topLevelPoster === user.id">OP</section>
+				<section class="ago">{{timeAgo}} ago</section>
+			</section>
 		</section>
 		<section class="details">
 			<figure class="line"><figure></figure></figure>
 			<section class="innards">
 				<figure class="text">{{comment.text}}</figure>
+
+				<section class="resolution" v-if="comment.resolution && comment.resolution.length" :class="{'red':comment.resolution === 'hurt'}">
+					{{comment.user.name}} says this <b>{{comment.resolution}}</b> them
+				</section>
 
 				<section class="actions">
 					<section @click="commenting = !commenting">
@@ -50,7 +56,7 @@
 			},
 			asParent(){
 				return `comment:${this.comment.id}`
-			}
+			},
 		},
 		methods:{
 			postedComment(comment){
@@ -81,12 +87,15 @@
 			align-items: center;
 
 			.ago {
+				flex:0 0 auto;
 				margin-left:20px;
 				font-size: 11px;
 				color:var(--text-secondary);
+				align-self: flex-end;
 			}
 
 			.op {
+				flex:0 0 auto;
 				border-radius:20px;
 				background:var(--highlight);
 				padding:2px 8px;
@@ -120,16 +129,40 @@
 			}
 
 			> .innards {
+				width:100%;
 
 				.text {
 					text-align:left;
 					color:var(--text-primary);
-					font-size: 14px;
+					font-size: 16px;
+					margin-bottom:30px;
 
 				}
 
+				.resolution {
+					font-size: 11px;
+					color:var(--text-secondary);
+					text-align: left;
+					margin-bottom:5px;
+					font-family: var(--secondary-font);
+
+					b {
+						color:var(--highlight);
+						font-weight: 800;
+					}
+
+					i {
+						margin-right:5px;
+					}
+
+					&.red {
+						b {
+							color:var(--error-snackbar);
+						}
+					}
+				}
+
 				.actions {
-					margin-top:30px;
 					cursor: pointer;
 					display:flex;
 					align-items: center;

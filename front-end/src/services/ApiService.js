@@ -83,12 +83,13 @@ const ApiService = {
 		const hash = sha256(code);
 		return GET(`users/find-code/${hash}`)
 	},
-	register:async(name, email, password, code) => {
+	register:async(name, email, password, code, data) => {
 		return POST('users/register', {
 			email,
 			name,
 			auth:{type:1, data:password},
 			code,
+			data,
 		}).then(x => {
 			if(!x) return false;
 			return ApiService.login(email, password);

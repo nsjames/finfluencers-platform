@@ -8,8 +8,11 @@
 
 			<SpreadBar />
 
-			<PostComment :parent="`content:${content.id}`" :top-level-parent="`content:${content.id}`" v-on:posted="postedComment" />
+			<PostComment :content="content" :parent="`content:${content.id}`" :top-level-parent="`content:${content.id}`" v-on:posted="postedComment" />
 
+			<br />
+			<br />
+			<br />
 			<Comment v-for="comment in comments" :comment="comment" :top-level-poster="content.user_id" :parent="`content:${content.id}`" />
 
 		</section>

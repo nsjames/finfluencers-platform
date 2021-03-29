@@ -259,6 +259,7 @@
 			}
 
 			.panel {
+				box-shadow:none;
 				display:flex;
 				flex-direction: column;
 				text-align:left;

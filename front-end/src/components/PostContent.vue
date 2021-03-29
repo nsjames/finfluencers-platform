@@ -42,16 +42,16 @@
 			<section key="CONTENT_TYPE.ADVICE" class="advice-warning" v-if="content.type === CONTENT_TYPE.ADVICE">
 				<b>Advice on finfluencers is crowd-sourced</b>. Do your own research along with advice you are given,
 				and make sure you are accepting advice from users who have proven track records. Asking for advice has no
-				impact on your portfolio, influence, or findicator.
+				impact on your portfolio, influence, or potential.
 			</section>
 			<section key="CONTENT_TYPE.KNOWLEDGE" class="advice-warning" v-if="content.type === CONTENT_TYPE.KNOWLEDGE">
 				Sharing your knowledge only impacts your influence.
 			</section>
 			<section key="CONTENT_TYPE.PREDICTION" class="advice-warning" v-if="content.type === CONTENT_TYPE.PREDICTION">
-				Predictions impact your findicator and influence scores but not your portfolio.
+				Predictions impact your potential and influence scores but not your portfolio.
 			</section>
 			<section key="CONTENT_TYPE.TRADE" class="advice-warning" v-if="content.type === CONTENT_TYPE.TRADE && !content.data.sandboxed">
-				Investments impact your findicator, and portfolio values.
+				Investments impact your potential, and portfolio values.
 			</section>
 		</transition>
 	</section>
@@ -95,12 +95,12 @@
 			image:'',
 			placeholder:'Why do you think so?',
 		},
-		[CONTENT_TYPE.PORTFOLIO]:{
-			id:CONTENT_TYPE.PORTFOLIO,
-			text:'Show off your portfolio',
-			image:'',
-			placeholder:'Give your portfolio some context...',
-		},
+		// [CONTENT_TYPE.PORTFOLIO]:{
+		// 	id:CONTENT_TYPE.PORTFOLIO,
+		// 	text:'Show off your portfolio',
+		// 	image:'',
+		// 	placeholder:'Give your portfolio some context...',
+		// },
 	};
 
 	const MAX_CHARS = 2000;

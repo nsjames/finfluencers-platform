@@ -78,12 +78,16 @@ module.exports = class ContentService {
     	// TODO: Add blockchain here
 
 		const parent_index = `content:${id}`;
-		if(!Object.keys(INTERACTION_TYPE).map(x => INTERACTION_TYPE[x]).includes(type)){
+		if(type !== INTERACTION_TYPE.HEART){
 			return {error:"Invalid interaction type"};
 		}
 
 		const content = await this.getById(id);
 		if(!content) return {error:"Content ID does not exist"};
+
+		if(content.user_id === user.id){
+			return {error:"Can't interact with your own content"};
+		}
 
 		const interaction = new Interaction({
 			// Will fail to insert this if previous interaction already exists
