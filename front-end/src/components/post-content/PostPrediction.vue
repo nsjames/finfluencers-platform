@@ -52,7 +52,7 @@
 			flex:0 0 auto;
 			margin-left:10px;
 			height:60px;
-			background:var(--background-color);
+			background:var(--content-bg);
 			box-shadow:var(--soft-shadow);
 			padding:0 20px;
 			display:flex;

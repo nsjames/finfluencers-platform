@@ -1,19 +1,9 @@
 <template>
 	<section>
 		<section class="post-content" v-if="contentTypes[content.type]">
-
-			<section class="actions">
-				<section class="post-type">
-					<Dropdown :selected="contentTypes[content.type]" :options="contentTypes"
-					          v-on:selected="x => content.type = x.id" />
-				</section>
-				<section class="post-details">
-					<span><b :class="{'over-length':content.text.data.length > MAX_CHARS}">{{content.text.data.length}}</b> / {{MAX_CHARS}}</span>
-					<button @click="post" v-if="!posting">Post</button>
-					<button v-if="posting">
-						<i class="fas fa-spin fa-spinner"></i>
-					</button>
-				</section>
+			<section class="select-post-type">
+				<Dropdown :transparent="true" :selected="contentTypes[content.type]" :options="contentTypes"
+				          v-on:selected="x => content.type = x.id" />
 			</section>
 
 			<section class="post-text">
@@ -39,21 +29,35 @@
 				</section>
 			</transition>
 
-			<transition name="sandbox" mode="out-in">
-				<section key="CONTENT_TYPE.GET_HELP" class="advice-warning" v-if="content.type === CONTENT_TYPE.GET_HELP">
-					<b>Advice on finfluencers is crowd-sourced</b>. Do your own research along with advice you are given,
-					and make sure you are accepting advice from users who have proven track records.
+			<!--<transition name="sandbox" mode="out-in">-->
+				<!--<section key="CONTENT_TYPE.GET_HELP" class="advice-warning" v-if="content.type === CONTENT_TYPE.GET_HELP">-->
+					<!--<b>Advice on finfluencers is crowd-sourced</b>. Do your own research along with advice you are given,-->
+					<!--and make sure you are accepting advice from users who have proven track records.-->
+				<!--</section>-->
+				<!--<section key="CONTENT_TYPE.SET_GOAL" class="advice-warning" v-if="content.type === CONTENT_TYPE.SET_GOAL">-->
+					<!--Setting goals allows finfluencers to track your progress and help you. It also unlocks <b>profile trophies.</b>-->
+				<!--</section>-->
+				<!--<section key="CONTENT_TYPE.KNOWLEDGE" class="advice-warning" v-if="content.type === CONTENT_TYPE.KNOWLEDGE">-->
+					<!--Sharing your knowledge grows your <b>influence</b> and unlocks <b>profile trophies</b>. But be careful, if you give bad advice your influence will suffer.-->
+				<!--</section>-->
+				<!--<section key="CONTENT_TYPE.PREDICTION" class="advice-warning" v-if="content.type === CONTENT_TYPE.PREDICTION || content.type === CONTENT_TYPE.TRADE">-->
+					<!--<b>Predictions</b> and <b>Investments</b> help create your track record that backs up your influence.-->
+				<!--</section>-->
+			<!--</transition>-->
+
+
+
+			<section class="actions">
+				<section class="post-type">
 				</section>
-				<section key="CONTENT_TYPE.SET_GOAL" class="advice-warning" v-if="content.type === CONTENT_TYPE.SET_GOAL">
-					Setting goals allows finfluencers to track your progress and help you. It also unlocks <b>profile trophies.</b>
+				<section class="post-details">
+					<span v-if="content.text.data.length > MAX_CHARS"><b class="over-length">{{MAX_CHARS - content.text.data.length}}</b></span>
+					<button @click="post" v-if="!posting">Post</button>
+					<button v-if="posting">
+						<i class="fas fa-spin fa-spinner"></i>
+					</button>
 				</section>
-				<section key="CONTENT_TYPE.KNOWLEDGE" class="advice-warning" v-if="content.type === CONTENT_TYPE.KNOWLEDGE">
-					Sharing your knowledge grows your <b>influence</b> and unlocks <b>profile trophies</b>. But be careful, if you give bad advice your influence will suffer.
-				</section>
-				<section key="CONTENT_TYPE.PREDICTION" class="advice-warning" v-if="content.type === CONTENT_TYPE.PREDICTION || content.type === CONTENT_TYPE.TRADE">
-					<b>Predictions</b> and <b>Investments</b> help create your track record that backs up your influence.
-				</section>
-			</transition>
+			</section>
 		</section>
 	</section>
 </template>
@@ -106,7 +110,7 @@
 					return {
 						[CONTENT_TYPE.GET_HELP]:{
 							id:CONTENT_TYPE.GET_HELP,
-							text:'Ask for advice',
+							text:'Ask a question',
 							image:'',
 							placeholder:'You can ask for help with anything related to finances',
 						},
@@ -214,11 +218,14 @@
 	@import "../styles/variables";
 
 	.post-content {
-		min-height:320px;
 
 		.over-length {
-			color:red;
 			font-weight: bold;
+			padding:4px 8px;
+			background:var(--error-snackbar);
+			color:#fff;
+			border-radius:6px;
+			font-size: 11px;
 		}
 
 		.advice-warning {
@@ -233,10 +240,14 @@
 			margin-top:20px;
 			margin-bottom:10px;
 
-			transition: all 0.5s ease;
-			transition-property: border, background;
 
+		}
 
+		.select-post-type {
+			display:flex;
+			align-items: flex-start;
+			margin-left:-15px;
+			margin-bottom:-10px;
 		}
 
 		.sandbox {
@@ -306,7 +317,7 @@
 			display:flex;
 			justify-content: space-between;
 			align-items: center;
-			margin-bottom:20px;
+			margin-top:20px;
 
 			@media only screen and (max-width:$breakpoint) {
 				flex-direction: column;

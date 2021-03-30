@@ -1,16 +1,14 @@
 <template>
 	<section class="explore">
+		<FeedSelect />
 
 		<PostContent />
 
 		<SpreadBar />
 		<!--<figure style="margin:80px 0;"></figure>-->
 
-		<FeedSelect />
 
-		<transition-group name="content" mode="out-in">
-			<Content :key="content.id" :content="content" v-for="content in contents" />
-		</transition-group>
+		<Content :key="content.id" :content="content" v-for="content in contents" />
 	</section>
 
 </template>
@@ -72,7 +70,7 @@
 			transition-property: transform, opacity;
 		}
 		.content-enter, .content-leave-to /* .content-leave-active below version 2.1.8 */ {
-			transform:translateY(-50px);
+			transform:translateY(50px);
 			opacity:0;
 		}
 	}

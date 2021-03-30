@@ -4,7 +4,7 @@
 			<textarea v-model="comment.text" :disabled="posting" :placeholder="placeholder"></textarea>
 			<section class="actions">
 				<section v-if="canApplyResult">
-					This {{resultType}} <Dropdown :options="['helped', 'hurt']" :selected="comment.resolution" v-on:selected="x => comment.resolution = x" /> me.
+					This {{resultType}} <Dropdown :options="['helped', 'hurt', 'did nothing for']" :selected="comment.resolution" v-on:selected="x => comment.resolution = x" /> me.
 				</section>
 				<section v-else></section>
 				<section>
@@ -33,11 +33,7 @@
 			posting:false,
 		}},
 		mounted(){
-			this.comment = new CommentModel();
-			this.comment.parent_index = this.parent;
-			this.comment.top_level_parent_index = this.topLevelParent;
-			this.comment.text = '';
-			if(this.canApplyResult) this.comment.resolution = 'helped';
+			this.setNewComment();
 		},
 		computed:{
 			...mapState([
@@ -72,11 +68,23 @@
 			}
 		},
 		methods:{
+			setNewComment(){
+				this.comment = new CommentModel();
+				this.comment.parent_index = this.parent;
+				this.comment.top_level_parent_index = this.topLevelParent;
+				this.comment.text = '';
+				if(this.canApplyResult) this.comment.resolution = 'did nothing for';
+			},
 			async post(){
 				if(!this.comment.text.length) return;
 				this.posting = true;
-				const posted = await ApiService.postComment(this.comment);
-				if(posted) this.$emit('posted', posted);
+				const comment = JSON.parse(JSON.stringify(this.comment));
+				if(comment.resolution === 'did nothing for') comment.resolution = '';
+				const posted = await ApiService.postComment(comment);
+				if(posted) {
+					this.$emit('posted', posted);
+					this.setNewComment();
+				}
 				this.posting = false;
 			}
 		}

@@ -71,8 +71,9 @@
 
 			> .chevron {
 				position:absolute;
-				right:10px;
+				right:5px;
 				padding:20px 10px;
+				margin-top:1px;
 				border-radius:var(--radius);
 				color:var(--text-primary);
 			}
@@ -97,7 +98,7 @@
 
 		.option {
 			display:flex;
-			padding:8px 20px;
+			padding:8px 10px 8px 15px;
 			cursor: pointer;
 			color:var(--text-primary);
 
