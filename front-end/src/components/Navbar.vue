@@ -12,13 +12,13 @@
 			</transition>
 			<transition mode="out-in" name="slide-right">
 				<section key="nav-actions" v-if="!searching" class="actions">
-					<i class="fa-lightbulb" :class="theme === 'dark' ? 'fas' : 'far'" @click="toggleTheme"></i>
+					<i class="fa-lightbulb desktop-only" :class="theme === 'dark' ? 'fas' : 'far'" @click="toggleTheme"></i>
 					<section class="alerts" @click="$router.push('/')">
 						<i class="fas fa-bell"></i>
-						<span>10</span>
+						<span class="desktop-only">10</span>
 					</section>
 					<i class="fas fa-search" @click="searching = !searching"></i>
-					<Profile v-if="user" :user="user" :size="36" />
+					<Profile :navbar="true" v-if="user" :user="user" :size="36" />
 				</section>
 				<section key="nav-closesearch" v-if="searching" class="close-search" @click="searching = false">
 					<i class="fas fa-times"></i>
@@ -68,21 +68,20 @@
 </script>
 
 <style lang="scss" scoped>
+	@import "../styles/variables";
+
 	.nav-placeholder {
-		height:80px;
-		margin:20px 0 30px;
+		height:48px;
+		margin:20px 0 50px;
 	}
 
 	nav {
-		max-width:1366px;
 		position:fixed;
-		top:20px;
-		left:30px;
-		right:30px;
+		top:0;
+		left:0;
+		right:0;
 		margin:0 auto;
-		border-radius:120px;
 		background:var(--nav-background);
-		background-color:var(--background-color);
 		box-shadow:var(--nav-shadow);
 		padding:0 20px 0 40px;
 		height:68px;
@@ -139,6 +138,11 @@
 				cursor: pointer;
 				padding:5px 10px;
 				margin-right:10px;
+
+
+				@media only screen and (max-width:$breakpoint) {
+					margin-right:0;
+				}
 
 				&:hover {
 					color:var(--highlight);

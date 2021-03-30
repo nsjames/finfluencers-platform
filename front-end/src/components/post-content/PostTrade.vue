@@ -27,9 +27,15 @@
 </script>
 
 <style lang="scss" scoped>
+	@import "../../styles/variables";
+
 	.post-trade {
 		display:flex;
 		justify-content: space-between;
+
+		@media only screen and (max-width:$breakpoint) {
+			flex-direction: column;
+		}
 
 		> section {
 			flex:1;
@@ -50,6 +56,15 @@
 
 			&:last-child {
 				margin-left:$margin;
+			}
+
+			@media only screen and (max-width:$breakpoint) {
+				margin-right:0 !important;
+				margin-left:0 !important;
+
+				&:not(:last-child){
+					margin-bottom:20px;
+				}
 			}
 
 		}

@@ -27,6 +27,8 @@
 </script>
 
 <style lang="scss" scoped>
+	@import "../styles/variables";
+
 	.content-prediction {
 		position: relative;
 		z-index:1;
@@ -35,7 +37,6 @@
 			display:flex;
 			align-items: center;
 			margin-bottom:20px;
-			padding:10px;
 			position: relative;
 			z-index:2;
 

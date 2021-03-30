@@ -28,7 +28,7 @@
 
 	.dark {
 		.spread-bar {
-			background: linear-gradient(270deg, #1A1A32 0.83%, #232340 100%);
+			background: linear-gradient(270deg, #35357a 0.83%, #575587 100%);
 		}
 	}
 </style>

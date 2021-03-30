@@ -4,7 +4,7 @@
 			<figure class="back" @click="$router.back()">
 				<i class="fas fa-arrow-left"></i>
 			</figure>
-			<Content :key="content.id" :content="content" :hide-comments-button="true" />
+			<Content :key="content.id" :content="content" :hide-comments-button="true" style="max-width:none;" />
 
 			<SpreadBar />
 
@@ -99,7 +99,7 @@
 			margin-bottom:10px;
 
 			i {
-				font-size: 24px;
+				font-size: 36px;
 				color:var(--text-secondary);
 				opacity:0.2;
 				padding:20px 20px 20px 0;

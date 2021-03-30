@@ -1,4 +1,4 @@
-module.exports = (timestamp) => {
+module.exports = (timestamp, raw = false) => {
 	let seconds = Math.floor((new Date() - new Date(timestamp)) / 1000);
 
 	let interval = seconds / 31536000;

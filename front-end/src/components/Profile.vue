@@ -1,9 +1,9 @@
 <template>
-	<section class="profile">
+	<section class="profile" :class="{'nav-only':navbar}">
 		<figure class="avatar" @click="goToProfile" :style="{'width':`${size || 36}px`, 'height':`${size || 36}px`}">
 			<img class="image" :src="`data:image/png;base64, ${identicon(user.name, (size || 36) - ((size || 36)/2))}`" />
 		</figure>
-		<section class="details">
+		<section class="details" :class="{'desktop-only':navbar}">
 			<figure class="name" @click="goToProfile">{{user ? user.name : 'No username'}}</figure>
 			<figure class="potential">
 				{{parseInt(user ? user.snapshot.influence : 0)}} Influence
@@ -16,7 +16,7 @@
 	import identicon from '../util/identicon';
 
 	export default {
-		props:['size', 'user'],
+		props:['size', 'user', 'navbar'],
 		methods:{
 			goToProfile(){
 				if(this.user) this.$router.push(`/profile/${this.user.name}`);
@@ -29,6 +29,8 @@
 </script>
 
 <style lang="scss" scoped>
+	@import "../styles/variables";
+
 	.profile {
 		display:flex;
 		align-items: center;
@@ -74,6 +76,17 @@
 				opacity:0.5;
 				margin-top:2px;
 				display:table;
+			}
+		}
+
+
+		@media only screen and (max-width:$breakpoint) {
+			&.nav-only {
+				padding-right:0;
+
+				.avatar {
+					margin-right:0;
+				}
 			}
 		}
 	}

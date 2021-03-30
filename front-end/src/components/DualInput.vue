@@ -51,6 +51,7 @@
 		background:transparent;
 		position: relative;
 		height:60px;
+		background:var(--content-bg);
 
 		> .bg {
 			position: absolute;

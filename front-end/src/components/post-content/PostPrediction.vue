@@ -1,7 +1,7 @@
 <template>
 	<section class="post-prediction">
 		<label>Asset and target</label>
-		<section style="display:flex">
+		<section class="holder">
 			<!--<DropdownInput style="flex:1;" :options="[1,1,1]" :selected="'Hello'" :value="'1.0'" placeholder="1.0" v-on:changed="x => content.data.price = x" />-->
 			<DualInput style="flex:1;"
 			           :value-b="content.data.asset" :placeholder-b="'ASSET'"
@@ -26,8 +26,19 @@
 </script>
 
 <style lang="scss" scoped>
+	@import "../../styles/variables";
+
 	.post-prediction {
 		text-align:left;
+
+
+		.holder {
+			display:flex;
+			@media only screen and (max-width:$breakpoint) {
+				display:block;
+			}
+		}
+
 
 		label {
 			font-size: 14px;
@@ -51,6 +62,11 @@
 			cursor: pointer;
 			position: relative;
 			color:var(--text-primary);
+
+			@media only screen and (max-width:$breakpoint) {
+				margin:0;
+				margin-top:10px;
+			}
 
 			.picker-attach {
 				position: absolute;

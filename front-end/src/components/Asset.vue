@@ -23,6 +23,7 @@
 		display:flex;
 		align-items: center;
 		justify-content: center;
+		background:rgba(255,255,255,0.06);
 
 		transition: all 0.8s ease;
 		transition-property: box-shadow;
@@ -34,7 +35,7 @@
 			overflow: hidden;
 			background-size:cover;
 			background-position: center;
-			background:rgba(0,0,0,0.03);
+			background:rgba(0,0,0,0.05);
 
 			display:flex;
 			align-items: center;

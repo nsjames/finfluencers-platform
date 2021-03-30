@@ -1,5 +1,5 @@
 <template>
-	<section class="labels">
+	<section class="labels" :class="{'important':important}">
 		<section class="label" v-for="label in labels">
 			{{label}}
 		</section>
@@ -8,7 +8,7 @@
 
 <script>
 	export default {
-		props:['labels'],
+		props:['labels', 'important'],
 	}
 </script>
 
@@ -16,19 +16,27 @@
 	.labels {
 		display:flex;
 		position:absolute;
-		top:15px;
-		right:15px;
+		top:20px;
+		right:0;
 		justify-content: flex-end;
 		flex-wrap: wrap;
 
 		.label {
-			padding:5px 10px;
-			font-size: 9px;
-			background:var(--highlight);
-			color:#fff;
+			padding:3px 8px;
+			font-size: 11px;
+			border:none;
+			background:var(--highlight-opaque);
+			color:var(--text-primary);
 			border-radius:4px;
 			margin-left: 10px;
 			margin-bottom:5px;
+		}
+
+		&.important {
+			.label {
+				background:var(--highlight);
+				color:#fff;
+			}
 		}
 	}
 </style>

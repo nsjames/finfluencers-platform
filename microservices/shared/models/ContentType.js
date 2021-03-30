@@ -1,9 +1,9 @@
 module.exports = {
 	CONTENT_TYPE:{
 		KNOWLEDGE:0,
-		ADVICE:1,
+		GET_HELP:1,
 		TRADE:2,
-		DECISION:3,
+		SET_GOAL:3,
 		PREDICTION:4,
 		PORTFOLIO:5,
 	}

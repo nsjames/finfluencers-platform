@@ -1,15 +1,20 @@
 <template>
-	<section class="content-component" :id="`content_${content.id}`" :ref="`content_${content.id}`" @click="removeSelfPosted">
+	<section class="content-component"
+	         :id="`content_${content.id}`"
+	         :ref="`content_${content.id}`"
+	         @click="removeSelfPosted"
+	>
 		<section class="header">
 			<Profile :size="44" :user="content.user" />
 
 			<section class="timestamp">
 				{{timeAgo}} ago
 			</section>
+
+			<Labels class="labels" :labels="labels" />
 		</section>
 
 		<section class="innards">
-			<Labels :labels="labels" />
 
 			<ContentPortfolio v-if="isPortfolio" class="portfolio" :portfolio="content.data"
 				:show-comparison="user && user.id !== content.user_id" />
@@ -17,18 +22,26 @@
 			<ContentPrediction v-if="isPrediction" :prediction="content.data" :created-at="content.created_at" />
 
 			<section class="text">
-				{{content.text.data}}
+				<!--{{content.text.data}}-->
+				<section class="markdown-content" :class="{'open':hideCommentsButton}" :style="{'max-height':`${maxHeight}px`}">
+					<vue-simple-markdown :heading="true"
+					                     :image="true"
+					                     :inline-code="false"
+					                     :table="false"
+					                     :highlight="false"
+					                     :source="content.text.data" />
+				</section>
 
 				<figure class="disclaimer" v-if="isAdvice">
 					<b>Influencers are not financial advisers.</b>
-					You should get as many opinions as possible before taking any financial actions.
-					You should also make sure that the influencers you're taking advice from have high influence scores.
+					You should get as many opinions as possible before making any financial decisions.
+					You should also make sure that the influencers you're taking advice from have high influence scores and proven track records.
 				</figure>
 			</section>
 
 			<section class="actions">
-				<section @click="heart">
-					<i class="fa-heart" :class="hasLiked ? 'fas' : 'far'"></i>
+				<section v-if="!isYours" @click="heart">
+					<i class="fa-heart" :class="hasLiked ? 'fas' : 'far'" v-tooltip="'Appreciate'"></i>
 					<span>{{(content.trackers ? content.trackers.hearts || 0 : 0) + (unhearting ? -1 : hearting ? 1 : 0)}}</span>
 				</section>
 				<!--<section>-->
@@ -36,12 +49,18 @@
 					<!--<span>3</span>-->
 				<!--</section>-->
 				<section @click="goToContent" v-if="!hideCommentsButton">
-					<i class="far fa-comment"></i>
+					<i class="far fa-comment" v-tooltip="'Comment'"></i>
 					<span>{{content.trackers ? content.trackers.comments || 0 : 0}}</span>
 				</section>
 				<section style="flex:1; cursor: auto;"></section>
-				<section @click="share" style="margin:0;">
-					<i class="far fa-share-square" style="padding-right:0;"></i>
+				<section @click="deleteContent" v-if="isYours" style="margin-right:10px;">
+					<i class="far fa-trash-alt smaller" v-tooltip="'Delete'"></i>
+				</section>
+				<section v-if="!isYours" @click="bookmark" style="margin-right:10px;">
+					<i class="far fa-bookmark smaller" v-tooltip="'Bookmark'"></i>
+				</section>
+				<section @click="share" style="margin-right:0;">
+					<i class="far fa-share-square smaller" style="padding-right:0;" v-tooltip="'Share'"></i>
 				</section>
 				<!--<section>-->
 					<!--<i class="fas fa-money-bill"></i>-->
@@ -70,12 +89,19 @@
 		data(){return {
 			hearting:false,
 			unhearting:false,
+			maxHeight:230,
 		}},
+		mounted(){
+			if(this.content.text.data.indexOf('![') === 0){
+				this.maxHeight = 500;
+			}
+		},
 		computed:{
 			...mapState([
 				'user',
 			]),
 			timeAgo(){ return ago(this.content.created_at); },
+			needsHelp(){ return this.content.type === CONTENT_TYPE.GET_HELP; },
 			isAdvice(){ return this.content.type === CONTENT_TYPE.KNOWLEDGE; },
 			isTrade(){ return this.content.type === CONTENT_TYPE.TRADE; },
 			isPrediction(){ return this.content.type === CONTENT_TYPE.PREDICTION; },
@@ -83,10 +109,13 @@
 			isSandboxed(){
 				return this.content.data && this.content.data.hasOwnProperty('sandboxed') && this.content.data.sandboxed;
 			},
+			isYours(){
+				return this.content.user_id === this.user.id;
+			},
 			contentTypeLabel(){
 				switch(this.content.type){
-					case CONTENT_TYPE.ADVICE: return 'Seeking Advice';
-					case CONTENT_TYPE.DECISION: return 'Decision';
+					case CONTENT_TYPE.GET_HELP: return 'Help!';
+					case CONTENT_TYPE.SET_GOAL: return 'Decision';
 					case CONTENT_TYPE.TRADE: return 'Investment';
 					case CONTENT_TYPE.KNOWLEDGE: return 'Advice';
 					case CONTENT_TYPE.PREDICTION: return 'Prediction';
@@ -106,6 +135,12 @@
 			}
 		},
 		methods:{
+			deleteContent(){
+
+			},
+			bookmark(){
+
+			},
 			share(){
 
 			},
@@ -144,10 +179,16 @@
 </script>
 
 <style lang="scss" scoped>
+	@import "../styles/variables";
+
 	.content-component {
+		max-width:var(--content-width);
+		margin:0 auto;
 		margin-bottom:80px;
-		padding:20px 0;
 		border-radius:var(--radius);
+		background:var(--content-bg);
+		padding:20px;
+		box-shadow:var(--soft-shadow);
 
 		transition:all 0.2s ease;
 		transition-property: padding, box-shadow;
@@ -161,6 +202,7 @@
 			display:flex;
 			justify-content: space-between;
 			align-items: flex-start;
+			position: relative;
 
 			.profile {
 
@@ -171,6 +213,7 @@
 				padding-right:5px;
 				color:var(--text-secondary);
 				font-family: var(--secondary-font);
+				align-self: flex-start;
 			}
 		}
 
@@ -180,30 +223,59 @@
 			/*background:var(--content-bg);*/
 			/*border-top-left-radius:0;*/
 			text-align:left;
-			box-shadow:var(--soft-shadow);
-			padding:20px;
 			position: relative;
-			background:var(--background-color);
 
 			transition: box-shadow 0.5s ease;
 
+			.labels {
+				margin-top:-26px;
+				margin-right:-5px;
+			}
+
 			.text {
-				font-size: 18px;
 				font-family: var(--secondary-font);
 				color:var(--text-primary);
-				padding:10px;
+
+				.markdown-content {
+					overflow-y:hidden;
+					position: relative;
+					padding-bottom:20px;
+
+					&:after {
+						content:'';
+						display:block;
+						position:absolute;
+						bottom:0;
+						left:0;
+						right:0;
+						height:80px;
+						box-shadow:inset 0 -40px 20px -20px var(--content-bg);
+						pointer-events: none;
+					}
+
+					&.open {
+						max-height:none !important;
+
+						&:after {
+							display:none;
+						}
+					}
+				}
 
 				.disclaimer {
 					font-size: 11px;
 					margin-top:30px;
-					margin-bottom:-20px;
-					margin-left:-10px;
+					margin-bottom:-10px;
 					padding:10px 15px;
 					border-radius:4px;
 					background:var(--warning-bg);
 					color:var(--text-primary);
 					display:table;
 					border:1px solid var(--warning-shadow);
+
+					@media only screen and (max-width:$breakpoint) {
+						font-size: 10px;
+					}
 				}
 			}
 
@@ -227,6 +299,10 @@
 								color:var(--highlight);
 								opacity:0.3;
 							}
+						}
+
+						&.smaller {
+							font-size: 16px;
 						}
 					}
 

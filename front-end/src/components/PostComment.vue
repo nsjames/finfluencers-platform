@@ -4,7 +4,7 @@
 			<textarea v-model="comment.text" :disabled="posting" :placeholder="placeholder"></textarea>
 			<section class="actions">
 				<section v-if="canApplyResult">
-					This {{resultType}} <Dropdown :transparent="true" :options="['helped', 'hurt']" :selected="comment.resolution" v-on:selected="x => comment.resolution = x" /> me.
+					This {{resultType}} <Dropdown :options="['helped', 'hurt']" :selected="comment.resolution" v-on:selected="x => comment.resolution = x" /> me.
 				</section>
 				<section v-else></section>
 				<section>
@@ -47,7 +47,7 @@
 				return this.reply ? `Reply to the comment above` : 'Let it all out.'
 			},
 			canApplyResult(){
-				if(this.content.user_id === this.user.id) return false;
+				if(this.content && this.content.user_id === this.user.id) return false;
 				if(this.topLevelParent !== this.parent) return false;
 				if(this.content){
 					switch(this.content.type){
@@ -55,20 +55,16 @@
 						case CONTENT_TYPE.KNOWLEDGE:
 						case CONTENT_TYPE.TRADE:
 							return true;
-
-						default:
-							break;
 					}
 				}
-				return true;
+				return false;
 			},
 			resultType(){
 				if(this.content){
 					switch(this.content.type){
 						case CONTENT_TYPE.PREDICTION: return 'prediction';
 						case CONTENT_TYPE.KNOWLEDGE: return 'advice';
-						case CONTENT_TYPE.TRADE: return 'investment';
-						default: break;
+						case CONTENT_TYPE.TRADE: return 'trade';
 					}
 				}
 
@@ -88,6 +84,8 @@
 </script>
 
 <style lang="scss">
+	@import "../styles/variables";
+
 	.post-comment {
 		width:100%;
 		text-align: right;
@@ -105,11 +103,16 @@
 			border-radius: var(--radius);
 			min-width:120px;
 			margin-top:5px;
+
 		}
 
 		.actions {
 			display:flex;
 			align-items: center;
+
+			@media only screen and (max-width:$breakpoint) {
+				flex-direction: column;
+			}
 
 			> section {
 				flex:1;
@@ -118,13 +121,21 @@
 				color:var(--text-primary);
 
 				.dropdown {
-					margin:0 -5px;
+					margin:0 10px;
 
-					.selected {
+
+					> .selected {
+						height:32px;
+
 						.option {
 							color:var(--highlight) !important;
 							font-weight: bold;
 						}
+					}
+
+					> .options {
+
+						top:38px;
 					}
 				}
 

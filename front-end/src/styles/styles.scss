@@ -1,3 +1,5 @@
+@import "variables";
+
 div, figure, section, nav, article, input, textarea, button, input { padding:0; margin:0; box-sizing: border-box; font-family: 'Oxygen', sans-serif; }
 html, body { padding:0; margin:0; box-sizing: border-box; position: relative; word-break: break-word; font-family: 'Oxygen', sans-serif; }
 a { display:inherit; text-decoration: inherit; color:inherit; }
@@ -28,6 +30,7 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
+
 :root {
   --max-width:960px;
   --radius:10px;
@@ -38,12 +41,14 @@ input[type=number] {
   --nav-index:1000000;
   --loader-index:999999;
   --secondary-font:'Roboto', sans-serif;
+  --content-width:650px;
 }
 
 .light {
   --background-color:#fff;
+  --content-bg:#fff;
   --highlight:#8282F3;
-  --highlight-opaque: rgba(130, 130, 243, 0.3);
+  --highlight-opaque: rgba(130, 130, 243, 0.15);
   --light-line:rgba(0,0,0,0.05);
   --text-primary: #10101F;
   --text-secondary: #9F9FA5;
@@ -65,31 +70,52 @@ input[type=number] {
 }
 
 .dark {
-  --background-color:#10101f;
+  --background-color:#2E2E69;
+  --content-bg:#424288;
   --highlight:#8282F3;
-  --highlight-opaque: rgba(130, 130, 243, 0.3);
+  --highlight-opaque: rgba(130, 130, 243, 0.2);
   --light-line:rgba(255,255,255,0.05);
   --text-primary: #F2F2F2;
-  --text-secondary: #9F9FA5;
-  --nav-shadow:0 8px 20px rgba(0,0,0,0.4);
-  --nav-background:linear-gradient(180deg, #393969 0%, #303058 5%, #212140 70%, #2a2a50 95%, #3a3a6e 100%);
-  --soft-shadow:0 0 25px 1px rgba(130, 130, 243, 0.05), 0 0 15px 1px rgba(130, 130, 243, 0.05), inset 0 0 0 3px var(--background-color), inset 0 0 0 5px rgba(130, 130, 243, 0.25);
+  --text-secondary: #a4a0dd;
+  --nav-shadow:0 2px 5px rgba(0,0,0, 0.1), 0 10px 15px rgba(0,0,0, 0.13);
+  --nav-background:#424288;
+  --soft-shadow:0 2px 5px rgba(0,0,0, 0.05), 0 5px 15px rgba(0,0,0, 0.08);
   --hint-bg: #212140;
-  --graph-bg: #161629;
+  --graph-bg: #383882;
   --graph-line-0: rgba(207, 0, 220, 0.1);
   --graph-line-1:#8282F3;
   --graph-line-mine:rgba(255,255,255,0.1);
   --landing-button: #ffffff;
   --colorful-button:linear-gradient(101.18deg, #CFFFDC 41.75%, #CECEFE 79.62%);
   --shark-fin: rgba(0,0,0,0.3);
-  --warning-bg: rgba(255, 0, 0, 0.21);
-  --warning-shadow: rgba(255, 0, 0, 0.4);
+  --warning-bg: #5e5eb6;
+  --warning-shadow: #8282F3;
   --error-snackbar: red;
   --posted-highlight: rgba(130, 130, 243, 0.7);
 }
 
+
+@media only screen and (max-width:$breakpoint) {
+  .desktop-only {
+    display:none !important;
+  }
+}
+
 body {
   min-height:100vh;
+}
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: var(--text-secondary);
+}
+::-moz-placeholder { /* Firefox 19+ */
+  color: var(--text-secondary);
+}
+:-ms-input-placeholder { /* IE 10+ */
+  color: var(--text-secondary);
+}
+:-moz-placeholder { /* Firefox 18- */
+  color: var(--text-secondary);
 }
 
 input[type="checkbox"] {
@@ -112,13 +138,11 @@ textarea {
   color:var(--text-primary);
   border-radius:var(--radius);
   position: relative;
-  border:2px solid var(--highlight-opaque);
+  border:0;
+  background:var(--content-bg);
+  box-shadow:var(--soft-shadow);
 
   transition:border 0.2s ease;
-
-  &:focus {
-    border:2px solid var(--highlight);
-  }
 }
 
 /*** BEUFY OVERRIDES */
@@ -194,14 +218,15 @@ textarea {
 .tooltip {
   display: block !important;
   z-index: 999999999999999999999999;
+  max-width:250px;
 
   .tooltip-inner {
-    background: var(--background-color);
-    box-shadow:var(--soft-shadow);
+    background: var(--content-bg);
+    box-shadow:0 2px 5px rgba(0,0,0,0.15);
     color: var(--text-primary);
-    font-size: 11px;
-    border-radius: 16px;
-    padding: 5px 10px 4px;
+    font-size: 14px;
+    border-radius: var(--radius);
+    padding: 10px 20px;
   }
 
   .tooltip-arrow {
@@ -210,7 +235,7 @@ textarea {
     border-style: solid;
     position: absolute;
     margin: 5px;
-    border-color: var(--background-color);
+    border-color: var(--content-bg);
     z-index: 1;
   }
 

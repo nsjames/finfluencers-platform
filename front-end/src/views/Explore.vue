@@ -4,14 +4,20 @@
 		<PostContent />
 
 		<SpreadBar />
+		<!--<figure style="margin:80px 0;"></figure>-->
 
-		<Content :key="content.id" :content="content" v-for="content in contents" />
+		<FeedSelect />
+
+		<transition-group name="content" mode="out-in">
+			<Content :key="content.id" :content="content" v-for="content in contents" />
+		</transition-group>
 	</section>
 
 </template>
 
 <script>
 	import ColorBlast from '../components/svgs/ColorBlast';
+	import FeedSelect from '../components/FeedSelect';
 	import PostContent from '../components/PostContent';
 	import Content from '../components/Content';
 	import {mapState} from "vuex";
@@ -20,6 +26,7 @@
 
 	export default {
 		components:{
+			FeedSelect,
 			ColorBlast,
 			PostContent,
 			Content,
@@ -27,6 +34,7 @@
 		computed:{
 			...mapState([
 				'contents',
+				'feedType'
 			])
 		},
 		beforeMount(){
@@ -44,6 +52,11 @@
 			loadFeed(){
 				return ApiService.setFeedContents();
 			}
+		},
+		watch:{
+			'feedType'(){
+				this.loadFeed();
+			}
 		}
 	}
 </script>
@@ -53,5 +66,14 @@
 	.explore {
 		padding-bottom:150px;
 
+
+		.content-enter-active, .content-leave-active {
+			transition: all 0.2s ease;
+			transition-property: transform, opacity;
+		}
+		.content-enter, .content-leave-to /* .content-leave-active below version 2.1.8 */ {
+			transform:translateY(-50px);
+			opacity:0;
+		}
 	}
 </style>

@@ -6,7 +6,7 @@
 		</section>
 		<transition name="onboarding" mode="out-in">
 
-			<!-- THEME -->
+			<!-- ACCESS CODE -->
 			<section class="limiter" key="STATES.CODE" v-if="state === STATES.CODE">
 				<h4>Are you really</h4>
 				<h1>supposed to be here?</h1>
@@ -49,7 +49,7 @@
 						<section class="graphic">
 							<i class="fas fa-lightbulb"></i>
 						</section>
-						<button @click="selectTheme('dark')" @mouseenter="setNewTheme('dark')">Select <b>Dark</b></button>
+						<button @click="selectTheme('dark')" @mouseenter="setNewTheme('dark')">Select <b>Midnight</b></button>
 					</section>
 				</section>
 			</section>
@@ -404,10 +404,17 @@
 </script>
 
 <style lang="scss" scoped>
+	@import "../styles/variables";
+
 	.onboarding {
 		z-index:var(--top-most-index);
 		padding:150px 0;
 		position: relative;
+
+
+		@media only screen and (max-width:$breakpoint) {
+			padding:50px 0;
+		}
 
 		.back-button {
 			position: fixed;
@@ -605,6 +612,14 @@
 			&.three {
 				.option {
 					flex: 0 0 calc(33.3% - 20px);
+				}
+			}
+
+
+			@media only screen and (max-width:$breakpoint) {
+				.option {
+					flex:0 0 100% !important;
+					margin-bottom:40px;
 				}
 			}
 

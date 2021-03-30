@@ -1,59 +1,60 @@
 <template>
-	<section class="post-content">
+	<section>
+		<section class="post-content" v-if="contentTypes[content.type]">
 
-		<section class="actions">
-			<section class="post-type">
-				<Dropdown :transparent="true" :selected="contentTypes[content.type]" :options="contentTypes"
-				          v-on:selected="x => content.type = x.id" />
-			</section>
-			<section class="post-details">
-				<span><b :class="{'over-length':content.text.data.length > MAX_CHARS}">{{content.text.data.length}}</b> / {{MAX_CHARS}}</span>
-				<button @click="post" v-if="!posting">Post</button>
-				<button v-if="posting">
-					<i class="fas fa-spin fa-spinner"></i>
-				</button>
-			</section>
-		</section>
-
-		<section class="post-text">
-			<textarea v-model="content.text.data" :placeholder="contentTypes[content.type].placeholder"></textarea>
-		</section>
-
-		<transition name="switch-content-type" mode="out-in">
-			<PostTrade v-if="content.type === CONTENT_TYPE.TRADE" :content="content" />
-			<PostPrediction v-if="content.type === CONTENT_TYPE.PREDICTION" :content="content" />
-			<PostPortfolio v-if="content.type === CONTENT_TYPE.PORTFOLIO" :content="content" />
-		</transition>
-
-		<transition name="sandbox" mode="out-in">
-			<section key="sandbox" class="sandbox" v-if="canSandbox">
-				<section>
-					<input type="checkbox" v-model="content.data.sandboxed" />
-					<span>Sandbox</span>
+			<section class="actions">
+				<section class="post-type">
+					<Dropdown :selected="contentTypes[content.type]" :options="contentTypes"
+					          v-on:selected="x => content.type = x.id" />
 				</section>
-				<p>
-					Sandboxing is a way to train your financial decision making muscles without impacting your profile in any way.
-					It is a way for you to experiment with different approaches to portfolio growth.
-				</p>
+				<section class="post-details">
+					<span><b :class="{'over-length':content.text.data.length > MAX_CHARS}">{{content.text.data.length}}</b> / {{MAX_CHARS}}</span>
+					<button @click="post" v-if="!posting">Post</button>
+					<button v-if="posting">
+						<i class="fas fa-spin fa-spinner"></i>
+					</button>
+				</section>
 			</section>
-		</transition>
 
-		<transition name="sandbox" mode="out-in">
-			<section key="CONTENT_TYPE.ADVICE" class="advice-warning" v-if="content.type === CONTENT_TYPE.ADVICE">
-				<b>Advice on finfluencers is crowd-sourced</b>. Do your own research along with advice you are given,
-				and make sure you are accepting advice from users who have proven track records. Asking for advice has no
-				impact on your portfolio, influence, or potential.
+			<section class="post-text">
+				<textarea v-model="content.text.data" :placeholder="contentTypes[content.type].placeholder"></textarea>
 			</section>
-			<section key="CONTENT_TYPE.KNOWLEDGE" class="advice-warning" v-if="content.type === CONTENT_TYPE.KNOWLEDGE">
-				Sharing your knowledge only impacts your influence.
-			</section>
-			<section key="CONTENT_TYPE.PREDICTION" class="advice-warning" v-if="content.type === CONTENT_TYPE.PREDICTION">
-				Predictions impact your potential and influence scores but not your portfolio.
-			</section>
-			<section key="CONTENT_TYPE.TRADE" class="advice-warning" v-if="content.type === CONTENT_TYPE.TRADE && !content.data.sandboxed">
-				Investments impact your potential, and portfolio values.
-			</section>
-		</transition>
+
+			<transition name="switch-content-type" mode="out-in">
+				<PostTrade v-if="content.type === CONTENT_TYPE.TRADE" :content="content" />
+				<PostPrediction v-if="content.type === CONTENT_TYPE.PREDICTION" :content="content" />
+				<PostPortfolio v-if="content.type === CONTENT_TYPE.PORTFOLIO" :content="content" />
+			</transition>
+
+			<transition name="sandbox" mode="out-in">
+				<section key="sandbox" class="sandbox" v-if="canSandbox">
+					<section>
+						<input type="checkbox" v-model="content.data.sandboxed" />
+						<span>Sandbox</span>
+					</section>
+					<p>
+						Sandboxing is a way to train your financial decision making muscles without impacting your profile in any way.
+						It is a way for you to experiment with different approaches to portfolio growth.
+					</p>
+				</section>
+			</transition>
+
+			<transition name="sandbox" mode="out-in">
+				<section key="CONTENT_TYPE.GET_HELP" class="advice-warning" v-if="content.type === CONTENT_TYPE.GET_HELP">
+					<b>Advice on finfluencers is crowd-sourced</b>. Do your own research along with advice you are given,
+					and make sure you are accepting advice from users who have proven track records.
+				</section>
+				<section key="CONTENT_TYPE.SET_GOAL" class="advice-warning" v-if="content.type === CONTENT_TYPE.SET_GOAL">
+					Setting goals allows finfluencers to track your progress and help you. It also unlocks <b>profile trophies.</b>
+				</section>
+				<section key="CONTENT_TYPE.KNOWLEDGE" class="advice-warning" v-if="content.type === CONTENT_TYPE.KNOWLEDGE">
+					Sharing your knowledge grows your <b>influence</b> and unlocks <b>profile trophies</b>. But be careful, if you give bad advice your influence will suffer.
+				</section>
+				<section key="CONTENT_TYPE.PREDICTION" class="advice-warning" v-if="content.type === CONTENT_TYPE.PREDICTION || content.type === CONTENT_TYPE.TRADE">
+					<b>Predictions</b> and <b>Investments</b> help create your track record that backs up your influence.
+				</section>
+			</transition>
+		</section>
 	</section>
 </template>
 
@@ -64,46 +65,7 @@
 	import {PortfolioContent, PredictionContent, TextContent, TradeContent} from "@finfluencers/shared/models/ContentData.model";
 	import * as ApiService from "../services/ApiService";
 
-	const contentTypes = {
-		[CONTENT_TYPE.KNOWLEDGE]:{
-			id:CONTENT_TYPE.KNOWLEDGE,
-			text:'Spread your knowledge',
-			image:'',
-			placeholder:'Show the world what you know about finance.',
-		},
-		[CONTENT_TYPE.ADVICE]:{
-			id:CONTENT_TYPE.ADVICE,
-			text:'Ask for advice',
-			image:'',
-			placeholder:'Want is it that you want help with?',
-		},
-		[CONTENT_TYPE.TRADE]:{
-			id:CONTENT_TYPE.TRADE,
-			text:'Share an investment',
-			image:'',
-			placeholder:'What made you do this investment/trade?',
-		},
-		// [CONTENT_TYPE.DECISION]:{
-		// 	id:CONTENT_TYPE.DECISION,
-		// 	text:'Share a decision',
-		// 	image:'',
-		// 	placeholder:'What have you decided to do that will make you wealthier?',
-		// },
-		[CONTENT_TYPE.PREDICTION]:{
-			id:CONTENT_TYPE.PREDICTION,
-			text:'Make a prediction',
-			image:'',
-			placeholder:'Why do you think so?',
-		},
-		// [CONTENT_TYPE.PORTFOLIO]:{
-		// 	id:CONTENT_TYPE.PORTFOLIO,
-		// 	text:'Show off your portfolio',
-		// 	image:'',
-		// 	placeholder:'Give your portfolio some context...',
-		// },
-	};
-
-	const MAX_CHARS = 2000;
+	const MAX_CHARS = 5000;
 
 	export default {
 		components:{
@@ -112,7 +74,6 @@
 			PostPortfolio:() => import('./post-content/PostPortfolio'),
 		},
 		data(){return {
-			contentTypes,
 			MAX_CHARS,
 			content:new ContentModel({
 				type:CONTENT_TYPE.KNOWLEDGE,
@@ -122,23 +83,68 @@
 			posting:false,
 		}},
 		mounted(){
-
+			this.setContentTypeDefault();
 		},
 		computed:{
 			...mapState([
 				'user',
+				'feedType',
 			]),
 			canSandbox(){
+				return false;
+
 				switch(this.content.type){
 					case CONTENT_TYPE.TRADE:
-					case CONTENT_TYPE.DECISION:
+					case CONTENT_TYPE.SET_GOAL:
 						return true;
 					default:
 						return false;
 				}
+			},
+			contentTypes(){
+				if(this.feedType === 0){
+					return {
+						[CONTENT_TYPE.GET_HELP]:{
+							id:CONTENT_TYPE.GET_HELP,
+							text:'Ask for advice',
+							image:'',
+							placeholder:'You can ask for help with anything related to finances',
+						},
+						[CONTENT_TYPE.SET_GOAL]:{
+							id:CONTENT_TYPE.SET_GOAL,
+							text:'Set a goal',
+							image:'',
+							placeholder:`Talk about why you are setting this goal`,
+						},
+					}
+				} else {
+					return {
+						[CONTENT_TYPE.KNOWLEDGE]:{
+							id:CONTENT_TYPE.KNOWLEDGE,
+							text:'Spread your knowledge',
+							image:'',
+							placeholder:'Show the world what you know about finance',
+						},
+						[CONTENT_TYPE.TRADE]:{
+							id:CONTENT_TYPE.TRADE,
+							text:'Share an investment',
+							image:'',
+							placeholder:'Explain your reasoning behind this investment, so that others can learn',
+						},
+						[CONTENT_TYPE.PREDICTION]:{
+							id:CONTENT_TYPE.PREDICTION,
+							text:'Make a prediction',
+							image:'',
+							placeholder:'Back up your prediction with some science',
+						}
+					}
+				}
 			}
 		},
 		methods:{
+			setContentTypeDefault(){
+				this.content.type = this.feedType === 0 ? CONTENT_TYPE.GET_HELP : CONTENT_TYPE.KNOWLEDGE;
+			},
 			async post(){
 				if(this.user) {
 					this.posting = true;
@@ -164,6 +170,7 @@
 							type:CONTENT_TYPE.KNOWLEDGE,
 							text:new TextContent()
 						});
+						this.setContentTypeDefault();
 
 					}
 
@@ -180,7 +187,7 @@
 			['content.type'](){
 				switch(this.content.type){
 					case CONTENT_TYPE.KNOWLEDGE:
-					case CONTENT_TYPE.ADVICE:
+					case CONTENT_TYPE.GET_HELP:
 						this.content.data = null; break;
 					case CONTENT_TYPE.TRADE:
 						this.content.data = new TradeContent();
@@ -195,13 +202,19 @@
 						this.content.data.snapshot = this.user.snapshot;
 						break;
 				}
+			},
+			'feedType'(){
+				this.setContentTypeDefault();
 			}
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
+	@import "../styles/variables";
+
 	.post-content {
+		min-height:320px;
 
 		.over-length {
 			color:red;
@@ -210,17 +223,20 @@
 
 		.advice-warning {
 			text-align:left;
-			font-size: 14px;
+			font-size: 13px;
 			color:var(--text-primary);
 			border:2px solid var(--warning-shadow);
-			padding:20px;
+			padding:10px 15px;
 			border-radius:var(--radius);
 			background:var(--warning-bg);
+			font-family: var(--secondary-font);
 			margin-top:20px;
 			margin-bottom:10px;
 
 			transition: all 0.5s ease;
 			transition-property: border, background;
+
+
 		}
 
 		.sandbox {
@@ -270,6 +286,7 @@
 		.sandbox-enter-active, .sandbox-leave-active {
 			transition: all 0.2s ease;
 			transition-property: transform, opacity;
+			transition-delay: 0.2s;
 		}
 		.sandbox-enter, .sandbox-leave-to /* .sandbox-leave-active below version 2.1.8 */ {
 			transform:translateY(20px);
@@ -290,6 +307,10 @@
 			justify-content: space-between;
 			align-items: center;
 			margin-bottom:20px;
+
+			@media only screen and (max-width:$breakpoint) {
+				flex-direction: column;
+			}
 
 			.post-type {
 

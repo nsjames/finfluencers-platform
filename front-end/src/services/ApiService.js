@@ -127,6 +127,7 @@ const ApiService = {
 		return GET(`contents/${id}`);
 	},
 	async setFeedContents(options = {}){
+		options.feedType = store.state.feedType;
 		const feed = await POST('contents/feed', options);
 		if(feed) store.dispatch('setContents', feed);
 	},

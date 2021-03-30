@@ -28,13 +28,12 @@
 
 <style lang="scss" scoped>
 	.content-trade {
-
+		margin-bottom:30px;
 		position: relative;
 
 		.assets {
 			display:flex;
 			align-items: center;
-			padding:10px;
 
 			i {
 				margin:0 10px;
@@ -46,12 +45,9 @@
 			font-size: 14px;
 			color:var(--text-primary);
 			font-weight: 800;
-			margin:10px 0 20px;
-			background:var(--graph-bg);
-			padding:10px;
+			margin:15px 0 10px;
 			border-radius:var(--radius);
 			display:table;
-			margin-left:10px;
 
 			b {
 				color:var(--highlight);

@@ -41,41 +41,43 @@
 				</section>
 			</section>
 
-			<section class="portfolio-container">
-				<label>{{isYourProfile ? 'Your' : `${profile.name}'s`}} current portfolio</label>
-				<section class="portfolio">
-					<ContentPortfolio :portfolio="{snapshot:profile.snapshot}" :details="[
-					// ['Saved versus earned','84%'],
-				]" :show-comparison="!isYourProfile" />
-				</section>
-			</section>
+			<!--<section class="portfolio-container">-->
+				<!--<label>{{isYourProfile ? 'Your' : `${profile.name}'s`}} current portfolio</label>-->
+				<!--<section class="portfolio">-->
+					<!--<ContentPortfolio :portfolio="{snapshot:profile.snapshot}" :details="[-->
+					<!--// ['Saved versus earned','84%'],-->
+				<!--]" :show-comparison="!isYourProfile" />-->
+				<!--</section>-->
+			<!--</section>-->
 
-			<section class="edit-portfolio" v-if="isYourProfile">
-				<section class="how-to-edit">
-					<label>Manage your portfolio</label>
-					<p>
-						The more information you add to your portfolio, the better the advice you will get from
-						users on finfluencers. We also use your portfolio data to show you content which is slightly
-						above your current potential score, so that you can progress gradually.
-						<br />
-						<br />
-						<b>
-							<u>Automation is key to financial stability.</u>
-							Consider linking your Bank and Blockchain accounts so that you don't have to track
-							them manually.
-						</b>
-					</p>
-				</section>
-				<section class="portfolio-actions">
-					<section class="action" v-for="action in PORTFOLIO_ACTIONS">
-						<i :class="action.icon"></i>
-						<span>{{action.text}}</span>
-					</section>
-				</section>
+			<Achievements :user-id="profile.id" />
 
-			</section>
+			<!--<section class="edit-portfolio" v-if="isYourProfile">-->
+				<!--<section class="how-to-edit">-->
+					<!--<label>Manage your portfolio</label>-->
+					<!--<p>-->
+						<!--The more information you add to your portfolio, the better the advice you will get from-->
+						<!--users on finfluencers. We also use your portfolio data to show you content which is slightly-->
+						<!--above your current potential score, so that you can progress gradually.-->
+						<!--<br />-->
+						<!--<br />-->
+						<!--<b>-->
+							<!--<u>Automation is key to financial stability.</u>-->
+							<!--Consider linking your Bank and Blockchain accounts so that you don't have to track-->
+							<!--them manually.-->
+						<!--</b>-->
+					<!--</p>-->
+				<!--</section>-->
+				<!--<section class="portfolio-actions">-->
+					<!--<section class="action" v-for="action in PORTFOLIO_ACTIONS">-->
+						<!--<i :class="action.icon"></i>-->
+						<!--<span>{{action.text}}</span>-->
+					<!--</section>-->
+				<!--</section>-->
 
-			<SpreadBar :margin="isYourProfile ? 150 : 70" />
+			<!--</section>-->
+
+			<SpreadBar />
 
 			<Content :key="content.id" :content="content" v-for="content in contents" />
 		</section>
@@ -87,6 +89,7 @@
 	import ColorBlast from '../components/svgs/ColorBlast';
 	import ContentPortfolio from '../components/ContentPortfolio';
 	import PostContent from '../components/PostContent';
+	import Achievements from '../components/Achievements';
 	import Content from '../components/Content';
 	import {mapActions, mapState} from "vuex";
 	import * as ApiService from "../services/ApiService";
@@ -133,6 +136,7 @@
 			PostContent,
 			Content,
 			ContentPortfolio,
+			Achievements,
 		},
 		data(){return {
 			profile:null,
@@ -196,6 +200,7 @@
 </script>
 
 <style lang="scss" scoped>
+	@import "../styles/variables";
 
 	.profile {
 		padding-bottom:150px;
@@ -336,6 +341,10 @@
 			overflow: hidden;
 
 			transform:rotateZ(-30deg);
+
+			@media only screen and (max-width:$breakpoint) {
+				margin-left:0;
+			}
 		}
 
 		.header {
@@ -344,6 +353,10 @@
 			display:flex;
 			justify-content: space-between;
 			align-items: center;
+
+			@media only screen and (max-width:$breakpoint) {
+				align-items: flex-start;
+			}
 
 			section {
 				&:last-child {
@@ -383,6 +396,11 @@
 						margin-top:30px;
 						cursor: pointer;
 
+						@media only screen and (max-width:$breakpoint) {
+							justify-self: flex-start;
+							margin-top:0;
+						}
+
 						i {
 							font-size: 14px;
 						}
@@ -404,12 +422,22 @@
 					color:var(--text-secondary);
 					font-size: 14px;
 
+					@media only screen and (max-width:$breakpoint) {
+						display:table;
+						margin-bottom:2px;
+					}
+
 					b {
 						margin-left:3px;
 						border:2px solid var(--highlight);
 						padding:4px 15px 5px;
 						border-radius:50px;
 						color:var(--highlight);
+
+						@media only screen and (max-width:$breakpoint) {
+							padding:4px 8px 5px;
+							border:0;
+						}
 					}
 				}
 			}
@@ -430,6 +458,7 @@
 				padding:20px;
 				box-shadow:var(--soft-shadow);
 				border-radius:var(--radius);
+				background:var(--content-bg);
 			}
 		}
 

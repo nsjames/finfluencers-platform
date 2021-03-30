@@ -8,14 +8,18 @@ import formatNumber from './util/formatNumber'
 import VTooltip from 'v-tooltip'
 import Buefy from 'buefy';
 import 'buefy/dist/buefy.css';
+import VueSimpleMarkdown from 'vue-simple-markdown'
+
 
 
 Vue.use(VueDatePicker);
 Vue.use(Buefy);
 Vue.use(VTooltip);
+Vue.use(VueSimpleMarkdown);
 
-
+import './styles/markdown.scss'
 import "./styles/styles.scss"
+
 
 
 VTooltip.options.defaultClass = 'tooltip'

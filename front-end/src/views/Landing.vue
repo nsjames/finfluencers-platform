@@ -70,9 +70,9 @@
 	import * as ApiService from "../services/ApiService";
 
 	const checklist = [
-		'Join like-minded people just learning how to grow their portfolios',
-		'Track investing trends from all financial worlds',
+		'Get help with your personal finances',
 		'Share and gather financial intelligence',
+		'Make better financial decisions, based on real data',
 		'Become a financial influencer',
 	]
 
@@ -103,6 +103,7 @@
 </script>
 
 <style lang="scss" scoped>
+	@import "../styles/variables";
 
 	.landing {
 		display:flex;
@@ -113,6 +114,12 @@
 		padding:0 30px;
 		overflow-x: hidden;
 		position: relative;
+
+
+		@media only screen and (max-width:$breakpoint) {
+			flex-direction: column;
+			padding-bottom:50px;
+		}
 
 		.info {
 			height:100vh;
@@ -166,6 +173,7 @@
 
 					font-size: 14px;
 					color:var(--text-secondary);
+					font-family: var(--secondary-font);
 
 					$circle:12px;
 					div {
@@ -177,6 +185,11 @@
 						box-shadow:0 0 0 4px var(--highlight);
 						border-radius:50%;
 						opacity:0.2;
+					}
+
+					b {
+						color:var(--highlight);
+						font-weight: normal;
 					}
 				}
 			}
@@ -204,6 +217,10 @@
 			overflow:hidden;
 			z-index:-1;
 			background:var(--background-color);
+
+			@media only screen and (max-width:$breakpoint) {
+				right:-200px;
+			}
 
 
 			svg {

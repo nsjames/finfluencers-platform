@@ -15,6 +15,8 @@ export default new Vuex.Store({
 		contents:[],
 		content:null,
 		comments:[],
+
+		feedType:0,
 	},
 	mutations: {
 		setTheme:(state, x) => state.theme = x,
@@ -28,6 +30,7 @@ export default new Vuex.Store({
 		removeSnackbar:(state, x) => state.snackbars = state.snackbars.filter(y => y.id !== x.id),
 		setContent:(state, x) => state.content = x,
 		setComments:(state, x) => state.comments = x,
+		setFeedType:(state, x) => state.feedType = x,
 	},
 	actions: {
 		setTheme:(context, x) => context.commit('setTheme', x),
@@ -46,6 +49,7 @@ export default new Vuex.Store({
 		removeSnackbar:(context, x) => context.commit('removeSnackbar', x),
 		setContent:(context, x) => context.commit('setContent', x),
 		setComments:(context, x) => context.commit('setComments', x),
+		setFeedType:(context, x) => context.commit('setFeedType', x),
 	},
 	getters: {
 		userPortfolioGraphData:state => state.user ? dummyPortfolioData /* TODO */ : null,
