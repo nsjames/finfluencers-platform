@@ -140,9 +140,12 @@ const ApiService = {
 	interactContent(content, type){
 		return POST(`contents/interact/${content.id}`, {type});
 	},
+	deleteContent(content){
+		return GET(`contents/delete/${content.id}`);
+	},
 	subscribe(user_id){
 		return GET(`users/subscribe/${user_id}`);
-	}
+	},
 }
 
 module.exports = ApiService;

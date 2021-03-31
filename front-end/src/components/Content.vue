@@ -1,5 +1,6 @@
 <template>
 	<section class="content-component"
+	         :class="{'deleted':deleted}"
 	         :id="`content_${content.id}`"
 	         :ref="`content_${content.id}`"
 	         @click="removeSelfPosted"
@@ -33,37 +34,32 @@
 				</section>
 
 				<figure class="disclaimer" v-if="isAdvice">
-					<b>Influencers are not financial advisors.</b>
+					Influencers are not financial advisors.
 				</figure>
 			</section>
 
 			<section class="actions">
+				<!-- LEFT ACTIONS -->
 				<section v-if="!isYours" @click="heart">
 					<i class="fa-heart" :class="hasLiked ? 'fas' : 'far'" v-tooltip="'Appreciate'"></i>
 					<span>{{(content.trackers ? content.trackers.hearts || 0 : 0) + (unhearting ? -1 : hearting ? 1 : 0)}}</span>
 				</section>
-				<!--<section>-->
-					<!--<i class="fas fa-retweet"></i>-->
-					<!--<span>3</span>-->
-				<!--</section>-->
 				<section @click="goToContent" v-if="!hideCommentsButton">
 					<i class="far fa-comment" v-tooltip="'Comment'"></i>
 					<span>{{content.trackers ? content.trackers.comments || 0 : 0}}</span>
 				</section>
+
+				<!-- RIGHT ACTIONS -->
 				<section style="flex:1; cursor: auto;"></section>
 				<section @click="deleteContent" v-if="isYours" style="margin-right:10px;">
 					<i class="far fa-trash-alt smaller" v-tooltip="'Delete'"></i>
 				</section>
 				<section v-if="!isYours" @click="bookmark" style="margin-right:10px;">
-					<i class="far fa-bookmark smaller" v-tooltip="'Bookmark'"></i>
+					<i class="fa-bookmark smaller" :class="hasBookmarked ? 'fas' : 'far'" v-tooltip="'Bookmark'"></i>
 				</section>
 				<section @click="share" style="margin-right:0;">
 					<i class="far fa-share-square smaller" style="padding-right:0;" v-tooltip="'Share'"></i>
 				</section>
-				<!--<section>-->
-					<!--<i class="fas fa-money-bill"></i>-->
-					<!--<span>tip</span>-->
-				<!--</section>-->
 			</section>
 		</section>
 
@@ -87,7 +83,10 @@
 		data(){return {
 			hearting:false,
 			unhearting:false,
+			bookmarking:false,
+			unbookmarking:false,
 			maxHeight:230,
+			deleted:false,
 		}},
 		mounted(){
 			if(this.content.text.data.indexOf('![') === 0){
@@ -130,14 +129,39 @@
 				return !!this.content.interactions.find(x => {
 					return x.type === INTERACTION_TYPE.HEART;
 				});
+			},
+			hasBookmarked(){
+				if(this.bookmarking) return true;
+				if(this.unbookmarking) return false;
+				if(!this.content.interactions) return false;
+				return !!this.content.interactions.find(x => {
+					return x.type === INTERACTION_TYPE.BOOKMARK;
+				});
 			}
 		},
 		methods:{
-			deleteContent(){
-
+			async deleteContent(){
+				this.deleted = true;
+				console.log('this.content', this.content);
+				const deleted = await ApiService.deleteContent(this.content);
+				if(!deleted) this.deleted = false;
 			},
-			bookmark(){
+			async bookmark(){
+				if(!this.hasBookmarked) this.bookmarking = true;
+				if(!this.bookmarking && this.hasBookmarked) this.unbookmarking = true;
+				const interaction = await ApiService.interactContent(this.content, INTERACTION_TYPE.BOOKMARK);
+				this.bookmarking = false;
+				this.unbookmarking = false;
 
+				if(interaction){
+					if(interaction.hasOwnProperty('id')){
+						if(!this.content.interactions) this.content.interactions = [];
+						this.content.interactions.push(interaction);
+					} else {
+						this.content.interactions = this.content.interactions.filter(x => x.type !== INTERACTION_TYPE.BOOKMARK);
+					}
+
+				}
 			},
 			share(){
 
@@ -188,6 +212,12 @@
 
 		transition:all 0.2s ease;
 		transition-property: padding, box-shadow;
+
+		&.deleted {
+			cursor: not-allowed;
+			opacity:0.2;
+			pointer-events: none;
+		}
 
 		&.self-posted {
 			padding:20px;
@@ -259,15 +289,14 @@
 				}
 
 				.disclaimer {
-					font-size: 11px;
-					padding:10px 15px;
-					border-radius:4px;
+					font-size: 9px;
+					font-weight: bold;
+					padding:5px 10px;
+					border-radius:var(--radius);
 					background:var(--warning-bg);
 					color:var(--text-primary);
 					display:table;
-					margin:0 0 0 auto;
-					margin-top:30px;
-					margin-bottom:-10px;
+					margin:10px 0 -20px auto;
 
 					@media only screen and (max-width:$breakpoint) {
 						font-size: 10px;

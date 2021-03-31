@@ -64,6 +64,7 @@ module.exports = class ContentService {
 	static async getById(id, swallowError = false){
 		try {
 			const content = new Content({id});
+			console.log('content', content);
 			return ORM.get(content.index(), Content).catch(err => {
 				if(!swallowError) console.error("Get by id error: ", err);
 				return null;
@@ -78,7 +79,7 @@ module.exports = class ContentService {
     	// TODO: Add blockchain here
 
 		const parent_index = `content:${id}`;
-		if(type !== INTERACTION_TYPE.HEART){
+		if(type !== INTERACTION_TYPE.HEART && type !== INTERACTION_TYPE.BOOKMARK){
 			return {error:"Invalid interaction type"};
 		}
 
@@ -100,17 +101,33 @@ module.exports = class ContentService {
 		});
 
 		if(await ORM.exists(interaction.index())){
-			if(type === INTERACTION_TYPE.HEART){
-				await ORM.remove(interaction.index());
-				return {};
-			}
-			return {error:"You have already done this interaction"};
+			await ORM.remove(interaction.index());
+			return {};
 		}
 
 		const saved = await ORM.insert(interaction).catch(() => null);
 		if(!saved) return {error:"Error saving interaction"};
 
 		return interaction;
+	}
+
+	static async delete(content_id, user){
+		const content = await this.getById(content_id).catch(err => {
+			console.error("Delete content fetch error", err);
+			return null;
+		});
+		if(!content) return {error:"Could not find content to delete"};
+
+		if(content.user_id !== user.id) return {error:"You cannot delete content you did not create"};
+
+		return ORM.getBucket().mutateIn(content.index(), [
+			couchbase.MutateInSpec.upsert("soft_delete", 1),
+		]).catch(err => {
+			console.error("Content soft delete error", err);
+			return false;
+		}).then(x => {
+			return true;
+		});
 	}
 
 }

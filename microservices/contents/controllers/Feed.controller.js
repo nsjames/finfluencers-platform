@@ -20,13 +20,13 @@ module.exports = class FeedController {
 		    // Influence
 		    typeQuery = `AND type IN [${CONTENT_TYPE.SET_GOAL}, ${CONTENT_TYPE.GET_HELP}]`
 	    }
-	    const contents = await ORM.query(`SELECT * FROM BUCKET_NAME WHERE doc_type = 'content' ${typeQuery} ORDER BY created_at DESC LIMIT 50`, Content);
+	    const contents = await ORM.query(`SELECT * FROM BUCKET_NAME WHERE doc_type = 'content' AND soft_delete = 0 ${typeQuery} ORDER BY created_at DESC LIMIT 50`, Content);
 	    await ContentService.prepareContent(contents, user);
 	    return contents;
     }
 
     static async profile(options, user){
-	    const contents = await ORM.query(`SELECT * FROM BUCKET_NAME WHERE doc_type = 'content' AND user_id = '${options.profile}' ORDER BY created_at DESC LIMIT 50`, Content);
+	    const contents = await ORM.query(`SELECT * FROM BUCKET_NAME WHERE doc_type = 'content' AND soft_delete = 0 AND user_id = '${options.profile}' ORDER BY created_at DESC LIMIT 50`, Content);
 	    await ContentService.prepareContent(contents, user);
 	    return contents;
     }

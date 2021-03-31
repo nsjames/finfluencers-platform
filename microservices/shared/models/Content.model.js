@@ -12,6 +12,7 @@ const FIELDS = {
     data:'any',
     text:'object',
     tags:'any',
+    soft_delete:'number',
 };
 
 const METHODS = {
@@ -20,6 +21,7 @@ const METHODS = {
     },
     constructor(json){
         if(!json.hasOwnProperty('tags') || !json.tags) json.tags = [];
+        if(!json.hasOwnProperty('soft_delete') || !json.soft_delete) json.soft_delete = 0;
     },
 };
 

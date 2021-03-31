@@ -48,5 +48,12 @@ module.exports = () => {
 		else res.json(Results.error(null, interaction.error));
 	});
 
+	routes.get('/delete/:id', AuthenticationService.validate, async (req, res) => {
+		const deleted = await ContentService.delete(req.params.id, req.user);
+
+		if(!deleted.hasOwnProperty('error')) res.json(Results.success(deleted));
+		else res.json(Results.error(null, deleted.error));
+	});
+
     return routes;
 };
