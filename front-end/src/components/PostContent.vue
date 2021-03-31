@@ -7,27 +7,12 @@
 			</section>
 
 			<section class="post-text">
-				<textarea v-model="content.text.data" :placeholder="contentTypes[content.type].placeholder"></textarea>
+				<textarea :class="{'extended-height':!hasExtendedPostFields}" v-model="content.text.data" :placeholder="contentTypes[content.type].placeholder"></textarea>
 			</section>
 
-			<transition name="switch-content-type" mode="out-in">
-				<PostTrade v-if="content.type === CONTENT_TYPE.TRADE" :content="content" />
-				<PostPrediction v-if="content.type === CONTENT_TYPE.PREDICTION" :content="content" />
-				<PostPortfolio v-if="content.type === CONTENT_TYPE.PORTFOLIO" :content="content" />
-			</transition>
-
-			<transition name="sandbox" mode="out-in">
-				<section key="sandbox" class="sandbox" v-if="canSandbox">
-					<section>
-						<input type="checkbox" v-model="content.data.sandboxed" />
-						<span>Sandbox</span>
-					</section>
-					<p>
-						Sandboxing is a way to train your financial decision making muscles without impacting your profile in any way.
-						It is a way for you to experiment with different approaches to portfolio growth.
-					</p>
-				</section>
-			</transition>
+			<PostTrade v-if="content.type === CONTENT_TYPE.TRADE" :content="content" />
+			<PostPrediction v-if="content.type === CONTENT_TYPE.PREDICTION" :content="content" />
+			<PostPortfolio v-if="content.type === CONTENT_TYPE.PORTFOLIO" :content="content" />
 
 			<!--<transition name="sandbox" mode="out-in">-->
 				<!--<section key="CONTENT_TYPE.GET_HELP" class="advice-warning" v-if="content.type === CONTENT_TYPE.GET_HELP">-->
@@ -52,7 +37,9 @@
 				</section>
 				<section class="post-details">
 					<span v-if="content.text.data.length > MAX_CHARS"><b class="over-length">{{MAX_CHARS - content.text.data.length}}</b></span>
-					<button @click="post" v-if="!posting">Post</button>
+					<button @click="post" v-if="!posting">
+						<i class="fas fa-plus"></i>
+					</button>
 					<button v-if="posting">
 						<i class="fas fa-spin fa-spinner"></i>
 					</button>
@@ -94,6 +81,9 @@
 				'user',
 				'feedType',
 			]),
+			hasExtendedPostFields(){
+				return [CONTENT_TYPE.TRADE, CONTENT_TYPE.PREDICTION].includes(this.content.type);
+			},
 			canSandbox(){
 				return false;
 
@@ -111,13 +101,13 @@
 						[CONTENT_TYPE.GET_HELP]:{
 							id:CONTENT_TYPE.GET_HELP,
 							text:'Ask a question',
-							image:'',
+							icon:'',
 							placeholder:'You can ask for help with anything related to finances',
 						},
 						[CONTENT_TYPE.SET_GOAL]:{
 							id:CONTENT_TYPE.SET_GOAL,
 							text:'Set a goal',
-							image:'',
+							icon:'',
 							placeholder:`Talk about why you are setting this goal`,
 						},
 					}
@@ -126,19 +116,19 @@
 						[CONTENT_TYPE.KNOWLEDGE]:{
 							id:CONTENT_TYPE.KNOWLEDGE,
 							text:'Spread your knowledge',
-							image:'',
+							icon:'',
 							placeholder:'Show the world what you know about finance',
 						},
 						[CONTENT_TYPE.TRADE]:{
 							id:CONTENT_TYPE.TRADE,
 							text:'Share an investment',
-							image:'',
+							icon:'',
 							placeholder:'Explain your reasoning behind this investment, so that others can learn',
 						},
 						[CONTENT_TYPE.PREDICTION]:{
 							id:CONTENT_TYPE.PREDICTION,
 							text:'Make a prediction',
-							image:'',
+							icon:'',
 							placeholder:'Back up your prediction with some science',
 						}
 					}
@@ -218,6 +208,23 @@
 	@import "../styles/variables";
 
 	.post-content {
+		margin-top:40px;
+
+		.extended-height {
+			min-height:calc(150px + 90px + 20px);
+		}
+
+		.collapse-enter-active, .collapse-leave-active {
+			width: inherit;
+			transition: all 0.3s ease;
+			transition-property: max-height;
+			max-height: 100px;
+			overflow:hidden;
+		}
+		.collapse-enter, .collapse-leave-to /* .collapse-leave-active below version 2.1.8 */ {
+			max-height:0;
+			opacity: 0;
+		}
 
 		.over-length {
 			font-weight: bold;
@@ -286,18 +293,18 @@
 		}
 
 		.switch-content-type-enter-active, .switch-content-type-leave-active {
-			transition: all 0.2s ease;
+			width: inherit;
+			transition: all 0.3s ease;
 			transition-property: transform, opacity;
 		}
 		.switch-content-type-enter, .switch-content-type-leave-to /* .switch-content-type-leave-active below version 2.1.8 */ {
-			transform:translateY(-20px);
+			transform:translateY(20px);
 			opacity:0;
 		}
 
 		.sandbox-enter-active, .sandbox-leave-active {
-			transition: all 0.2s ease;
+			transition: all 0.3s ease;
 			transition-property: transform, opacity;
-			transition-delay: 0.2s;
 		}
 		.sandbox-enter, .sandbox-leave-to /* .sandbox-leave-active below version 2.1.8 */ {
 			transform:translateY(20px);
@@ -328,8 +335,11 @@
 			}
 
 			.post-details {
+				position: relative;
 				flex:1;
 				justify-content: flex-end;
+
+				padding-bottom:40px;
 
 				display:flex;
 				align-items: center;
@@ -349,10 +359,13 @@
 					padding:10px 40px;
 					font-size: 14px;
 					font-weight: bold;
-					color:#101010;
-					background:var(--colorful-button);
-					border-radius: var(--radius);
+					color:var(--background-color);
+					background:var(--text-primary);
+					border-radius: 100px;
 					min-width:120px;
+					position: absolute;
+					top:0;
+					right:0;
 
 				}
 			}

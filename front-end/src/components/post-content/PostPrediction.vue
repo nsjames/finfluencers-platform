@@ -30,6 +30,7 @@
 
 	.post-prediction {
 		text-align:left;
+		height:90px;
 
 
 		.holder {
@@ -46,6 +47,7 @@
 			color:var(--text-primary);
 			margin-bottom:10px;
 			display: block;
+			line-height:14px;
 		}
 
 		.target-date {

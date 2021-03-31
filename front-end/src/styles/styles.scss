@@ -64,11 +64,11 @@ input[type=number] {
   --graph-line-mine:rgba(0,0,0,0.05);
   --landing-button:#10101F;
   --colorful-button:linear-gradient(150.18deg, #CFFFDC 41.75%, #CECEFE 79.62%);
-  --shark-fin:rgba(0,0,0,0.08);
+  --shark-fin:var(--highlight);
   --warning-bg: rgba(130, 130, 243, 0.05);
   --warning-shadow: rgba(130, 130, 243, 0.3);
   --error-snackbar: red;
-  --posted-highlight: rgba(130, 130, 243, 0.3);
+  --posted-highlight: 0 0 50px rgba(130, 130, 243, 0.3);
 }
 
 .dark {
@@ -91,11 +91,11 @@ input[type=number] {
   --graph-line-mine:rgba(255,255,255,0.1);
   --landing-button: #ffffff;
   --colorful-button:linear-gradient(101.18deg, #CFFFDC 41.75%, #CECEFE 79.62%);
-  --shark-fin: rgba(0,0,0,0.3);
+  --shark-fin: #fff;
   --warning-bg: #5e5eb6;
   --warning-shadow: #8282F3;
   --error-snackbar: red;
-  --posted-highlight: rgba(130, 130, 243, 0.7);
+  --posted-highlight: 0 3px 8px rgba(0,0,0,0.3), 0 0 60px 10px rgba(130, 130, 243, 0.2);
 }
 
 
@@ -225,9 +225,9 @@ textarea {
   max-width:250px;
 
   .tooltip-inner {
-    background: var(--content-bg);
+    background: var(--text-primary);
     box-shadow:0 2px 5px rgba(0,0,0,0.15);
-    color: var(--text-primary);
+    color: var(--background-color);
     font-size: 14px;
     border-radius: var(--radius);
     padding: 10px 20px;
@@ -239,7 +239,7 @@ textarea {
     border-style: solid;
     position: absolute;
     margin: 5px;
-    border-color: var(--content-bg);
+    border-color: var(--text-primary);
     z-index: 1;
   }
 

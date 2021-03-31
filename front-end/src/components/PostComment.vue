@@ -9,7 +9,9 @@
 				<section v-else></section>
 				<section>
 					<i v-if="reply" class="cancel fas fa-times" @click="$emit('posted', null)"></i>
-					<button @click="post" v-if="!posting">Comment</button>
+					<button @click="post" v-if="!posting">
+						<i class="fas fa-comment"></i>
+					</button>
 					<button v-if="posting">
 						<i class="fas fa-spin fa-spinner"></i>
 					</button>
@@ -102,13 +104,12 @@
 			cursor: pointer;
 			outline:0;
 			border:0;
-			height:44px;
 			padding:10px 40px;
-			font-size: 11px;
+			font-size: 16px;
 			font-weight: bold;
-			color:#101010;
-			background:var(--colorful-button);
-			border-radius: var(--radius);
+			color:var(--background-color);
+			background:var(--text-primary);
+			border-radius: 100px;
 			min-width:120px;
 			margin-top:5px;
 
@@ -117,6 +118,7 @@
 		.actions {
 			display:flex;
 			align-items: center;
+			margin:10px 0;
 
 			@media only screen and (max-width:$breakpoint) {
 				flex-direction: column;
@@ -128,15 +130,21 @@
 				align-items: center;
 				color:var(--text-primary);
 
+				@media only screen and (max-width:$breakpoint) {
+					margin-bottom:10px;
+				}
+
 				.dropdown {
-					margin:0 10px;
+					margin:0 5px;
 
 
 					> .selected {
-						height:32px;
+						height:28px;
 
 						.option {
 							color:var(--highlight) !important;
+							font-size: 14px;
+							padding-left:10px;
 							font-weight: bold;
 						}
 					}

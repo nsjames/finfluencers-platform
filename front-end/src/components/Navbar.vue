@@ -12,12 +12,13 @@
 			</transition>
 			<transition mode="out-in" name="slide-right">
 				<section key="nav-actions" v-if="!searching" class="actions">
-					<i class="fa-lightbulb desktop-only" :class="theme === 'dark' ? 'fas' : 'far'" @click="toggleTheme"></i>
-					<section class="alerts" @click="$router.push('/')">
-						<i class="fas fa-bell"></i>
-						<span class="desktop-only">10</span>
-					</section>
-					<i class="fas fa-search" @click="searching = !searching"></i>
+					<!--<i class="fa-lightbulb desktop-only" :class="theme === 'dark' ? 'fas' : 'far'" @click="toggleTheme"></i>-->
+					<!--<section class="alerts" @click="$router.push('/')">-->
+						<!--<i class="fas fa-bell"></i>-->
+						<!--<span class="desktop-only">10</span>-->
+					<!--</section>-->
+					<i v-tooltip="'Search'" class="fas fa-search" @click="searching = !searching"></i>
+					<i v-tooltip="'Bookmarks'" class="fas fa-bookmark" @click="$router.push('/bookmarks')"></i>
 					<Profile :navbar="true" v-if="user" :user="user" :size="36" />
 				</section>
 				<section key="nav-closesearch" v-if="searching" class="close-search" @click="searching = false">
@@ -39,6 +40,10 @@
 		}},
 		mounted(){
 			this.setSpecificTheme(localStorage.getItem('theme') || 'light');
+			EventBus.$on('toggle-theme', this.toggleTheme);
+		},
+		destroyed(){
+			EventBus.$off('toggle-theme', this.toggleTheme);
 		},
 		computed:{
 			...mapState([
@@ -138,6 +143,7 @@
 				cursor: pointer;
 				padding:5px 10px;
 				margin-right:10px;
+				color:var(--text-primary);
 
 
 				@media only screen and (max-width:$breakpoint) {

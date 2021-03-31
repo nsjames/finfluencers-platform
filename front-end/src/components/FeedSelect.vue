@@ -42,7 +42,6 @@
 		background:$feedbackground;
 		margin-top:-50px;
 		position: relative;
-		margin-bottom:20px;
 		box-shadow:$feedshadow;
 		border-bottom:1px solid var(--feed-select-bg-line);
 

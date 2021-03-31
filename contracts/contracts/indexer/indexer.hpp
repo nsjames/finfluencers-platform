@@ -4,10 +4,10 @@
 using namespace eosio;
 using Json = nlohmann::json;
 
-namespace data_header {
+namespace indexer_header {
 
-    TABLE [[eosio::contract("data")]] Interaction {
-            uint64_t                user_id;
+    TABLE [[eosio::contract("indexer")]] Content {
+            uint64_t                id;
             eosio::time_point_sec   created_at;
             std::string             data;
 
@@ -17,13 +17,13 @@ namespace data_header {
             EOSLIB_SERIALIZE(Content, (id)(created_at)(data))
     };
 
-    typedef eosio::multi_index<"interactions"_n, Content> Contents;
+    typedef eosio::multi_index<"content"_n, Content> Contents;
 
 
 
 
 
-    TABLE [[eosio::contract("data")]] ReverseIndex {
+    TABLE [[eosio::contract("indexer")]] ReverseIndex {
             uint64_t            id;
             uint64_t            value;
 

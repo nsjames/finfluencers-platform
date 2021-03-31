@@ -63,6 +63,7 @@
 			position: relative;
 			border-radius:50px;
 			box-shadow:inset 0px 3px 8px var(--highlight), inset 0px 12px 8px rgba(255,255,255,0.3);
+			margin-bottom:5px;
 
 			.icon {
 				font-size: 16px;

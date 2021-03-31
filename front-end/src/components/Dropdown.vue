@@ -1,8 +1,8 @@
 <template>
-	<section :id="randomId" class="dropdown" :class="{'transparent':!!transparent, 'is-images':isImages, 'open':open}">
+	<section :id="randomId" class="dropdown" :class="{'transparent':!!transparent, 'open':open}">
 		<section class="selected" @click="open = !open">
 			<figure class="option active">
-				<div v-if="isImages" :style="`background-image:url(${typeof selected === 'object' ? selected.image : selected})`"></div>
+				<i v-if="typeof selected === 'object' && selected.icon" :class="selected.icon"></i>
 				<span v-if="!hideSelectedText">{{typeof selected === 'object' ? selected.text : selected}}</span>
 			</figure>
 			<figure class="chevron">
@@ -11,7 +11,7 @@
 		</section>
 		<section class="options" v-if="open">
 			<figure class="option" v-for="option in options" @click="select(option)" :class="{'selected':typeof selected === 'object' ? selected.id === option.id : selected === option}">
-				<div v-if="isImages" :style="`background-image:url(${typeof option === 'object' ? option.image : option})`"></div>
+				<i v-if="typeof option === 'object' && option.icon" :class="option.icon"></i>
 				<span>{{typeof option === 'object' ? option.text : option}}</span>
 			</figure>
 		</section>
@@ -22,7 +22,7 @@
 	import {EventBus} from "../services/EventBus";
 
 	export default {
-		props:['transparent', 'isImages', 'options', 'selected', 'hideSelectedText'],
+		props:['transparent', 'options', 'selected', 'hideSelectedText'],
 		name: "Dropdown",
 		data(){return {
 			open:false,
@@ -76,6 +76,11 @@
 				margin-top:1px;
 				border-radius:var(--radius);
 				color:var(--text-primary);
+				font-size: 14px;
+			}
+
+			.option {
+				font-weight: bold;
 			}
 
 		}
@@ -101,6 +106,11 @@
 			padding:8px 10px 8px 15px;
 			cursor: pointer;
 			color:var(--text-primary);
+			align-items: center;
+
+			i {
+				margin-right:10px;
+			}
 
 			&:not(.active){
 				&:hover {
@@ -112,10 +122,6 @@
 			&.selected {
 				background:var(--highlight-opaque);
 			}
-		}
-
-		&.is-images {
-
 		}
 
 		&.transparent {

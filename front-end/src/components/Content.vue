@@ -115,7 +115,7 @@
 			contentTypeLabel(){
 				switch(this.content.type){
 					case CONTENT_TYPE.GET_HELP: return 'Help!';
-					case CONTENT_TYPE.SET_GOAL: return 'Decision';
+					case CONTENT_TYPE.SET_GOAL: return 'Goal';
 					case CONTENT_TYPE.TRADE: return 'Investment';
 					case CONTENT_TYPE.KNOWLEDGE: return 'Advice';
 					case CONTENT_TYPE.PREDICTION: return 'Prediction';
@@ -195,7 +195,7 @@
 
 		&.self-posted {
 			padding:20px;
-			box-shadow:0 0 50px var(--posted-highlight);
+			box-shadow:var(--posted-highlight);
 		}
 
 		.header {

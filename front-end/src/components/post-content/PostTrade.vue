@@ -32,6 +32,7 @@
 	.post-trade {
 		display:flex;
 		justify-content: space-between;
+		height:90px;
 
 		@media only screen and (max-width:$breakpoint) {
 			flex-direction: column;
@@ -47,6 +48,7 @@
 				color:var(--text-primary);
 				margin-bottom:10px;
 				display: block;
+				line-height:14px;
 			}
 
 			$margin:5px;

@@ -25,13 +25,14 @@
 				<section>
 					<figure class="name">{{profile.name}}</figure>
 					<figure class="overview">
-						<span>Potential <b>{{parseFloat(profile.snapshot.potential).toFixed(2)}}</b></span>
+						<!--<span>Potential <b>{{parseFloat(profile.snapshot.potential).toFixed(2)}}</b></span>-->
 						<span>Influence <b>{{parseInt(profile.snapshot.influence)}}</b></span>
 						<span>Subscribers <b>{{parseInt(profile.snapshot.subscribers)}}</b></span>
 					</figure>
 				</section>
 				<section>
-					<i v-if="isYourProfile" class="fas fa-cog"></i>
+					<i class="fa-lightbulb" :class="theme === 'dark' ? 'fas' : 'far'" @click="toggleTheme"></i>
+					<!--<i v-if="isYourProfile" class="fas fa-cog"></i>-->
 					<i v-if="isYourProfile" @click="logout" class="fas fa-power-off"></i>
 					<button v-if="!isYourProfile" @click="subscribe">
 						<span v-if="!isSubscribed && !subscribing">Subscribe</span>
@@ -42,7 +43,7 @@
 			</section>
 
 			<!--<section class="portfolio-container">-->
-				<!--<label>{{isYourProfile ? 'Your' : `${profile.name}'s`}} current portfolio</label>-->
+				<!--&lt;!&ndash;<label>{{isYourProfile ? 'Your' : `${profile.name}'s`}} current portfolio</label>&ndash;&gt;-->
 				<!--<section class="portfolio">-->
 					<!--<ContentPortfolio :portfolio="{snapshot:profile.snapshot}" :details="[-->
 					<!--// ['Saved versus earned','84%'],-->
@@ -154,6 +155,7 @@
 			...mapState([
 				'contents',
 				'user',
+				'theme',
 			]),
 			isYourProfile(){
 				return this.user && this.user.id === this.profile.id;
@@ -169,6 +171,9 @@
 			}
 		},
 		methods:{
+			toggleTheme(){
+				EventBus.$emit('toggle-theme');
+			},
 			async load(){
 				this.profile = await ApiService.getUser(this.$route.params.user);
 				console.log('profile', this.profile);
@@ -383,8 +388,8 @@
 					}
 
 					button {
-						background:var(--colorful-button);
-						color:#101010;
+						background:var(--text-primary);
+						color:var(--background-color);
 						border-radius:50px;
 						padding:0 10px;
 						height:40px;
@@ -429,10 +434,11 @@
 
 					b {
 						margin-left:3px;
-						border:2px solid var(--highlight);
-						padding:4px 15px 5px;
+						padding:4px 2px 5px;
 						border-radius:50px;
 						color:var(--highlight);
+						font-size: 18px;
+						font-weight: 800;
 
 						@media only screen and (max-width:$breakpoint) {
 							padding:4px 8px 5px;
@@ -444,7 +450,7 @@
 		}
 
 		.portfolio-container {
-			margin-top:60px;
+			margin:20px 0 30px;
 			text-align:left;
 
 			label {
