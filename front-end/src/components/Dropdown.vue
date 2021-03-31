@@ -54,6 +54,7 @@
 <style lang="scss" scoped>
 	.dropdown {
 		position: relative;
+		font-size: 18px;
 
 
 		> .selected {

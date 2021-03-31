@@ -51,7 +51,9 @@
 		background:transparent;
 		position: relative;
 		height:60px;
-		background:var(--content-bg);
+		background:var(--background-color);
+		border:1px solid var(--light-line);
+
 
 		> .bg {
 			position: absolute;
@@ -61,7 +63,6 @@
 			right:0;
 			border-radius:var(--radius);
 			z-index:-1;
-			box-shadow:var(--soft-shadow);
 
 			transition:box-shadow 0.5s ease;
 		}
@@ -77,11 +78,13 @@
 			padding:0 20px;
 			flex:1;
 			outline:0;
-			border:0;
 			background:transparent;
 			font-family: var(--secondary-font);
 			font-size: 20px;
 			color:var(--text-primary);
+			border-radius:var(--radius);
+			transition:border 0.2s ease;
+			border:1px solid transparent;
 
 			&:first-child {
 				text-align:left;
@@ -89,6 +92,11 @@
 
 			&:last-child {
 				text-align:right;
+			}
+
+
+			&:focus {
+				border:1px solid var(--highlight);
 			}
 		}
 	}

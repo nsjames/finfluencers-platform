@@ -54,8 +54,9 @@
 			flex:0 0 auto;
 			margin-left:10px;
 			height:60px;
-			background:var(--content-bg);
-			box-shadow:var(--soft-shadow);
+			background:var(--background-color);
+
+			border:1px solid var(--light-line);
 			padding:0 20px;
 			display:flex;
 			align-items: center;

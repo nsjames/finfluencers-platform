@@ -33,7 +33,7 @@ input[type=number] {
 
 :root {
   --max-width:960px;
-  --radius:10px;
+  --radius:5px;
 
   --top-most-index:2000000;
   --snackbar-index:1000002;
@@ -49,14 +49,14 @@ input[type=number] {
   --content-bg:#fff;
   --highlight:#8282F3;
   --highlight-opaque: rgba(130, 130, 243, 0.15);
-  --light-line:rgba(0,0,0,0.05);
+  --light-line:rgba(0,0,0,0.08);
   --text-primary: #10101F;
   --text-secondary: #9F9FA5;
-  --nav-shadow:0 2px 5px rgba(34, 34, 78, 0.08), 0 5px 15px rgba(34, 34, 78, 0.05);
+  --nav-shadow:0px 14px 14px rgba(0, 0, 0, 0.05), 0px 2px 5px rgba(0, 0, 0, 0.15);
   --nav-background:#fff;
   --feed-select-bg:#f8f8fe;
   --feed-select-bg-line:#ebebeb ;
-  --soft-shadow:0 2px 5px rgba(34, 34, 78, 0.08), 0 5px 15px rgba(34, 34, 78, 0.05);
+  --soft-shadow:var(--nav-shadow);
   --hint-bg:#fff;
   --graph-bg: #f9f9fe;
   --graph-line-0:#CFFFDC;
@@ -79,11 +79,11 @@ input[type=number] {
   --light-line:rgba(255,255,255,0.05);
   --text-primary: #F2F2F2;
   --text-secondary: #a4a0dd;
-  --nav-shadow:0 2px 5px rgba(0,0,0, 0.1), 0 10px 15px rgba(0,0,0, 0.13);
+  --nav-shadow:0px 14px 14px rgba(0, 0, 0, 0.15), 0px 2px 4px rgba(0, 0, 0, 0.15);
   --nav-background:#424288;
   --feed-select-bg:#333370;
   --feed-select-bg-line:#3a3a7c;
-  --soft-shadow:0 2px 5px rgba(0,0,0, 0.05), 0 5px 15px rgba(0,0,0, 0.08);
+  --soft-shadow:var(--nav-shadow);
   --hint-bg: #212140;
   --graph-bg: #383882;
   --graph-line-0: rgba(207, 0, 220, 0.1);
@@ -141,12 +141,15 @@ textarea {
   font-size: 16px;
   color:var(--text-primary);
   border-radius:var(--radius);
+  border:1px solid var(--light-line);
   position: relative;
-  border:0;
-  background:var(--content-bg);
-  box-shadow:var(--soft-shadow);
+  background:var(--background-color);
 
   transition:border 0.2s ease;
+
+  &:focus {
+    border:1px solid var(--highlight);
+  }
 }
 
 /*** BEUFY OVERRIDES */

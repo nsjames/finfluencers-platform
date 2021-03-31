@@ -23,6 +23,7 @@
 		position: relative;
 		box-shadow: var(--soft-shadow);
 		padding:8px;
+		background:var(--content-bg);
 
 		> section {
 			position: relative;
@@ -30,6 +31,7 @@
 			height:100%;
 			border-radius: 50%;
 			overflow: hidden;
+			background:var(--background-color);
 		}
 
 		svg.fin {

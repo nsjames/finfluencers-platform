@@ -33,9 +33,7 @@
 				</section>
 
 				<figure class="disclaimer" v-if="isAdvice">
-					<b>Influencers are not financial advisers.</b>
-					You should get as many opinions as possible before making any financial decisions.
-					You should also make sure that the influencers you're taking advice from have high influence scores and proven track records.
+					<b>Influencers are not financial advisors.</b>
 				</figure>
 			</section>
 
@@ -182,8 +180,6 @@
 	@import "../styles/variables";
 
 	.content-component {
-		max-width:var(--content-width);
-		margin:0 auto;
 		margin-bottom:80px;
 		border-radius:var(--radius);
 		background:var(--content-bg);
@@ -264,14 +260,14 @@
 
 				.disclaimer {
 					font-size: 11px;
-					margin-top:30px;
-					margin-bottom:-10px;
 					padding:10px 15px;
 					border-radius:4px;
 					background:var(--warning-bg);
 					color:var(--text-primary);
 					display:table;
-					border:1px solid var(--warning-shadow);
+					margin:0 0 0 auto;
+					margin-top:30px;
+					margin-bottom:-10px;
 
 					@media only screen and (max-width:$breakpoint) {
 						font-size: 10px;

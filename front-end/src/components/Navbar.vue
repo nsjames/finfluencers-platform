@@ -12,7 +12,7 @@
 			</transition>
 			<transition mode="out-in" name="slide-right">
 				<section key="nav-actions" v-if="!searching" class="actions">
-					<!--<i class="fa-lightbulb desktop-only" :class="theme === 'dark' ? 'fas' : 'far'" @click="toggleTheme"></i>-->
+					<i class="fa-lightbulb desktop-only" :class="theme === 'dark' ? 'fas' : 'far'" @click="toggleTheme"></i>
 					<!--<section class="alerts" @click="$router.push('/')">-->
 						<!--<i class="fas fa-bell"></i>-->
 						<!--<span class="desktop-only">10</span>-->
@@ -76,21 +76,22 @@
 	@import "../styles/variables";
 
 	.nav-placeholder {
-		height:48px;
+		height:68px;
 		margin:20px 0 50px;
 	}
 
 	nav {
 		position:fixed;
-		top:0;
-		left:0;
-		right:0;
+		top:20px;
+		left:20px;
+		right:20px;
 		margin:0 auto;
 		background:var(--nav-background);
 		box-shadow:var(--nav-shadow);
 		padding:0 20px 0 40px;
 		height:68px;
 		z-index:var(--nav-index);
+		border-radius: 10px;
 
 		display:flex;
 		justify-content: space-between;
