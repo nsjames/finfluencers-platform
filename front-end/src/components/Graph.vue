@@ -59,7 +59,7 @@
 					fill: false,
 					borderColor: this.secondary ? color2 : gradientStroke,
 					backgroundColor: 'transparent',
-					spanGaps: false,
+					spanGaps: true,
 					pointRadius:0,
 					borderWidth:4,
 					borderDash:this.secondary ? [5,2] : null
@@ -70,7 +70,7 @@
 					fill: false,
 					borderColor: color2,
 					backgroundColor: 'transparent',
-					spanGaps: false,
+					spanGaps: true,
 					pointRadius:0,
 					borderWidth:4,
 					borderDash:[5,3]

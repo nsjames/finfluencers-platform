@@ -3,21 +3,23 @@
 
 		<section class="totals">
 			<span>{{pnlToPrediction}}%</span>
-			<span>Prediction quota</span>
-			<span><i></i> Predicted price</span>
-			<span><i></i> Actual {{prediction.asset.symbol}} price</span>
+			<span>Predicted outcome</span>
+			<section class="legend">
+				<span class="line-1"><i></i> Prediction</span>
+				<span class="line-2"><i></i> {{prediction.asset.symbol}}</span>
+			</section>
 		</section>
 		<section class="graphs">
-			<Graph class="graph" :height="130" :data-arr="graphData" :data-arr-secondary="setPrice"  />
+			<Graph class="graph" :height="80" :data-arr="graphData" :data-arr-secondary="setPrice"  />
 		</section>
 		<section class="details">
 			<section>
 				<span>Price at creation</span>
-				<span>${{priceAtStart}}</span>
+				<span>${{formatPrice(priceAtStart)}}</span>
 			</section>
 			<section>
 				<span>Price at stop</span>
-				<span>${{priceAtEnd}}</span>
+				<span>${{formatPrice(priceAtEnd)}}</span>
 			</section>
 			<section>
 				<span>Profit & Loss</span>
@@ -66,11 +68,20 @@
 				const val = parseFloat((this.prediction.price-this.priceAtStart)/this.prediction.price*100.0).toFixed(2);
 				return val > 0 ? '+' + val : val;
 			},
+		},
+		methods:{
+			formatPrice(price){
+				const [whole, dec] = price.toString().split('.');
+				if(whole.length > 0) return parseFloat(price).toFixed(2);
+				return price;
+			}
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
+	@import "../styles/variables";
+
 	.post-portfolio {
 		//box-shadow:var(--soft-shadow);
 		background:var(--graph-bg);
@@ -84,65 +95,80 @@
 			position: relative;
 			z-index:1;
 
-			span {
+			.legend {
+				display:flex;
+				align-items: flex-end;
+				justify-content: flex-end;
+				flex-direction: column;
+				margin-top:-15px;
+				margin-bottom:10px;
+				position: absolute;
+				top:30px;
+				right:20px;
+			}
+
+			.line-1 {
+				flex:0 0 auto;
+				font-size: 11px;
+				color:var(--text-secondary);
+				font-weight: bold;
+				display:flex;
+				align-items: center;
+				opacity:0.5;
+
+				i {
+					margin-right:10px;
+					width:30px;
+					border:1px dashed var(--text-secondary);
+					position: relative;
+					opacity:0.4;
+				}
+			}
+
+			.line-2 {
+				flex:1;
+				font-size: 11px;
+				color:var(--text-secondary);
+				font-weight: bold;
+				display:flex;
+				align-items: center;
+				opacity:0.5;
+
+				i {
+					margin-right:10px;
+					width:30px;
+					background:linear-gradient(90deg, var(--graph-line-0) 0%, var(--graph-line-1) 100%);
+					height:3px;
+					position: relative;
+					opacity:1;
+				}
+			}
+
+			> span {
 				display:block;
 				font-family: var(--secondary-font);
 
 				&:nth-child(1){
 					font-size: 28px;
 					font-weight: bold;
+					line-height:28px;
+					margin-top:-6px;
+					margin-bottom:5px;
 					color:var(--highlight);
 				}
 
 				&:nth-child(2){
 					font-size: 18px;
 					color:var(--text-primary);
-					margin-top:5px;
-				}
-
-				&:nth-child(3){
-					font-size: 11px;
-					color:var(--text-secondary);
-					font-weight: bold;
-					margin-top:15px;
-					display:flex;
-					align-items: center;
-					opacity:0.5;
-
-					i {
-						margin-right:10px;
-						width:8%;
-						border:2px dashed var(--text-secondary);
-						position: relative;
-						opacity:0.4;
-					}
-				}
-
-				&:nth-child(4){
-					font-size: 11px;
-					color:var(--text-secondary);
-					font-weight: bold;
-					margin-top:15px;
-					display:flex;
-					align-items: center;
-					opacity:0.5;
-
-					i {
-						margin-right:10px;
-						width:8%;
-						background:linear-gradient(90deg, var(--graph-line-0) 0%, var(--graph-line-1) 100%);
-						height:4px;
-						position: relative;
-						opacity:1;
-					}
 				}
 			}
 		}
 
 		.graphs {
 			position: relative;
-			height:130px;
+			height:80px;
 			z-index:1;
+			margin-top:-10px;
 
 			.graph {
 				position:absolute;
@@ -150,7 +176,7 @@
 				bottom:0;
 				left:0;
 				right:0;
-				height:130px;
+				height:80px;
 
 				&:first-child {
 					z-index:2;
@@ -166,12 +192,26 @@
 			display:flex;
 			justify-content: space-between;
 
+			@media only screen and (max-width:$breakpoint) {
+				flex-direction: column;
+			}
+
 			> section {
 				padding-right:50px;
+
+				@media only screen and (max-width:$breakpoint) {
+					&:not(:last-child){
+						margin-bottom:20px;
+					}
+				}
 
 				&:last-child {
 					text-align:right;
 					padding-right:0;
+
+					@media only screen and (max-width:$breakpoint) {
+						text-align:left;
+					}
 				}
 
 				&:first-child {
