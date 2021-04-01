@@ -6,7 +6,7 @@
 				<TokenInput :valuea="content.data.price" v-on:asset="selectedAsset" v-on:valuea="x => $emit('price', x)" />
 			</section>
 			<section class="target-date">
-				<VueDatePicker v-model="content.data.date" attach=".target-date .picker-attach" :min-date="new Date(+new Date() + 86400000)" />
+				<VueDatePicker v-model="content.data.date" attach=".target-date .picker-attach" :min-date="new Date(+new Date() + 86400000)" :max-date="new Date(+new Date() + 86400000 + (86400000*30))" />
 				<div class="picker-attach"></div>
 			</section>
 

@@ -59,10 +59,12 @@
 				return this.rawGraphData[this.rawGraphData.length-1].price;
 			},
 			pnl(){
-				return parseFloat((this.priceAtEnd-this.priceAtStart)/this.priceAtEnd*100.0).toFixed(2);
+				const val =parseFloat((this.priceAtEnd-this.priceAtStart)/this.priceAtEnd*100.0).toFixed(2);
+				return val > 0 ? '+' + val : val;
 			},
 			pnlToPrediction(){
-				return parseFloat((this.prediction.price-this.priceAtStart)/this.prediction.price*100.0).toFixed(2);
+				const val = parseFloat((this.prediction.price-this.priceAtStart)/this.prediction.price*100.0).toFixed(2);
+				return val > 0 ? '+' + val : val;
 			},
 		}
 	}

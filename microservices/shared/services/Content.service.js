@@ -40,7 +40,8 @@ module.exports = class ContentService {
 				content.data.historical_prices = content.data.historical_prices.map(x => {
 					x.price = parseFloat(x.price);
 					return x;
-				})
+				});
+
 				if(content.data.historical_prices.length && content.data.historical_prices.length < 30){
 					for(let i = 0; i < 30 - content.data.historical_prices.length; i++){
 						content.data.historical_prices.push({
@@ -56,7 +57,6 @@ module.exports = class ContentService {
 						return 0;
 					});
 
-					console.log('content.data.historical_prices', content.data.historical_prices);
 				}
 			}
 		}));
