@@ -27,16 +27,19 @@ const run = async () => {
             process.env[key] = env[key];
         });
         process.env.BUCKET_NAME = 'finfluencers_test';
+        process.env.BUCKET_NAME = 'finfluencers';
 
         ORM.init();
-        await couchbase.flush();
+
+        // await couchbase.flush();
         // There's a delay between flushing and indexer rollbacks,
         // but no way to get the state programatically :(
-        await new Promise(r => setTimeout(r, 5000));
+        // await new Promise(r => setTimeout(r, 5000));
 
         require('../runner/run');
 
         const runTests = (files) => {
+        	console.log('running tests', files);
             if (files.length) {
                 return new Promise(r => {
 	                const mocha = new Mocha({
@@ -49,6 +52,7 @@ const run = async () => {
 	                });
 	                for (let n = 0; n < files.length; n++) {
 		                const filepath = files[n];
+		                console.log('filepath', filepath);
 		                mocha.addFile(path.join(files[n]));
 	                }
 	                mocha.run(failures => {
@@ -68,14 +72,17 @@ const run = async () => {
                 })
             })
         } else {
-            const microservices = SERVICES ? [SERVICES.split(',')] : fs.readdirSync('./microservices').filter(x => x.indexOf('.') === -1 && x !== 'scaffold');
+            const microservices = SERVICES ? SERVICES.split(',') : fs.readdirSync('./microservices').filter(x => x.indexOf('.') === -1 && x !== 'scaffold');
+            console.log('microservices', microservices);
 
             for (let i = 0; i < microservices.length; i++) {
                 const service = microservices[i];
 
+                console.log('spec', `./microservices/${service}/**/*.spec.js`);
                 await new Promise(r => {
                     glob(`./microservices/${service}/**/*.spec.js`, {}, async (er, files) => {
-                        runTests(files);
+                    	console.log('files', files);
+                        await runTests(files);
                         r(true);
                     })
                 })

@@ -45,7 +45,7 @@ module.exports = class UserService {
         }
     }
 
-    static async getById(id, swallowError = false){
+    static async getById(id, swallowError = false, prepare = true){
         try {
             let user = new User({id});
 	        user = await ORM.get(user.index(), User).catch(err => {
@@ -53,7 +53,7 @@ module.exports = class UserService {
 	            return null;
             });
 
-	        if(user) await this.buildSnapshot(user);
+	        if(user && prepare) await this.buildSnapshot(user);
 
 	        return user;
         } catch(e){

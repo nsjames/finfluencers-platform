@@ -31,7 +31,7 @@
 					</figure>
 				</section>
 				<section>
-					<i class="fa-lightbulb" :class="theme === 'dark' ? 'fas' : 'far'" @click="toggleTheme"></i>
+					<i v-if="isYourProfile" class="fa-lightbulb" :class="theme === 'dark' ? 'fas' : 'far'" @click="toggleTheme"></i>
 					<!--<i v-if="isYourProfile" class="fas fa-cog"></i>-->
 					<i v-if="isYourProfile" @click="logout" class="fas fa-power-off"></i>
 					<button v-if="!isYourProfile" @click="subscribe">

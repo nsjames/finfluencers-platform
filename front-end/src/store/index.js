@@ -26,6 +26,7 @@ export default new Vuex.Store({
 		setContents:(state, x) => state.contents = x,
 		appendContent:(state, x) => state.contents.push(x),
 		prependContent:(state, x) => state.contents.unshift(x),
+		removeContent:(state, x) => state.contents = state.contents.filter(c => c.id !== x.id),
 		setSnackbar:(state, x) => state.snackbars.push(x),
 		removeSnackbar:(state, x) => state.snackbars = state.snackbars.filter(y => y.id !== x.id),
 		setContent:(state, x) => state.content = x,
@@ -40,6 +41,7 @@ export default new Vuex.Store({
 		setContents:(context, x) => context.commit('setContents', x),
 		appendContent:(context, x) => context.commit('appendContent', x),
 		prependContent:(context, x) => context.commit('prependContent', x),
+		removeContent:(context, x) => context.commit('removeContent', x),
 		setSnackbar:(context, x) => {
 			context.commit('setSnackbar', x);
 			setTimeout(() => {

@@ -20,7 +20,8 @@
 			<ContentPortfolio v-if="isPortfolio" class="portfolio" :portfolio="content.data"
 				:show-comparison="user && user.id !== content.user_id" />
 			<ContentTrade v-if="isTrade" :trade="content.data" />
-			<ContentPrediction v-if="isPrediction" :prediction="content.data" :created-at="content.created_at" />
+			<ContentPrediction v-if="isPrediction" :prediction="content.data" :created-at="content.created_at" :full-size="hideCommentsButton" />
+			<ContentPredictionGraph v-if="isPrediction" :prediction="content.data" :created-at="content.created_at" />
 
 			<section class="text">
 				<!--{{content.text.data}}-->
@@ -58,7 +59,7 @@
 					<i class="fa-bookmark smaller" :class="hasBookmarked ? 'fas' : 'far'" v-tooltip="'Bookmark'"></i>
 				</section>
 				<section @click="share" style="margin-right:0;">
-					<i class="far fa-share-square smaller" style="padding-right:0;" v-tooltip="'Share'"></i>
+					<i class="fas fa-link smaller" style="padding-right:0;" v-tooltip="'Copy Link'"></i>
 				</section>
 			</section>
 		</section>
@@ -72,6 +73,8 @@
 	import ago from '../util/ago'
 	import {mapActions, mapState} from "vuex";
 	import * as ApiService from "../services/ApiService";
+	import copyText from "../util/copy";
+	import {Snackbar} from '../models/Snackbar'
 
 	export default {
 		props:['content', 'hideCommentsButton'],
@@ -79,6 +82,7 @@
 			ContentPortfolio:() => import('./ContentPortfolio'),
 			ContentTrade:() => import('./ContentTrade'),
 			ContentPrediction:() => import('./ContentPrediction'),
+			ContentPredictionGraph:() => import('./ContentPredictionGraph'),
 		},
 		data(){return {
 			hearting:false,
@@ -159,12 +163,18 @@
 						this.content.interactions.push(interaction);
 					} else {
 						this.content.interactions = this.content.interactions.filter(x => x.type !== INTERACTION_TYPE.BOOKMARK);
+						if(this.$route.name === 'Bookmarks'){
+							// this.removeContent(this.content);
+							this.deleted = true;
+						}
 					}
 
 				}
 			},
 			share(){
-
+				const link = window.location.origin + `/content/${this.content.id}`;
+				copyText(link);
+				Snackbar.notify('Copied link')
 			},
 			removeSelfPosted(){
 				const elem = this.$refs[`content_${this.content.id}`];
@@ -194,7 +204,8 @@
 				}
 			},
 			...mapActions([
-				'setContent'
+				'setContent',
+				'removeContent'
 			])
 		}
 	}

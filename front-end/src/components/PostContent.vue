@@ -11,7 +11,7 @@
 			</section>
 
 			<PostTrade v-if="content.type === CONTENT_TYPE.TRADE" :content="content" />
-			<PostPrediction v-if="content.type === CONTENT_TYPE.PREDICTION" :content="content" />
+			<PostPrediction v-if="content.type === CONTENT_TYPE.PREDICTION" :content="content" v-on:price="x => content.data.price = x" />
 			<PostPortfolio v-if="content.type === CONTENT_TYPE.PORTFOLIO" :content="content" />
 
 			<!--<transition name="sandbox" mode="out-in">-->
@@ -55,6 +55,7 @@
 	import {CONTENT_TYPE} from '@finfluencers/shared/models/ContentType';
 	import {PortfolioContent, PredictionContent, TextContent, TradeContent} from "@finfluencers/shared/models/ContentData.model";
 	import * as ApiService from "../services/ApiService";
+	import {Snackbar} from '../models/Snackbar'
 
 	const MAX_CHARS = 5000;
 
@@ -141,16 +142,20 @@
 			},
 			async post(){
 				if(this.user) {
-					this.posting = true;
 					this.content.user_id = this.user.id;
 
 					if(this.content.data && this.content.data.hasOwnProperty('date')){
 						this.content.data.date = +new Date(this.content.data.date);
 					}
 
+					if(this.content.type === CONTENT_TYPE.PREDICTION){
+						if(parseInt(this.content.data.asset.id) < 1) return Snackbar.error("Select an asset from the dropdown first.");
+					}
+
+					this.posting = true;
+
 					await new Promise(r => setTimeout(r, 1000));
 					const posted = await ApiService.postContent(this.content);
-					console.log('content', this.content);
 					console.log('posted', posted);
 					if(posted) {
 						await this.prependContent(new ContentModel(posted));
@@ -189,7 +194,7 @@
 						break;
 					case CONTENT_TYPE.PREDICTION:
 						this.content.data = new PredictionContent();
-						this.content.data.date = new Date();
+						this.content.data.date = new Date(+new Date() + 86400000);
 						break;
 					case CONTENT_TYPE.PORTFOLIO:
 						this.content.data = new PortfolioContent();

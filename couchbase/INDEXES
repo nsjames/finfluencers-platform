@@ -5,3 +5,5 @@ CREATE INDEX interactions ON finfluencers(`parent_index`,`type`) WHERE doc_type 
 CREATE INDEX interactions_by_user ON finfluencers(`parent_index`,`user_id`) WHERE doc_type = 'interaction' USING GSI
 CREATE INDEX interactions_for_user ON finfluencers(`parent_index`,`parent_owner_id`) WHERE doc_type = 'interaction' USING GSI
 CREATE INDEX interactions_for_user_by_type ON finfluencers(`parent_index`,`parent_owner_id`,`type`) WHERE doc_type = 'interaction' USING GSI
+CREATE INDEX tokens ON finfluencers(`name`,`symbol`) WHERE doc_type = 'cachedtoken' USING GSI
+CREATE INDEX tokenprice ON finfluencers(`id`,`created_at`) WHERE doc_type = 'tokenprice' USING GSI

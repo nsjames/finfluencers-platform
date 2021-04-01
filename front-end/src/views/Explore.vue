@@ -6,13 +6,13 @@
 
 		<!--<SpreadBar />-->
 		<!--<figure style="margin:80px 0;"></figure>-->
-		<section class="breaker" v-if="feedType === 0">
+		<section class="feed-breaker" v-if="feedType === 0">
 			<span>Gather information</span>
 			<p>
 				Influential people post about their decisions every day
 			</p>
 		</section>
-		<section class="breaker" v-if="feedType === 1">
+		<section class="feed-breaker" v-if="feedType === 1">
 			<span>Lend a helping hand</span>
 			<p>
 				Posts below are from users who need assistance.
@@ -75,30 +75,5 @@
 
 	.explore {
 		padding-bottom:150px;
-
-		.breaker {
-			text-align: left;
-			margin:60px 0 40px;
-
-			span {
-				font-size: 18px;
-				font-weight: bold;
-				color:var(--text-primary);
-			}
-
-			p {
-				color:var(--text-secondary);
-				font-size: 14px;
-			}
-		}
-
-		.content-enter-active, .content-leave-active {
-			transition: all 0.2s ease;
-			transition-property: transform, opacity;
-		}
-		.content-enter, .content-leave-to /* .content-leave-active below version 2.1.8 */ {
-			transform:translateY(50px);
-			opacity:0;
-		}
 	}
 </style>

@@ -37,6 +37,7 @@ Vue.component('Logo', () => import('./components/svgs/Logo.vue'));
 Vue.component('Loader', () => import('./components/Loader.vue'));
 Vue.component('Labels', () => import('./components/Labels.vue'));
 Vue.component('PostComment', () => import('./components/PostComment.vue'));
+Vue.component('TokenInput', () => import('./components/TokenInput.vue'));
 
 Vue.mixin({
 	methods: {

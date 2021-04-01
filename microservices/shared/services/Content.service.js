@@ -1,10 +1,12 @@
 const {INTERACTION_TYPE} = require("../models/InteractionType");
+const {CONTENT_TYPE} = require('../models/ContentType');
 
 const ORM = require('../orm');
 const couchbase = require('couchbase');
 const Content = require('../models/Content.model');
 const Interaction = require('../models/Interaction.model');
 const UserService = require('../services/User.service');
+const TokenService = require('../services/Token.service');
 const uuid = require('../utils/uuid.util');
 const {sha256} = require('../utils/crypto.util');
 
@@ -31,6 +33,32 @@ module.exports = class ContentService {
 			content.trackers.comments = await ORM.query(COMMENT_TRACKER_QUERY(content));
 			content.trackers.hearts = await ORM.query(HEART_TRACKER_QUERY(content));
 			content.interactions = await ORM.query(INTERACTIONS_QUERY(content, user), Interaction);
+
+			if(content.type === CONTENT_TYPE.PREDICTION){
+				const thirtyDays = content.data.date - 86400*1000*30;
+				content.data.historical_prices = await TokenService.getPriceHistory(content.data.asset.id, thirtyDays, content.data.date);
+				content.data.historical_prices = content.data.historical_prices.map(x => {
+					x.price = parseFloat(x.price);
+					return x;
+				})
+				if(content.data.historical_prices.length && content.data.historical_prices.length < 30){
+					for(let i = 0; i < 30 - content.data.historical_prices.length; i++){
+						content.data.historical_prices.push({
+							id:content.data.historical_prices[0].id,
+							price:content.data.historical_prices[0].price - (content.data.historical_prices[0].price / 5) + Math.round(Math.random() * content.data.historical_prices[0].price / 4),
+							date:content.data.historical_prices[0].date - (86400*1000*i)
+						});
+					}
+
+					content.data.historical_prices = content.data.historical_prices.sort((a,b) => {
+						if(b.date > a.date) return -1;
+						if(b.date < a.date) return 1;
+						return 0;
+					});
+
+					console.log('content.data.historical_prices', content.data.historical_prices);
+				}
+			}
 		}));
 	}
 

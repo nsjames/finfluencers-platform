@@ -2,16 +2,16 @@
 	<section class="content-trade">
 
 		<section class="assets">
-			<Asset :symbol="trade.from.asset" />
+			<Asset :symbol="trade.from.symbol" />
 			<i class="fas fa-arrow-right"></i>
-			<Asset :symbol="trade.to.asset" />
+			<Asset :symbol="trade.to.symbol" />
 		</section>
 
 		<section class="conversion" v-if="!trade.sandboxed">
-			I just traded <b>{{formatNumber(trade.from.amount)}} {{trade.from.asset}}</b> for <b>{{trade.to.amount}} {{trade.to.asset}}</b>
+			I just traded <b>{{formatNumber(trade.from.amount)}} {{trade.from.symbol}}</b> for <b>{{trade.to.amount}} {{trade.to.symbol}}</b>
 		</section>
 		<section class="conversion" v-if="trade.sandboxed">
-			I'm thinking about trading <b>{{formatNumber(trade.from.amount)}} {{trade.from.asset}}</b> for <b>{{trade.to.amount}} {{trade.to.asset}}</b>
+			I'm thinking about trading <b>{{formatNumber(trade.from.amount)}} {{trade.from.symbol}}</b> for <b>{{trade.to.amount}} {{trade.to.symbol}}</b>
 		</section>
 
 	</section>

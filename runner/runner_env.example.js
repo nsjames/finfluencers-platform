@@ -3,4 +3,5 @@ module.exports = {
     COUCHBASE_USERNAME:"admin",
     COUCHBASE_PASSWORD:"",
     BUCKET_NAME:"finfluencers",
+    CMC_KEY:"",
 }

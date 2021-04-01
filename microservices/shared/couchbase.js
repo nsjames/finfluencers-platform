@@ -23,7 +23,7 @@ const query = (queryString, model = null) => {
 
     const isCount = queryString.indexOf('COUNT(') > -1;
 
-    // console.log('queryString', queryString);
+    // console.log(queryString);
     return (manual_instance ? manual_instance : cluster).query(queryString, {
         scanConsistency: couchbase.QueryScanConsistency.RequestPlus
     }).then(({meta, rows}) => {

@@ -3,9 +3,7 @@
 		<section class="popup-container" v-if="nextPopup">
 			<figure class="bg" @click="closeOpenPopup"></figure>
 
-			<section class="popup">
-				hi
-			</section>
+			<section class="popup"></section>
 		</section>
 	</section>
 </template>
@@ -15,13 +13,17 @@
 
 	export default {
 		data(){return {
-			show:false,
+
 		}},
+		components:{
+
+		},
 		computed:{
 			...mapState([
 				'popups',
 			]),
 			nextPopup(){
+				// return true;
 				return this.popups[0];
 			}
 		},
@@ -44,7 +46,7 @@
 			right:0;
 			justify-content: center;
 			align-items: center;
-			z-index:99;
+			z-index:var(--popup-index);
 
 			.bg {
 				position: fixed;
@@ -52,18 +54,21 @@
 				bottom:0;
 				left:0;
 				right:0;
-				background:var(--risk-bg);
+				background:var(--colorful-button);
 				opacity: 0.9;
 				z-index:-1;
 			}
 
 			.popup {
-				padding:30px;
+				padding:20px;
 				background:var(--background-color);
 				position: relative;
 				z-index:1;
-				border-radius:20px;
-				box-shadow:0 10px 20px rgba(0,0,0,0.1);
+				border-radius:var(--radius);
+				box-shadow:var(--soft-shadow);
+				width:100%;
+				margin:20px;
+				max-width:500px;
 
 				color:var(--text-primary);
 			}

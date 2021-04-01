@@ -1,16 +1,12 @@
 <template>
 	<section class="post-prediction">
-		<label>Asset and target</label>
+		<label>Price and asset</label>
 		<section class="holder">
-			<!--<DropdownInput style="flex:1;" :options="[1,1,1]" :selected="'Hello'" :value="'1.0'" placeholder="1.0" v-on:changed="x => content.data.price = x" />-->
-			<DualInput style="flex:1;"
-			           :value-b="content.data.asset" :placeholder-b="'ASSET'"
-			           :value-a="content.data.price" :placeholder-a="'$100.00'"
-			           v-on:changedb="x => content.data.asset = x"
-			           v-on:changeda="x => content.data.price = x"
-			/>
+			<section class="asset-input">
+				<TokenInput :valuea="content.data.price" v-on:asset="selectedAsset" v-on:valuea="x => $emit('price', x)" />
+			</section>
 			<section class="target-date">
-				<VueDatePicker v-model="content.data.date" attach=".target-date .picker-attach" :min-date="new Date()" />
+				<VueDatePicker v-model="content.data.date" attach=".target-date .picker-attach" :min-date="new Date(+new Date() + 86400000)" />
 				<div class="picker-attach"></div>
 			</section>
 
@@ -20,8 +16,16 @@
 
 <script>
 
+	import * as ApiService from "../../services/ApiService";
+
 	export default {
 		props:['content'],
+		methods:{
+			selectedAsset(asset){
+				this.content.data.asset.id = asset.id;
+				this.content.data.asset.symbol = asset.symbol;
+			},
+		},
 	}
 </script>
 
@@ -48,6 +52,11 @@
 			margin-bottom:10px;
 			display: block;
 			line-height:14px;
+		}
+
+		.asset-input {
+			flex:1;
+			position: relative;
 		}
 
 		.target-date {

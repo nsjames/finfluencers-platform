@@ -4,7 +4,7 @@ module.exports = class Asset {
 
 	constructor(json = {}){
 		this.id = getOrDefault(json, 'id', '');
-		this.asset = getOrDefault(json, 'asset', '');
+		this.symbol = getOrDefault(json, 'symbol', '');
 		this.amount = getOrDefault(json, 'amount', 0);
 	}
 

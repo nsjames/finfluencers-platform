@@ -1,6 +1,6 @@
 <template>
 	<section :id="randomId" class="dropdown" :class="{'transparent':!!transparent, 'open':open}">
-		<section class="selected" @click="open = !open">
+		<section v-if="!optionsOnly" class="selected" @click="open = !open">
 			<figure class="option active">
 				<i v-if="typeof selected === 'object' && selected.icon" :class="selected.icon"></i>
 				<span v-if="!hideSelectedText">{{typeof selected === 'object' ? selected.text : selected}}</span>
@@ -9,7 +9,7 @@
 				<i class="fas fa-chevron-down"></i>
 			</figure>
 		</section>
-		<section class="options" v-if="open">
+		<section class="options" v-if="open" :class="{'at-top':optionsOnly}">
 			<figure class="option" v-for="option in options" @click="select(option)" :class="{'selected':typeof selected === 'object' ? selected.id === option.id : selected === option}">
 				<i v-if="typeof option === 'object' && option.icon" :class="option.icon"></i>
 				<span>{{typeof option === 'object' ? option.text : option}}</span>
@@ -22,7 +22,7 @@
 	import {EventBus} from "../services/EventBus";
 
 	export default {
-		props:['transparent', 'options', 'selected', 'hideSelectedText'],
+		props:['transparent', 'options', 'selected', 'hideSelectedText', 'forceOpen', 'optionsOnly'],
 		name: "Dropdown",
 		data(){return {
 			open:false,
@@ -30,16 +30,19 @@
 		}},
 		mounted(){
 			EventBus.$on('close-dropdowns', this.handleCloseDropdowns)
+			if(this.forceOpen) this.open = true;
 		},
 		destroyed(){
 			EventBus.$off('close-dropdowns', this.handleCloseDropdowns)
 		},
 		methods:{
 			handleCloseDropdowns(id){
+				if(this.forceOpen) return;
 				if(this.randomId !== id) this.open = false;
 			},
 			select(option){
 				this.$emit('selected', option);
+				if(this.forceOpen) return;
 				this.open = false;
 			}
 		},
@@ -100,6 +103,10 @@
 			max-height:260px;
 			min-width:300px;
 			text-align: left;
+
+			&.at-top {
+				top:5px;
+			}
 		}
 
 		.option {

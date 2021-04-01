@@ -2,19 +2,11 @@
 	<section class="post-trade">
 		<section>
 			<label>From</label>
-			<!--<DropdownInput :options="[1,1,1]" :selected="'Hello'" :value="'1.0'" placeholder="1.0" v-on:changed="x => content.data.from.amount = x" />-->
-			<DualInput type-a="number" :value-b="content.data.from.asset" :placeholder-b="'ASSET'" :value-a="content.data.from.amount" placeholder-a="100.00"
-			           v-on:changeda="x => content.data.from.amount = x"
-			           v-on:changedb="x => content.data.from.asset = x"
-			/>
+			<TokenInput :allow-dollar="true" :valuea="content.data.from.amount" v-on:asset="selectedFrom" v-on:valuea="x => content.data.from.amount = x" />
 		</section>
 		<section>
 			<label>To</label>
-			<!--<DropdownInput :options="[1,1,1]" :selected="'Hello'" :value="'1.0'" placeholder="1.0" v-on:changed="x => content.data.to.amount = x" />-->
-			<DualInput type-a="number" :value-b="content.data.to.asset" :placeholder-b="'ASSET'" :value-a="content.data.to.amount" placeholder-a="100.00"
-			           v-on:changeda="x => content.data.to.amount = x"
-			           v-on:changedb="x => content.data.to.asset = x"
-			/>
+			<TokenInput :allow-dollar="true" :valuea="content.data.to.amount" v-on:asset="selectedTo" v-on:valuea="x => content.data.to.amount = x" />
 		</section>
 
 	</section>
@@ -22,7 +14,20 @@
 
 <script>
 	export default {
-		props:['content']
+		props:['content'],
+		data(){return {
+
+		}},
+		methods:{
+			selectedFrom(asset){
+				this.content.data.from.id = asset.id;
+				this.content.data.from.symbol = asset.symbol;
+			},
+			selectedTo(asset){
+				this.content.data.to.id = asset.id;
+				this.content.data.to.symbol = asset.symbol;
+			},
+		}
 	}
 </script>
 

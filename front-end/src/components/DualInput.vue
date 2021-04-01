@@ -1,8 +1,8 @@
 <template>
 	<section class="dual-input">
 		<figure class="bg"></figure>
-		<input :type="typeA || 'text'" :placeholder="placeholderA" v-model="inputValueA" />
-		<input :type="typeB || 'text'" :placeholder="placeholderB" v-model="inputValueB" />
+		<input :type="typeA || 'text'" @focus="$emit('focuseda', true)" @blur="$emit('focuseda', false)" :placeholder="placeholderA" v-model="inputValueA" />
+		<input :type="typeB || 'text'" @focus="$emit('focusedb', true)" @blur="$emit('focusedb', false)" :placeholder="placeholderB" v-model="inputValueB" />
 	</section>
 </template>
 

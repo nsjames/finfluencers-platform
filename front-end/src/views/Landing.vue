@@ -70,10 +70,10 @@
 	import * as ApiService from "../services/ApiService";
 
 	const checklist = [
-		'Get help with your personal finances',
-		'Share and gather financial intelligence',
-		'Make better financial decisions, based on real data',
-		'Become a financial influencer',
+		'Work together to get the most out of your money',
+		'Make better financial decisions, based on reality',
+		'Be informed of financial trends here first',
+		'Capitalize on your financial knowledge',
 	]
 
 	export default {

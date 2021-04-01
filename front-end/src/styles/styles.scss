@@ -52,7 +52,7 @@ input[type=number] {
   --light-line:rgba(0,0,0,0.08);
   --text-primary: #10101F;
   --text-secondary: #9F9FA5;
-  --nav-shadow:0px 14px 14px rgba(0, 0, 0, 0.05), 0px 2px 5px rgba(0, 0, 0, 0.15);
+  --nav-shadow:0px 14px 14px rgba(0, 0, 0, 0.04), 0px 2px 5px rgba(0, 0, 0, 0.1);
   --nav-background:#fff;
   --feed-select-bg:#f8f8fe;
   --feed-select-bg-line:#ebebeb ;
@@ -316,5 +316,22 @@ textarea {
     visibility: visible;
     opacity: 1;
     transition: opacity .15s;
+  }
+}
+
+
+.feed-breaker {
+  text-align: left;
+  margin:60px 0 40px;
+
+  span {
+    font-size: 18px;
+    font-weight: bold;
+    color:var(--text-primary);
+  }
+
+  p {
+    color:var(--text-secondary);
+    font-size: 14px;
   }
 }

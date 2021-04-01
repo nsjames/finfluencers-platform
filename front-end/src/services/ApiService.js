@@ -127,7 +127,7 @@ const ApiService = {
 		return GET(`contents/${id}`);
 	},
 	async setFeedContents(options = {}){
-		options.feedType = store.state.feedType;
+		if(!options.feedType) options.feedType = store.state.feedType;
 		const feed = await POST('contents/feed', options);
 		if(feed) store.dispatch('setContents', feed);
 	},
@@ -146,6 +146,9 @@ const ApiService = {
 	subscribe(user_id){
 		return GET(`users/subscribe/${user_id}`);
 	},
+	searchAssets(term){
+		return GET(`search/tokens/${encodeURIComponent(term)}`)
+	}
 }
 
 module.exports = ApiService;

@@ -9,6 +9,7 @@ const routes = [
 	{ path: '/content/:id', name: 'Content', component: () => import('../views/Content.vue') },
 	{ path: '/register', name: 'Register', component: () => import('../views/Register.vue') },
 	{ path: '/explore', name: 'Explore', component: () => import('../views/Explore.vue') },
+	{ path: '/bookmarks', name: 'Bookmarks', component: () => import('../views/Bookmarks.vue') },
 	{ path: '/test', name: 'Test', component: () => import('../views/Test.vue') },
 	{ path: '*', name: '404', component: () => import('../views/404.vue') },
 ]

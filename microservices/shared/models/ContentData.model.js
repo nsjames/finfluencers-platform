@@ -19,7 +19,7 @@ export class TradeContent {
 
 export class PredictionContent {
 	constructor(json = {}){
-		this.asset = getOrDefault(json, 'asset', '');
+		this.asset = getOrDefault(json, 'asset', new Asset(), Asset);
 		this.price = getOrDefault(json, 'price', 0);
 		this.date = getOrDefault(json, 'date', +new Date() + (60*60*24*7*1000));
 	}

@@ -4,6 +4,7 @@ const {CONTENT_TYPE} = require('@finfluencers/shared/models/ContentType');
 const {sha256} = require('@finfluencers/shared/utils/crypto.util');
 const ContentService = require('@finfluencers/shared/services/Content.service');
 const UserService = require('@finfluencers/shared/services/User.service');
+const TokenService = require('@finfluencers/shared/services/Token.service');
 const {INTERACTION_TYPE} = require('@finfluencers/shared/models/InteractionType');
 const Interaction = require('@finfluencers/shared/models/Interaction.model');
 
@@ -12,6 +13,9 @@ const Interaction = require('@finfluencers/shared/models/Interaction.model');
 module.exports = class FeedController {
 
     static async explore(options, user){
+    	// TODO: Move to cron job
+	    TokenService.cacheTokenList();
+
     	let typeQuery;
     	if(options.feedType === 0){
 		    // Learn
@@ -27,6 +31,14 @@ module.exports = class FeedController {
 
     static async profile(options, user){
 	    const contents = await ORM.query(`SELECT * FROM BUCKET_NAME WHERE doc_type = 'content' AND soft_delete = 0 AND user_id = '${options.profile}' ORDER BY created_at DESC LIMIT 50`, Content);
+	    await ContentService.prepareContent(contents, user);
+	    return contents;
+    }
+
+    static async bookmarks(user){
+    	const bookmarks = await ORM.query(`SELECT * FROM BUCKET_NAME WHERE doc_type = 'interaction' AND type = ${INTERACTION_TYPE.BOOKMARK} ORDER BY created_at DESC LIMIT 50`, Interaction);
+    	const ids = bookmarks.map(x => x.parent_index.split('content:')[1]);
+    	const contents = await Promise.all(ids.map(id => ORM.get((new Content({id})).index())));
 	    await ContentService.prepareContent(contents, user);
 	    return contents;
     }

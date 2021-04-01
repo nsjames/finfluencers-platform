@@ -24,10 +24,16 @@ module.exports = () => {
     routes.post('/feed', AuthenticationService.validate, async (req, res) => {
         const options = req.body || {};
 
-        let profile = options.hasOwnProperty('profile') ? !!options.profile : false;
-        const feed = profile
-	        ? await FeedController.profile(options, req.user)
-	        : await FeedController.explore(options, req.user);
+        let feed;
+
+        if(options.bookmarks){
+			feed = await FeedController.bookmarks(req.user);
+        } else {
+	        let profile = options.hasOwnProperty('profile') ? !!options.profile : false;
+	        feed = profile
+		        ? await FeedController.profile(options, req.user)
+		        : await FeedController.explore(options, req.user);
+        }
 
         if(feed) return res.json(Results.success(feed));
         return res.json(Results.error(ERROR_TYPES.DATABASE, "Could not fetch feed"))

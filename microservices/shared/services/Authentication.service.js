@@ -90,7 +90,7 @@ module.exports = class AuthenticationService {
             const hash = sha256(`${auth.nonce}:${auth.user_index}:${sha256(ip)}:${auth.expiration}`);
             if(`${id}:${hash}` !== auth.encoded) return fail();
 
-            req.user = await UserService.getById(auth.user_index.split(':')[1]);
+            req.user = await UserService.getById(auth.user_index.split(':')[1], true, false);
             next();
         } catch(e){
             console.error(`Validate authentication error`, e);
