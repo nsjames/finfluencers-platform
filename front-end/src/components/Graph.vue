@@ -12,11 +12,6 @@
 	Chart.defaults.global.tooltips.enabled = false;
 	Chart.defaults.global.responsive = true;
 	Chart.defaults.global.maintainAspectRatio = false;
-	Chart.scaleService.updateScaleDefaults('linear', {
-		ticks: {
-			min: 0
-		}
-	});
 
 
 	export default {
@@ -61,7 +56,7 @@
 					backgroundColor: 'transparent',
 					spanGaps: true,
 					pointRadius:0,
-					borderWidth:4,
+					borderWidth:5,
 					borderDash:this.secondary ? [5,2] : null
 				};
 				const dataSet2 = this.dataArrSecondary ? {
@@ -72,8 +67,8 @@
 					backgroundColor: 'transparent',
 					spanGaps: true,
 					pointRadius:0,
-					borderWidth:4,
-					borderDash:[5,3]
+					borderWidth:5,
+					borderDash:[6,4]
 				} : null;
 				this.chart = new Chart(this.$refs.graph, {
 					type: 'line',
@@ -89,7 +84,7 @@
 						maintainAspectRatio: false,
 						layout: {
 							padding: {
-								left:0,
+								left:-10,
 								right:0,
 								top:0,
 								bottom:0,
@@ -104,8 +99,6 @@
 									display: !!this.ticks,
 									fontColor:tickColor,
 									beginAtZero: false,
-									min:highest + (highest/10),
-									max:lowest - (lowest/10),
 								},
 								gridLines: {
 									display:false

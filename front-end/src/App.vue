@@ -131,7 +131,7 @@
 		&.limited {
 			max-width:var(--max-width);
 			transition-delay:0.5s;
-			padding:0 30px;
+			padding:0 20px;
 		}
 
 		.snackbars {

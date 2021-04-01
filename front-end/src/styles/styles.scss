@@ -152,6 +152,28 @@ textarea {
   }
 }
 
+
+.no-content {
+  padding:80px 0;
+
+  h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color:var(--text-primary);
+  }
+
+  p {
+    font-size: 14px;
+    color:var(--text-secondary);
+  }
+
+  > i {
+    font-size: 36px;
+    color:var(--light-line);
+  }
+}
+
+
 /*** BEUFY OVERRIDES */
 .b-checkbox.checkbox .control-label {
   color:var(--text-primary);

@@ -36,6 +36,9 @@
 		text-align:left;
 		height:90px;
 
+		@media only screen and (max-width:$breakpoint) {
+			height:auto;
+		}
 
 		.holder {
 			display:flex;

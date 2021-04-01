@@ -33,8 +33,6 @@
 
 
 			<section class="actions">
-				<section class="post-type">
-				</section>
 				<section class="post-details">
 					<span v-if="content.text.data.length > MAX_CHARS"><b class="over-length">{{MAX_CHARS - content.text.data.length}}</b></span>
 					<button @click="post" v-if="!posting">
@@ -335,10 +333,6 @@
 				flex-direction: column;
 			}
 
-			.post-type {
-
-			}
-
 			.post-details {
 				position: relative;
 				flex:1;
@@ -349,6 +343,11 @@
 				display:flex;
 				align-items: center;
 				font-size: 14px;
+				width:100%;
+
+				@media only screen and (max-width:$breakpoint) {
+					flex-direction: column;
+				}
 
 				span {
 					margin-right:20px;
@@ -372,6 +371,14 @@
 					top:0;
 					right:0;
 
+
+					@media only screen and (max-width:$breakpoint) {
+						min-width:100%;
+						flex:1;
+						padding:20px 40px;
+						font-size: 22px;
+						position: relative;
+					}
 				}
 			}
 		}

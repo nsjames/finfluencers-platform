@@ -12,18 +12,46 @@
 		<section class="graphs">
 			<Graph class="graph" :height="80" :data-arr="graphData" :data-arr-secondary="setPrice"  />
 		</section>
-		<section class="details">
-			<section>
-				<span>Price at creation</span>
-				<span>${{formatPrice(priceAtStart)}}</span>
+		<section class="details" v-if="!isComplete">
+			<!-- Only show if there is rounding on the number -->
+			<section class="desktop-only" v-if="prediction.price > 999">
+				<span>Prediction</span>
+				<span>{{formatPrice(prediction.price)}}</span>
+			</section>
+			<section class="desktop-only">
+				<span>Starting price</span>
+				<span>{{formatPrice(priceAtStart)}}</span>
 			</section>
 			<section>
-				<span>Price at stop</span>
-				<span>${{formatPrice(priceAtEnd)}}</span>
+				<span>Current price</span>
+				<span>{{formatPrice(priceAtEnd)}}</span>
 			</section>
 			<section>
-				<span>Profit & Loss</span>
+				<span>Current outcome</span>
 				<span>{{pnl}}%</span>
+			</section>
+		</section>
+		<section class="details" v-if="isComplete">
+			<section class="desktop-only">
+				<span>Prediction</span>
+				<span>{{formatPrice(prediction.price)}}</span>
+			</section>
+			<section class="desktop-only">
+				<span>Final price</span>
+				<span>{{formatPrice(priceAtEnd)}}</span>
+			</section>
+			<section>
+				<span>Final outcome</span>
+				<span>{{pnl}}%</span>
+			</section>
+			<section>
+				<span>Success</span>
+				<span v-if="successfulPrediction">
+					<i class="fas fa-check"></i>
+				</span>
+				<span v-else>
+					<i class="fas fa-times"></i>
+				</span>
 			</section>
 		</section>
 
@@ -37,6 +65,9 @@
 	export default {
 		props:['prediction', 'createdAt'],
 		computed:{
+			isComplete(){
+				return this.prediction.date <= +new Date();
+			},
 			rawGraphData(){
 				if(this.prediction.historical_prices.length === 1){
 					return [this.prediction.historical_prices[0], this.prediction.historical_prices[0]];
@@ -53,7 +84,7 @@
 				return [...Array(this.graphData.length).keys()].map(() => parseFloat(this.prediction.price));
 			},
 			priceAtStart(){
-				const price = this.rawGraphData.find(x => x.date > (this.createdAt - 86400000) && x.date < (this.prediction.date + 86400000));
+				const price = this.rawGraphData.find(x => x.date > (this.createdAt - (60*60*4*1000)) && x.date < (this.prediction.date + (60*60*4*1000)));
 				if(!price) return this.rawGraphData[0].price;
 				return price.price;
 			},
@@ -68,12 +99,22 @@
 				const val = parseFloat((this.prediction.price-this.priceAtStart)/this.prediction.price*100.0).toFixed(2);
 				return val > 0 ? '+' + val : val;
 			},
+			successfulPrediction(){
+				if(!this.isComplete) return false;
+				console.log('prediction', this.prediction.asset.symbol, this.prediction.price, this.priceAtEnd)
+				if(parseFloat(this.prediction.price) > parseFloat(this.priceAtStart)){
+					return parseFloat(this.priceAtEnd) >= parseFloat(this.prediction.price);
+				} else {
+					return parseFloat(this.priceAtEnd) <= parseFloat(this.prediction.price);
+				}
+			}
 		},
 		methods:{
 			formatPrice(price){
-				const [whole, dec] = price.toString().split('.');
-				if(whole.length > 0) return parseFloat(price).toFixed(2);
-				return price;
+				return parseFloat(parseFloat(price).toFixed(8)).toLocaleString('en-US', {
+					style: 'currency',
+					currency: 'USD',
+				});
 			}
 		}
 	}
@@ -118,8 +159,8 @@
 
 				i {
 					margin-right:10px;
-					width:30px;
-					border:1px dashed var(--text-secondary);
+					width:40px;
+					border:3px dashed var(--text-secondary);
 					position: relative;
 					opacity:0.4;
 				}
@@ -133,12 +174,13 @@
 				display:flex;
 				align-items: center;
 				opacity:0.5;
+				margin-top:3px;
 
 				i {
 					margin-right:10px;
-					width:30px;
+					width:40px;
 					background:linear-gradient(90deg, var(--graph-line-0) 0%, var(--graph-line-1) 100%);
-					height:3px;
+					height:6px;
 					position: relative;
 					opacity:1;
 				}

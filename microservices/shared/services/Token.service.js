@@ -20,7 +20,7 @@ const POST = (route, data) => fetch(`${HOST}/${route}`, Object.assign({headers},
 })).then(x => x.json());
 
 const FETCH_LIMIT = 5000;
-const STALE_TIME = 60*60*12*1000;
+const STALE_TIME = 60*60*4*1000;
 
 module.exports = class TokenService {
 
@@ -90,7 +90,7 @@ module.exports = class TokenService {
     }
 
     static async getPriceHistory(id, start = 0, end = +new Date()){
-        return ORM.query(`SELECT * FROM BUCKET_NAME WHERE doc_type = 'tokenprice' AND id = '${id}' AND created_at BETWEEN ${start} AND ${end} ORDER BY created_at DESC LIMIT 30`, TokenPrice);
+        return ORM.query(`SELECT * FROM BUCKET_NAME WHERE doc_type = 'tokenprice' AND id = '${id}' AND created_at BETWEEN ${start} AND ${end} ORDER BY created_at DESC LIMIT 180` /* 24 / 4hr * 30 days = 180 */, TokenPrice);
     }
 
 }

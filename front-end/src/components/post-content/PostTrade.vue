@@ -40,6 +40,10 @@
 		height:90px;
 
 		@media only screen and (max-width:$breakpoint) {
+			height:auto;
+		}
+
+		@media only screen and (max-width:$breakpoint) {
 			flex-direction: column;
 		}
 

@@ -77,7 +77,7 @@ module.exports = class CommentController {
 
 		    const posted = await ORM.insert(comment);
 
-		    comment.user = user.safer();
+		    comment.user = (await UserService.getById(user.id)).safer();
 
 		    return comment;
 	    } catch(e){

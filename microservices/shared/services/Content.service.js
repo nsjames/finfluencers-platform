@@ -79,7 +79,7 @@ module.exports = class ContentService {
 
 	        const posted = await ORM.insert(content);
 
-	        content.user = user.safer();
+	        content.user = (await UserService.getById(user.id)).safer();
 
 	        await this.prepareContent([content], user);
 	        return content;

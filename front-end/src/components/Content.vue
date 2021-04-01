@@ -52,8 +52,11 @@
 
 				<!-- RIGHT ACTIONS -->
 				<section style="flex:1; cursor: auto;"></section>
-				<section @click="deleteContent" v-if="isYours" style="margin-right:10px;">
+				<section @click="deleteContent" v-if="isYours && !deleting" style="margin-right:10px;">
 					<i class="far fa-trash-alt smaller" v-tooltip="'Delete'"></i>
+				</section>
+				<section @click="deleteContent" v-if="isYours && deleting" style="margin-right:10px;">
+					<figure class="delete-time" v-tooltip="'Cancel'">{{deleteTimeLeft}}</figure>
 				</section>
 				<section v-if="!isYours" @click="bookmark" style="margin-right:10px;">
 					<i class="fa-bookmark smaller" :class="hasBookmarked ? 'fas' : 'far'" v-tooltip="'Bookmark'"></i>
@@ -76,6 +79,8 @@
 	import copyText from "../util/copy";
 	import {Snackbar} from '../models/Snackbar'
 
+	let deleteInterval;
+	let deleteTimeout;
 	export default {
 		props:['content', 'hideCommentsButton'],
 		components:{
@@ -91,6 +96,8 @@
 			unbookmarking:false,
 			maxHeight:230,
 			deleted:false,
+			deleting:false,
+			deleteTimeLeft:0,
 		}},
 		mounted(){
 			if(this.content.text.data.indexOf('![') === 0){
@@ -145,10 +152,28 @@
 		},
 		methods:{
 			async deleteContent(){
-				this.deleted = true;
-				console.log('this.content', this.content);
-				const deleted = await ApiService.deleteContent(this.content);
-				if(!deleted) this.deleted = false;
+				if(this.deleting){
+					clearInterval(deleteInterval);
+					this.deleting = false;
+					return;
+				}
+
+				this.deleting = true;
+				this.deleteTimeLeft = 3;
+				deleteInterval = setInterval(async () => {
+					if(this.deleteTimeLeft === 0){
+						clearInterval(deleteInterval);
+						this.deleted = true;
+						this.deleting = false;
+						console.log('this.content', this.content);
+						const deleted = await ApiService.deleteContent(this.content);
+						if(!deleted) this.deleted = false;
+					}
+
+					this.deleteTimeLeft--;
+
+				}, 1000);
+
 			},
 			async bookmark(){
 				if(!this.hasBookmarked) this.bookmarking = true;
@@ -222,11 +247,11 @@
 		box-shadow:var(--soft-shadow);
 
 		transition:all 0.2s ease;
-		transition-property: padding, box-shadow;
+		transition-property: padding, box-shadow, opacity;
 
 		&.deleted {
 			cursor: not-allowed;
-			opacity:0.2;
+			opacity:0.1;
 			pointer-events: none;
 		}
 
@@ -323,6 +348,24 @@
 				margin-top:20px;
 				cursor: pointer;
 				display:flex;
+
+				.delete-time {
+					font-size: 16px;
+					font-weight: bold;
+					color:var(--highlight);
+
+					padding:10px;
+					margin-bottom:-10px;
+					transition: all 0.1s ease;
+					transition-property: opacity, color;
+
+					animation: deleting 1s ease infinite;
+
+					@keyframes deleting {
+						0%, 100% { transform:scale(1); }
+						10% { transform:scale(2); }
+					}
+				}
 
 				> section {
 					margin-right:40px;

@@ -178,10 +178,7 @@
 				}
 
 				@media only screen and (max-width:$breakpoint) {
-					padding:30px 0;
-					i {
-						font-size: 24px;
-					}
+					padding:30px 0 20px;
 				}
 			}
 		}
