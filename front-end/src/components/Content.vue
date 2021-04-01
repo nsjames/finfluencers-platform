@@ -165,9 +165,7 @@
 						clearInterval(deleteInterval);
 						this.deleted = true;
 						this.deleting = false;
-						console.log('this.content', this.content);
-						const deleted = await ApiService.deleteContent(this.content);
-						if(!deleted) this.deleted = false;
+						if(!await ApiService.deleteContent(this.content)) this.deleted = false;
 					}
 
 					this.deleteTimeLeft--;

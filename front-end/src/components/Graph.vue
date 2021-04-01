@@ -68,7 +68,7 @@
 					spanGaps: true,
 					pointRadius:0,
 					borderWidth:5,
-					borderDash:[6,4]
+					borderDash:[5,3]
 				} : null;
 				this.chart = new Chart(this.$refs.graph, {
 					type: 'line',
