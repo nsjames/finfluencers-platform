@@ -25,6 +25,9 @@ module.exports = class UserController {
             if(!userJson.email || !validateEmail(userJson.email)) return results.error(results.ERROR_TYPES.INVALID_PARAMS, "The email you specified is invalid");
             if(!userJson.name || !userJson.name.replace(/\s+/g, "").length) return results.error(results.ERROR_TYPES.INVALID_PARAMS, "The name you specified is invalid");
             if(!userJson.auth) return results.error(results.ERROR_TYPES.INVALID_PARAMS, "The auth you specified is invalid");
+            if(!userJson.keys || typeof userJson !== 'object') return results.error(results.ERROR_TYPES.INVALID_PARAMS, "The encrypted keys were invalid");
+            if(!userJson.keys.hasOwnProperty('public') && userJson.public.length) return results.error(results.ERROR_TYPES.INVALID_PARAMS, "The encrypted keys were invalid");
+            if(!userJson.keys.hasOwnProperty('encrypted') && userJson.encrypted.length) return results.error(results.ERROR_TYPES.INVALID_PARAMS, "The encrypted keys were invalid");
 
             const {defaultAccountType, monthlyIncome, monthlyExpenses, strengths, goals} = userJson;
 
@@ -42,14 +45,13 @@ module.exports = class UserController {
             if(!auth.isValid()) return results.error(results.ERROR_TYPES.INVALID_PARAMS, "The authorization object is invalid");
             if(auth.type === authentication.AUTH_TYPES.PASSWORD) auth.data = sha256(auth.data + SALT);
 
-
             const user = new User({
 	            id:'',
 	            name:userJson.name,
 	            email:userJson.email,
 	            auth,
-	            public_key:'',
 	            graphics:{},
+	            keys:userJson.keys,
             });
 
             if(await ORM.exists(user.emailIndex()).catch(() => false))
@@ -99,6 +101,8 @@ module.exports = class UserController {
 
             	original.name = userJson.name.replace(/[\t\n]+/g,' ');
             }
+
+            // TODO: Update key encryption!
             if(userJson.auth) {
                 const auth = new authentication.AccountAuth(userJson.auth);
                 if(!auth.isValid()) return results.error(results.ERROR_TYPES.INVALID_PARAMS, "The authorization object is invalid");
@@ -122,6 +126,11 @@ module.exports = class UserController {
 	    user = user.safe();
 	    user.data = userData;
 	    return user;
+    }
+
+    static async getEncryptedKey(user){
+	    const rawUser = await UserService.getById(user.id, false, false);
+	    return rawUser ? rawUser.keys : rawUser;
     }
 
     static async touch(user, quit = false){

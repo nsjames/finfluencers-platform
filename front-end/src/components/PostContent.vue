@@ -147,7 +147,13 @@
 					}
 
 					if(this.content.type === CONTENT_TYPE.PREDICTION){
-						if(parseInt(this.content.data.asset.id) < 1) return Snackbar.error("Select an asset from the dropdown first.");
+						console.log('prediction asset id', parseInt(this.content.data.asset.id));
+						if(!this.content.data.asset.id || parseInt(this.content.data.asset.id) < 1) return Snackbar.error("Select an asset from the dropdown first.");
+					}
+
+					if(this.content.type === CONTENT_TYPE.TRADE){
+						if(!this.content.data.from.id || parseInt(this.content.data.from.id) < 1) return Snackbar.error("Select a from asset from the dropdown first.");
+						if(!this.content.data.to.id || parseInt(this.content.data.to.id) < 1) return Snackbar.error("Select a to asset from the dropdown first.");
 					}
 
 					this.posting = true;

@@ -3,7 +3,9 @@
 		<section class="popup-container" v-if="nextPopup">
 			<figure class="bg" @click="closeOpenPopup"></figure>
 
-			<section class="popup"></section>
+			<section class="popup">
+				<UnlockKey :popup="nextPopup" v-if="nextPopup.type === 'unlock-key'" />
+			</section>
 		</section>
 	</section>
 </template>
@@ -16,7 +18,7 @@
 
 		}},
 		components:{
-
+			UnlockKey:() => import('./popups/UnlockKey'),
 		},
 		computed:{
 			...mapState([
@@ -60,15 +62,16 @@
 			}
 
 			.popup {
-				padding:20px;
-				background:var(--background-color);
+				padding:20px 30px;
+				background:var(--content-bg);
 				position: relative;
 				z-index:1;
 				border-radius:var(--radius);
-				box-shadow:var(--soft-shadow);
+				box-shadow:var(--soft-shadow), var(--nav-shadow);
 				width:100%;
 				margin:20px;
 				max-width:500px;
+				text-align: left;
 
 				color:var(--text-primary);
 			}

@@ -33,8 +33,8 @@
 		</section>
 		<section class="details" v-if="isComplete">
 			<section class="desktop-only">
-				<span>Prediction</span>
-				<span>{{formatPrice(prediction.price)}}</span>
+				<span>Starting price</span>
+				<span>{{formatPrice(priceAtStart)}}</span>
 			</section>
 			<section class="desktop-only">
 				<span>Final price</span>
@@ -84,12 +84,18 @@
 				return [...Array(this.graphData.length).keys()].map(() => parseFloat(this.prediction.price));
 			},
 			priceAtStart(){
-				const price = this.rawGraphData.find(x => x.date > (this.createdAt - (60*60*4*1000)) && x.date < (this.prediction.date + (60*60*4*1000)));
-				if(!price) return this.rawGraphData[0].price;
-				return price.price;
+				if(!this.rawGraphData.length) return 0;
+				return (this.rawGraphData.reduce((acc,x) => {
+					if(x.date >= acc.date && acc.date <= this.createdAt) return x;
+					return acc;
+				})).price;
 			},
 			priceAtEnd(){
-				return this.rawGraphData[this.rawGraphData.length-1].price;
+				if(!this.rawGraphData.length) return 0;
+				return (this.rawGraphData.reduce((acc,x) => {
+					if(x.date >= acc.date && acc.date <= this.prediction.date) return x;
+					return acc;
+				})).price;
 			},
 			pnl(){
 				const val =parseFloat((this.priceAtEnd-this.priceAtStart)/this.priceAtEnd*100.0).toFixed(2);

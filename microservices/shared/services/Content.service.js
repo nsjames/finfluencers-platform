@@ -36,8 +36,8 @@ module.exports = class ContentService {
 			content.interactions = await ORM.query(INTERACTIONS_QUERY(content, user), Interaction);
 
 			if(content.type === CONTENT_TYPE.PREDICTION){
-				const thirtyDays = content.data.date - 86400*1000*30;
-				content.data.historical_prices = await TokenService.getPriceHistory(content.data.asset.id, thirtyDays, content.data.date);
+				const thirtyDaysBefore = content.data.date - 86400*1000*30;
+				content.data.historical_prices = await TokenService.getPriceHistory(content.data.asset.id, thirtyDaysBefore, content.data.date);
 				content.data.historical_prices = content.data.historical_prices.map(x => {
 					x.price = parseFloat(x.price);
 					return x;
@@ -65,14 +65,27 @@ module.exports = class ContentService {
 
     static async post(json, user){
         try {
-	        json.user_id = user.id;
+	        if(json.user_id !== user.id) return {error:`Content posted from wrong user ID`};
+	        if(!json.created_at || json.created_at < (+new Date() - 30*1000) || json.created_at > (+new Date() + 30*1000))
+	        	return {error:`Content date is not valid`};
 
         	let id = uuid();
 	        while(!!await ContentService.getById(id, true).catch((() => false))) id = uuid();
 
 
 	        const content = new Content(Object.assign(json, {id}));
-	        content.created_at = +new Date();
+
+	        switch(content.type){
+		        case CONTENT_TYPE.PREDICTION:
+		        	if(!content.data.asset.id) return {error:"Invalid asset"};
+		        	break;
+
+		        case CONTENT_TYPE.TRADE:
+		        	if(!content.data.from.id) return {error:"Invalid from asset"};
+		        	if(!content.data.to.id) return {error:"Invalid to asset"};
+		        	break;
+
+	        }
 
 	        if(!content.text.data.length) return {error:`You can't post empty text content`};
 
@@ -144,6 +157,15 @@ module.exports = class ContentService {
 		if(!content) return {error:"Could not find content to delete"};
 
 		if(content.user_id !== user.id) return {error:"You cannot delete content you did not create"};
+
+		if(content.type === CONTENT_TYPE.PREDICTION){
+			const timeDiff = content.data.date - content.created_at;
+			const halfLife = (content.data.date + (timeDiff/2));
+			const hasReachedHalfLife = +new Date() > halfLife;
+			if (hasReachedHalfLife && !content.data.applied) {
+				return {error: "Predictions can only be deleted when they haven't yet reached 50% of the completion date"};
+			}
+		}
 
 		return ORM.getBucket().mutateIn(content.index(), [
 			couchbase.MutateInSpec.upsert("soft_delete", 1),

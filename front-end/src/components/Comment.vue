@@ -10,7 +10,17 @@
 		<section class="details">
 			<figure class="line"><figure></figure></figure>
 			<section class="innards">
-				<figure class="text">{{comment.text}}</figure>
+				<!--<figure class="text">{{comment.text}}</figure>-->
+				<figure class="text">
+					<section class="markdown-content open">
+						<vue-simple-markdown :heading="false"
+						                     :image="true"
+						                     :inline-code="false"
+						                     :table="false"
+						                     :highlight="false"
+						                     :source="comment.text" />
+					</section>
+				</figure>
 
 				<section class="resolution" v-if="comment.resolution && comment.resolution.length" :class="{'red':comment.resolution === 'hurt'}">
 					{{comment.user.name}} says this <b>{{comment.resolution}}</b> them
@@ -25,7 +35,7 @@
 
 				<PostComment class="reply" v-if="commenting" :parent="asParent" :top-level-parent="parent" v-on:posted="postedComment" :reply="true" />
 
-				<Comment v-for="child in comment.comments" :key="child.id" :comment="child" :child="true" :parent="parent" />
+				<Comment v-for="child in comment.comments" :key="child.id" :comment="child" :child="true" :parent="parent" :top-level-poster="topLevelPoster" />
 
 			</section>
 		</section>

@@ -1,10 +1,10 @@
+const BlockchainService = require("./BlockchainService").default;
 
 const store = require('../store/index').default;
 const {Snackbar} = require('../models/Snackbar');
 
 const {sha256} = require('@finfluencers/shared/utils/crypto.util');
 
-console.log('process.env.API_BALANCER', process.env.VUE_APP_API_BALANCER);
 const HOST = process.env.VUE_APP_API_BALANCER;
 let token = localStorage.getItem('token') || null;
 
@@ -60,10 +60,14 @@ const GET = (route, api_key = false) => fetch(`${HOST}/${route}`, {
 });
 
 
-const regenUser = async () => {
+const regenUser = async (pass = null) => {
 	const user = await ApiService.getSelfUser();
 	console.log('self user', user);
 	if(!user) return false;
+
+	const key = await ApiService.getEncryptedKey();
+	if(pass) BlockchainService.decryptAndLoad(key.encrypted, pass);
+	else BlockchainService.loadKey(key.encrypted);
 
 	return store.dispatch('setUser', user);
 };
@@ -87,12 +91,14 @@ const ApiService = {
 		return GET(`users/find-code/${hash}`)
 	},
 	register:async(name, email, password, code, data) => {
+		const keys = await BlockchainService.generateKey(password);
 		return POST('users/register', {
 			email,
 			name,
 			auth:{type:1, data:password},
 			code,
 			data,
+			keys,
 		}).then(x => {
 			if(!x) return false;
 			return ApiService.login(email, password);
@@ -107,7 +113,7 @@ const ApiService = {
 				token = _token;
 				localStorage.setItem('token', token);
 
-				await regenUser();
+				await regenUser(pass);
 
 				return true;
 			}
@@ -115,10 +121,22 @@ const ApiService = {
 		})
 	},
 	postContent:async(content) => {
+		content.user_id = store.state.user.id;
+		content.created_at = +new Date();
+		console.log('content', JSON.parse(JSON.stringify(content)));
+		const data = content.data ? `:${JSON.stringify(content.data)}` : '';
+		content.signature = await BlockchainService.sign(sha256(`content:${content.user_id}:${content.created_at}:${content.type}:${content.text.data}:${data}`));
+		if(!content.signature) {
+			Snackbar.error("Cannot post content without a signature");
+			return false;
+		}
 		return POST('contents', content)
 	},
 	getSelfUser:async() => {
 		return GET('users/user')
+	},
+	getEncryptedKey:async() => {
+		return GET('users/encrypted-key')
 	},
 	getUser:async(name) => {
 		return GET(`users/user/${encodeURIComponent(name)}`)
@@ -149,8 +167,11 @@ const ApiService = {
 	subscribe(user_id){
 		return GET(`users/subscribe/${user_id}`);
 	},
-	searchAssets(term){
-		return GET(`search/tokens/${encodeURIComponent(term)}`)
+	searchAssets(symbolOrName){
+		return GET(`search/tokens/${encodeURIComponent(symbolOrName)}`)
+	},
+	search(terms){
+		return GET(`search/terms/${encodeURIComponent(terms)}`)
 	}
 }
 

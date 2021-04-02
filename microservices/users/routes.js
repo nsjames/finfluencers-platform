@@ -30,6 +30,11 @@ module.exports = () => {
         res.json(Results.success(await UserController.getSelfUser(req.user)));
     });
 
+    routes.get('/encrypted-key', AuthenticationService.validate, async (req, res) => {
+        // Can only get your own user
+        res.json(Results.success(await UserController.getEncryptedKey(req.user)));
+    });
+
     routes.get('/name/:name', async (req, res) => {
         res.json(Results.success(await UserController.isNameAvailable(decodeURIComponent(req.params.name))));
     });

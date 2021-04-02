@@ -9,11 +9,12 @@ export default class Popup {
 	}
 
 	open(){
-		store.dispatch('addPopup', this);
+		return store.dispatch('addPopup', this);
 	}
 
 	close(){
-		store.dispatch('removePopup', this);
+		if(this.data && this.data.resolve) this.data.resolve();
+		return store.dispatch('removePopup', this);
 	}
 
 }

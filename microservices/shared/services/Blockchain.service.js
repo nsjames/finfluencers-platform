@@ -11,6 +11,10 @@ const encode = auth => {
 
 module.exports = class BlockchainService {
 
+    static async pushTransaction(actions){
+
+    }
+
     static async checkActivationCode(code){
         return true;
     }

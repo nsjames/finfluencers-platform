@@ -1,7 +1,7 @@
 <template>
 	<section :id="randomId" class="dropdown" :class="{'transparent':!!transparent, 'open':open}">
 		<section v-if="!optionsOnly" class="selected" @click="open = !open">
-			<figure class="option active">
+			<figure class="option active" v-if="selected">
 				<i v-if="typeof selected === 'object' && selected.icon" :class="selected.icon"></i>
 				<span v-if="!hideSelectedText">{{typeof selected === 'object' ? selected.text : selected}}</span>
 			</figure>

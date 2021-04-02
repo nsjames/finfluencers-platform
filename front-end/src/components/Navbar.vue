@@ -2,29 +2,39 @@
 	<section>
 		<nav>
 			<transition mode="out-in" name="slide-left">
-				<section key="nav-logo" v-if="!searching" class="logo" @click="goToExplore">
+				<section key="nav-logo" v-if="!searchMode" class="logo" @click="goToExplore">
 					<Logo />
 				</section>
-				<section key="nav-searchbar" v-if="searching" class="search-bar">
+				<section key="nav-searchbar" v-if="searchMode" class="search-bar">
 					<i class="fas fa-search"></i>
-					<input placeholder="What are you looking for?" />
+					<input v-model="searchTerms" placeholder="What are you looking for?" />
 				</section>
 			</transition>
 			<transition mode="out-in" name="slide-right">
-				<section key="nav-actions" v-if="!searching" class="actions">
+				<section key="nav-actions" v-if="!searchMode" class="actions">
 					<i class="fa-lightbulb desktop-only" :class="theme === 'dark' ? 'fas' : 'far'" @click="toggleTheme"></i>
 					<!--<section class="alerts" @click="$router.push('/')">-->
 						<!--<i class="fas fa-bell"></i>-->
 						<!--<span class="desktop-only">10</span>-->
 					<!--</section>-->
-					<i v-tooltip="'Search'" class="fas fa-search" @click="searching = !searching"></i>
+					<i v-tooltip="'Search'" class="fas fa-search" @click="searchMode = !searchMode"></i>
 					<i v-tooltip="'Bookmarks'" class="fas fa-bookmark" @click="$router.push('/bookmarks')"></i>
 					<Profile :navbar="true" v-if="user" :user="user" :size="36" />
 				</section>
-				<section key="nav-closesearch" v-if="searching" class="close-search" @click="searching = false">
+				<section key="nav-closesearch" v-if="searchMode" class="close-search" @click="searchMode = false">
 					<i class="fas fa-times"></i>
 				</section>
 			</transition>
+
+			<section class="search-results" v-if="searchResults.length">
+				<figure class="header">Found {{searchResults.length}} results</figure>
+				<section class="items">
+					<section class="item" v-for="result in searchResults" @click="clickedSearchResult(result)">
+						<figure class="type">{{result.type}}</figure>
+						<figure class="text">{{result.text}}</figure>
+					</section>
+				</section>
+			</section>
 		</nav>
 		<figure class="nav-placeholder"></figure>
 	</section>
@@ -33,10 +43,16 @@
 <script>
 	import {mapActions, mapState} from "vuex";
 	import {EventBus} from "../services/EventBus";
+	import * as ApiService from "../services/ApiService";
+	import {CONTENT_TYPE} from '@finfluencers/shared/models/ContentType';
 
+	let searchTimeout;
 	export default {
 		data(){return {
+			searchMode:false,
 			searching:false,
+			searchTerms:'',
+			searchResults:[],
 		}},
 		mounted(){
 			this.setSpecificTheme(localStorage.getItem('theme') || 'light');
@@ -65,9 +81,53 @@
 				if(this.$route.name === 'Explore') EventBus.$emit('refresh-explore');
 				else this.$router.push('/explore');
 			},
+			contentTypeLabel(content){
+				switch(content.type){
+					case CONTENT_TYPE.GET_HELP: return 'Help!';
+					case CONTENT_TYPE.SET_GOAL: return 'Goal';
+					case CONTENT_TYPE.TRADE: return 'Investment';
+					case CONTENT_TYPE.KNOWLEDGE: return 'Advice';
+					case CONTENT_TYPE.PREDICTION: return 'Prediction';
+					case CONTENT_TYPE.PORTFOLIO: return null;
+				}
+			},
+			async search(){
+				this.searchResults = [];
+				const results = await ApiService.search(this.searchTerms.trim());
+				if(!results) return;
+
+				console.log(results);
+
+				this.searchResults = results.users.map(x => {
+					return {
+						type:'Profile',
+						text:x.name,
+						url:`/profile/${encodeURIComponent(x.name)}`
+					}
+				}).concat(results.content.map(x => {
+					return {
+						type:this.contentTypeLabel(x),
+						text:x.text.data.substr(0,40),
+						url:`/content/${x.id}`
+					}
+				}))
+			},
+			clickedSearchResult(result){
+				this.$router.push(result.url);
+				this.searchResults = [];
+				this.searchMode = false;
+				this.searchTerms = '';
+			},
 			...mapActions([
 				'setTheme'
 			])
+		},
+		watch:{
+			searchTerms(){
+				if(!this.searchTerms || !this.searchTerms.trim().length) return;
+				clearTimeout(searchTimeout);
+				searchTimeout = setTimeout(() => this.search(), 600);
+			}
 		}
 	}
 </script>
@@ -98,6 +158,57 @@
 		align-items: center;
 
 		color:var(--text-primary);
+
+		.search-results {
+			position:absolute;
+			top:73px;
+			left:0;
+			right:0;
+			border-radius: 10px;
+			background:var(--content-bg);
+			box-shadow:var(--nav-shadow);
+			overflow: hidden;
+			max-width:var(--max-width);
+			margin:0 auto;
+
+			> .header {
+				font-size: 11px;
+				background:var(--highlight);
+				color:#fff;
+				padding:4px 8px;
+			}
+
+			.items {
+				max-height:300px;
+				overflow-y: auto;
+
+				> .item {
+					padding:10px 10px;
+					display:flex;
+					font-size: 14px;
+					cursor: pointer;
+
+					.type {
+						padding:5px 10px;
+						background:var(--highlight);
+						color:#fff;
+						font-size: 11px;
+						font-weight: bold;
+						line-height: 11px;
+						border-radius: 50px;
+						margin-right:10px;
+					}
+
+					.text {
+
+					}
+
+					&:hover {
+						background:var(--highlight-opaque);
+					}
+				}
+			}
+		}
 
 		.slide-right-enter-active, .slide-right-leave-active,
 		.slide-left-enter-active, .slide-left-leave-active{

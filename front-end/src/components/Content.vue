@@ -79,8 +79,6 @@
 	import copyText from "../util/copy";
 	import {Snackbar} from '../models/Snackbar'
 
-	let deleteInterval;
-	let deleteTimeout;
 	export default {
 		props:['content', 'hideCommentsButton'],
 		components:{
@@ -98,6 +96,7 @@
 			deleted:false,
 			deleting:false,
 			deleteTimeLeft:0,
+			deleteInterval:null,
 		}},
 		mounted(){
 			if(this.content.text.data.indexOf('![') === 0){
@@ -118,6 +117,7 @@
 				return this.content.data && this.content.data.hasOwnProperty('sandboxed') && this.content.data.sandboxed;
 			},
 			isYours(){
+				if(!this.user) return false;
 				return this.content.user_id === this.user.id;
 			},
 			contentTypeLabel(){
@@ -153,16 +153,16 @@
 		methods:{
 			async deleteContent(){
 				if(this.deleting){
-					clearInterval(deleteInterval);
+					clearInterval(this.deleteInterval);
 					this.deleting = false;
 					return;
 				}
 
 				this.deleting = true;
 				this.deleteTimeLeft = 3;
-				deleteInterval = setInterval(async () => {
+				this.deleteInterval = setInterval(async () => {
 					if(this.deleteTimeLeft === 0){
-						clearInterval(deleteInterval);
+						clearInterval(this.deleteInterval);
 						this.deleted = true;
 						this.deleting = false;
 						if(!await ApiService.deleteContent(this.content)) this.deleted = false;
@@ -295,32 +295,6 @@
 			.text {
 				font-family: var(--secondary-font);
 				color:var(--text-primary);
-
-				.markdown-content {
-					overflow-y:hidden;
-					position: relative;
-					padding-bottom:20px;
-
-					&:after {
-						content:'';
-						display:block;
-						position:absolute;
-						bottom:0;
-						left:0;
-						right:0;
-						height:80px;
-						box-shadow:inset 0 -40px 20px -20px var(--content-bg);
-						pointer-events: none;
-					}
-
-					&.open {
-						max-height:none !important;
-
-						&:after {
-							display:none;
-						}
-					}
-				}
 
 				.disclaimer {
 					font-size: 9px;

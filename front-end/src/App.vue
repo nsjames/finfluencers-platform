@@ -48,7 +48,6 @@
 		async mounted(){
 			await ApiService.checkUser();
 			document.documentElement.className = localStorage.getItem('theme') || 'light';
-			document.documentElement.className = 'dark';
 			document.addEventListener('click', this.clickAnywhere);
 			EventBus.$on('opened-dropdown', this.openedDropdown);
 			EventBus.$on('loading', this.catchLoading);

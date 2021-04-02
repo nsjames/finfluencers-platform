@@ -13,7 +13,7 @@
 			<br />
 			<br />
 			<br />
-			<Comment v-for="comment in comments" :comment="comment" :top-level-poster="content.user_id" :parent="`content:${content.id}`" />
+			<Comment :key="comment.id" v-for="comment in comments" :comment="comment" :top-level-poster="content.user_id" :parent="`content:${content.id}`" />
 
 		</section>
 	</section>

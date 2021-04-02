@@ -7,8 +7,9 @@ const FIELDS = {
     name:'string',
     email:'string',
     auth:'object',
-    public_key:'string',
     graphics:'any',
+	keys:'any',
+    chain_id:'string',
 };
 
 const METHODS = {
@@ -28,8 +29,11 @@ const METHODS = {
             json.email = '';
             json.auth = null;
         }
-        if(!json.hasOwnProperty('public_key') || !json.public_key) {
-            json.public_key = '';
+        if(!json.hasOwnProperty('chain_id') || !json.chain_id) {
+            json.chain_id = '';
+        }
+        if(!json.hasOwnProperty('keys') || !json.keys) {
+            json.keys = '';
         }
     },
     safe(){
