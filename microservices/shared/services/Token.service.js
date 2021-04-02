@@ -10,8 +10,6 @@ const headers = {
     'X-CMC_PRO_API_KEY':process.env.CMC_KEY
 };
 
-console.log('process.env.CMC_KEY', process.env.CMC_KEY);
-
 const HOST = 'https://pro-api.coinmarketcap.com';
 const GET = route => fetch(`${HOST}/${route}`, Object.assign({headers}, {method:"GET"})).then(x => x.json());
 const POST = (route, data) => fetch(`${HOST}/${route}`, Object.assign({headers}, {
@@ -20,7 +18,7 @@ const POST = (route, data) => fetch(`${HOST}/${route}`, Object.assign({headers},
 })).then(x => x.json());
 
 const FETCH_LIMIT = 5000;
-const STALE_TIME = 60*60*4*1000;
+const STALE_TIME = 60*30*1000;
 
 module.exports = class TokenService {
 
@@ -32,21 +30,17 @@ module.exports = class TokenService {
         return ORM.upsert(+new Date(), `last_token_fetch_time`);
     }
 
-    static async updateTokenPrices(startIndex = 1){
-        // TODO: Separate below and this so it doesn't hold up the UI.
-    }
+    static async cacheTokenList(startIndex = 1, running = false, date = null){
+        if(!running) {
+	        const lastFetch = await this.getLastFetchTime();
+	        if (lastFetch > 0 && lastFetch > (+new Date() - STALE_TIME)) return;
+        }
 
-    static async cacheTokenList(startIndex = 1){
-        const finalize = async () => {
-            await this.setLastFetchTime();
-            return true;
-        };
-	    // Only fetch once per day.
-        const lastFetch = await this.getLastFetchTime();
-	    console.log('CACHING TOKEN LIST', lastFetch, (+new Date() - STALE_TIME))
-        if(lastFetch > 0 && lastFetch > (+new Date() - STALE_TIME)) return true;
+	    await this.setLastFetchTime();
 
-	    const date = +new Date();
+	    if(!date) date = +new Date();
+
+	    console.log('Caching token list', startIndex, (new Date(date)).toUTCString());
 
         const results = await GET(`v1/cryptocurrency/listings/latest?start=${startIndex}&limit=${FETCH_LIMIT}&aux=platform&sort=volume_30d&sort_dir=desc`).then(x => x.data).catch(() => []);
         if(results.length){
@@ -61,31 +55,28 @@ module.exports = class TokenService {
 		            contract:data.platform ? data.platform.token_address : '',
 	            });
 
-	            await ORM.upsert(cachedToken);
+	            // Only need to insert if it doesn't already exist
+	            await ORM.insert(cachedToken).catch(() => {});
 
 
 	            const tokenPrice = new TokenPrice({
 		            id:data.id.toString(),
 		            price:data.quote.USD.price.toString(),
-		            date
+		            date:+new Date(data.quote.USD.last_updated)
 	            });
 
 	            await ORM.upsert(tokenPrice);
             }
 
             // Don't need any more than this as we're sorting by volume_30d
-            if(startIndex > FETCH_LIMIT*2) return finalize();
+            if(startIndex > FETCH_LIMIT*2) return;
             // Get another round
-            return this.cacheTokenList(startIndex+FETCH_LIMIT);
-        } else {
-            return finalize();
+            return this.cacheTokenList(startIndex+FETCH_LIMIT, true, date);
         }
     }
 
     static async search(term){
-        await this.cacheTokenList();
 	    term = term.toUpperCase();
-	    console.log('term', term);
 
         return ORM.query(`SELECT * FROM BUCKET_NAME WHERE doc_type = 'cachedtoken' AND (UPPER(name) LIKE '${term}%' OR UPPER(symbol) LIKE '${term}%') ORDER BY symbol LIMIT 20`, CachedToken).then(tokens => {
             return tokens.sort((a,b) => {
@@ -96,7 +87,12 @@ module.exports = class TokenService {
     }
 
     static async getPriceHistory(id, start = 0, end = +new Date()){
-        return ORM.query(`SELECT * FROM BUCKET_NAME WHERE doc_type = 'tokenprice' AND id = '${id}' AND created_at BETWEEN ${start} AND ${end} ORDER BY created_at DESC LIMIT 180` /* 24 / 4hr * 30 days = 180 */, TokenPrice);
+	    // TODO: Get a maximum amount of prices, based on the diff between start and end.
+	    // Examples:
+	    // - 3 day diff, 12 prices per day
+	    // - 4 hour diff: 2 prices per hour
+	    // - 30 day diff: 1 price per day
+        return ORM.query(`SELECT * FROM BUCKET_NAME WHERE doc_type = 'tokenprice' AND id = '${id}' AND created_at BETWEEN ${start} AND ${end} ORDER BY created_at DESC LIMIT ${24 * STALE_TIME / 30 / 1000}` /* 30 days worth */, TokenPrice);
     }
 
 }

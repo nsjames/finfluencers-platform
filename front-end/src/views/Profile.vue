@@ -51,7 +51,7 @@
 				<!--</section>-->
 			<!--</section>-->
 
-			<Achievements :user-id="profile.id" />
+			<!--<Achievements :user-id="profile.id" />-->
 
 			<!--<section class="edit-portfolio" v-if="isYourProfile">-->
 				<!--<section class="how-to-edit">-->

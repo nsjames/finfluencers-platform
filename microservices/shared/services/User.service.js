@@ -3,6 +3,7 @@ const {INTERACTION_TYPE} = require('../models/InteractionType');
 
 const ORM = require('../orm');
 const User = require('../models/User.model');
+const UserInfluence = require('../models/UserInfluence.model');
 const Interaction = require('../models/Interaction.model');
 const couchbase = require('couchbase');
 
@@ -21,6 +22,7 @@ module.exports = class UserService {
             return [
                 x,
                 await ORM.insert(user.index(), user.emailIndex()),
+                await ORM.insert(user.index(), user.nameIndex()),
             ];
         });
     }
@@ -67,9 +69,10 @@ module.exports = class UserService {
     }
 
     static async getUserInfluence(user){
-	    const interactionCount = await ORM.query(`SELECT COUNT(*) FROM BUCKET_NAME WHERE doc_type = 'interaction' AND parent_owner_id = '${user.id}'`);
-	    const negativeContentResolutions = await ORM.query(`SELECT COUNT(*) FROM BUCKET_NAME WHERE doc_type = 'interaction' AND parent_owner_id = '${user.id}' AND type = ${INTERACTION_TYPE.CONTENT_RESOLUTION} AND data = -1`);
-	    return interactionCount - (negativeContentResolutions * 2);
+		return ORM.get((new UserInfluence({user_id:user.id})).index()).then(x => x.influence).catch(() => 0);
+	    // const interactionCount = await ORM.query(`SELECT COUNT(*) FROM BUCKET_NAME WHERE doc_type = 'interaction' AND parent_owner_id = '${user.id}'`);
+	    // const negativeContentResolutions = await ORM.query(`SELECT COUNT(*) FROM BUCKET_NAME WHERE doc_type = 'interaction' AND parent_owner_id = '${user.id}' AND type = ${INTERACTION_TYPE.CONTENT_RESOLUTION} AND data = -1`);
+	    // return userInfluence + interactionCount - (negativeContentResolutions * 2);
     }
 
     static async buildSnapshot(user){
@@ -81,6 +84,20 @@ module.exports = class UserService {
 
     static async totalUsers(){
         return ORM.query(`SELECT COUNT(*) FROM BUCKET_NAME WHERE doc_type = 'user'`);
+    }
+
+    static async deltaInfluence(delta, user_id){
+		const influence = new UserInfluence({user_id, influence:0});
+		if(!await ORM.exists(influence.index())){
+			await ORM.insert(influence);
+		}
+
+	    return ORM.getBucket().mutateIn(influence.index(), [
+		    couchbase.MutateInSpec.increment("influence", delta),
+	    ]).catch(err => {
+		    console.error("Did not add experience", err);
+		    return false;
+	    }).then(() => true);
     }
 
 }

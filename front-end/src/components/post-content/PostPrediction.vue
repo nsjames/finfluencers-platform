@@ -1,6 +1,6 @@
 <template>
 	<section class="post-prediction">
-		<label>Price and asset</label>
+		<label>Prediction details</label>
 		<section class="holder">
 			<section class="asset-input">
 				<TokenInput :valuea="content.data.price" v-on:asset="selectedAsset" v-on:valuea="x => $emit('price', x)" />

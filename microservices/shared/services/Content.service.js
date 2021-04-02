@@ -6,6 +6,7 @@ const couchbase = require('couchbase');
 const Content = require('../models/Content.model');
 const Interaction = require('../models/Interaction.model');
 const UserService = require('../services/User.service');
+const InteractionService = require('../services/Interaction.service');
 const TokenService = require('../services/Token.service');
 const uuid = require('../utils/uuid.util');
 const {sha256} = require('../utils/crypto.util');
@@ -92,7 +93,6 @@ module.exports = class ContentService {
 	static async getById(id, swallowError = false){
 		try {
 			const content = new Content({id});
-			console.log('content', content);
 			return ORM.get(content.index(), Content).catch(err => {
 				if(!swallowError) console.error("Get by id error: ", err);
 				return null;
@@ -104,7 +104,6 @@ module.exports = class ContentService {
 	}
 
 	static async interact(id, type, user){
-    	// TODO: Add blockchain here
 
 		const parent_index = `content:${id}`;
 		if(type !== INTERACTION_TYPE.HEART && type !== INTERACTION_TYPE.BOOKMARK){
@@ -118,25 +117,23 @@ module.exports = class ContentService {
 			return {error:"Can't interact with your own content"};
 		}
 
-		const interaction = new Interaction({
-			// Will fail to insert this if previous interaction already exists
-			id:sha256(`${parent_index}:${user.id}:${type}`),
-			user_id:user.id,
-			parent_index,
-			parent_owner_id:content.user_id,
-			type,
-			data:null,
-		});
+		const shaID = sha256(`${parent_index}:${user.id}:${type}`);
+		const index = (new Interaction({id:shaID})).index();
 
-		if(await ORM.exists(interaction.index())){
-			await ORM.remove(interaction.index());
+		if(await ORM.exists(index)){
+			await InteractionService.removeInteraction(shaID, content.user_id);
 			return {};
 		}
 
-		const saved = await ORM.insert(interaction).catch(() => null);
-		if(!saved) return {error:"Error saving interaction"};
+		const saved = await InteractionService.addInteraction(
+			shaID,
+			user.id,
+			parent_index,
+			content.user_id,
+			type,
+		);
 
-		return interaction;
+		return saved ? saved : {error:"Error saving interaction"};
 	}
 
 	static async delete(content_id, user){

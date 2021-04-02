@@ -4,6 +4,7 @@ const User = require('@finfluencers/shared/models/User.model');
 const UserData = require('@finfluencers/shared/models/UserData.model');
 const Interaction = require('@finfluencers/shared/models/Interaction.model');
 const {INTERACTION_TYPE} = require('@finfluencers/shared/models/InteractionType');
+const InteractionService = require('@finfluencers/shared/services/Interaction.service');
 const UserService = require('@finfluencers/shared/services/User.service');
 const BlockchainService = require('@finfluencers/shared/services/Blockchain.service');
 
@@ -49,20 +50,25 @@ module.exports = class UserController {
             if(await ORM.exists(user.emailIndex()).catch(() => false))
                 return results.error(results.ERROR_TYPES.DATABASE, "This account already exists");
 
+            if(await ORM.exists(user.nameIndex()).catch(() => false))
+                return results.error(results.ERROR_TYPES.DATABASE, "This username is already taken");
+
+            // Will throw here if invalid fields
+	        const userData = new UserData(Object.assign({
+		        user_id:user.id
+	        }, userJson.data));
+
             // Setting unique-id
             user.id = uuid();
             while(!!await UserService.getById(user.id, true).catch((() => false))) user.id = uuid();
 
+	        // TODO: Register on blockchain
             if(!await UserService.insert(user).catch(err => {
             	console.error("Error creating user", err);
             	return null;
             })){
                 return results.error(results.ERROR_TYPES.DATABASE, "Could not create the user");
             }
-
-	        const userData = new UserData(Object.assign({
-		        user_id:user.id
-	        }, userJson.data));
 
             await ORM.insert(userData);
 
@@ -127,32 +133,26 @@ module.exports = class UserController {
     }
 
 	static async subscribe(id, user){
-		// TODO: Add blockchain here
-
-		const parent_index = `user:${id}`;
-
 		if(!await UserService.exists(id))
 		    return {error:"The user you are trying to subscribe to does not exist"};
 
-		const interaction = new Interaction({
-			// Will fail to insert this if previous interaction already exists
-			id:sha256(`${parent_index}:${user.id}:${INTERACTION_TYPE.SUBSCRIBE}`),
-			user_id:user.id,
-			parent_index,
-			parent_owner_id:id,
-			type:INTERACTION_TYPE.SUBSCRIBE,
-			data:null,
-		});
+		const shaID = sha256(`${parent_index}:${user.id}:${INTERACTION_TYPE.SUBSCRIBE}`);
+		const index = (new Interaction({id:shaID})).index();
 
-		if(await ORM.exists(interaction.index())){
-			await ORM.remove(interaction.index());
+		if(await ORM.exists(index)){
+			await InteractionService.removeInteraction(shaID, id);
 			return {};
 		}
 
-		const saved = await ORM.insert(interaction).catch(() => null);
-		if(!saved) return {error:"Error saving interaction"};
+		const saved = await InteractionService.addInteraction(
+			shaID,
+			user.id,
+			`user:${id}`,
+			id,
+			INTERACTION_TYPE.SUBSCRIBE
+		);
 
-		return interaction;
+		return saved ? saved : {error:"Error saving interaction"};
 	}
 
 }

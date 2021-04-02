@@ -4,6 +4,7 @@ const Interaction = require('@finfluencers/shared/models/Interaction.model');
 const {INTERACTION_TYPE} = require('@finfluencers/shared/models/InteractionType');
 const UserService = require('@finfluencers/shared/services/User.service');
 const ContentService = require('@finfluencers/shared/services/Content.service');
+const InteractionService = require('@finfluencers/shared/services/Interaction.service');
 const uuid = require('@finfluencers/shared/utils/uuid.util');
 const {sha256} = require('@finfluencers/shared/utils/crypto.util');
 
@@ -55,17 +56,14 @@ module.exports = class CommentController {
 					if(content.user_id === user.id){
 						comment.resolution = '';
 					} else {
-						const interaction = new Interaction({
-							// Will fail to insert this if previous interaction already exists
-							id:sha256(`${content.id}:${user.id}:${INTERACTION_TYPE.CONTENT_RESOLUTION}`),
-							user_id:user.id,
-							parent_index:content.id,
-							parent_owner_id:content.user_id,
-							type:INTERACTION_TYPE.CONTENT_RESOLUTION,
-							data:comment.resolution === 'helped' ? 1 : -1,
-						});
-
-						await ORM.upsert(interaction);
+						await InteractionService.addInteraction(
+							sha256(`${content.id}:${user.id}:${INTERACTION_TYPE.CONTENT_RESOLUTION}`),
+							user.id,
+							`content:${content.id}`,
+							content.user_id,
+							INTERACTION_TYPE.CONTENT_RESOLUTION,
+							comment.resolution === 'helped' ? 1 : -1,
+						);
 					}
 				} else {
 					comment.resolution = '';

@@ -4,5 +4,6 @@ module.exports = {
 		SUBSCRIBE:1,
 		CONTENT_RESOLUTION:2,
 		BOOKMARK:3,
+		PREDICTION_RESOLUTION:4,
 	}
 };

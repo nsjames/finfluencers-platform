@@ -18,6 +18,9 @@ const METHODS = {
     emailIndex(){
         return this.rawIndex('email', sha256(this.email))
     },
+    nameIndex(){
+        return this.rawIndex('name', sha256(this.name))
+    },
     constructor(json){
         if(!json.hasOwnProperty('id')) {
             json.id = uuid();

@@ -65,7 +65,7 @@ const regenUser = async () => {
 	console.log('self user', user);
 	if(!user) return false;
 
-	store.dispatch('setUser', user);
+	return store.dispatch('setUser', user);
 };
 
 const ApiService = {
@@ -77,7 +77,7 @@ const ApiService = {
 		localStorage.removeItem('token')
 	},
 	checkUser(){
-		regenUser();
+		return regenUser();
 	},
 	checkActivationCode:async(code) => {
 		const hash = sha256(code);

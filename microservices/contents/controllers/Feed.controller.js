@@ -13,8 +13,6 @@ const Interaction = require('@finfluencers/shared/models/Interaction.model');
 module.exports = class FeedController {
 
     static async explore(options, user){
-    	// TODO: Move to cron job
-	    TokenService.cacheTokenList();
 
     	let typeQuery;
     	if(options.feedType === 0){

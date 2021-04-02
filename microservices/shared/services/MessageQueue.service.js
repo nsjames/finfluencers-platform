@@ -36,11 +36,15 @@ module.exports = class MessageQueueService {
 	static async clearSockets(){
 		console.log('Clearing message queue sockets')
 		await Promise.all(Object.keys(sockCache).map(async key => {
-			const [topic, type] = key.split('||');
-			if(type === SOCKET_TYPES.PUSH) await sockCache[key].unbind(`${ZMQ_HOST}:${topicToPort(topic)}`);
-			if(type === SOCKET_TYPES.PULL) await sockCache[key].disconnect(`${ZMQ_HOST}:${topicToPort(topic)}`);
-			sockCache[key].close();
-			await new Promise(r => setTimeout(r, 1000));
+			try {
+				const [topic, type] = key.split('||');
+				if(type === SOCKET_TYPES.PUSH) await sockCache[key].unbind(`${ZMQ_HOST}:${topicToPort(topic)}`);
+				if(type === SOCKET_TYPES.PULL) await sockCache[key].disconnect(`${ZMQ_HOST}:${topicToPort(topic)}`);
+				sockCache[key].close();
+				await new Promise(r => setTimeout(r, 1000));
+			} catch(e){
+				console.error("Error clearing socket", e);
+			}
 			delete sockCache[key];
 		}));
 

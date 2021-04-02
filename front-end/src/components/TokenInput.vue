@@ -29,6 +29,7 @@
 		}},
 		computed:{
 			formattedTokenOptions(){
+				if(!this.tokenOptions.length && this.assetSearch.length) return ['Please wait'];
 				return this.tokenOptions.map(x => {
 					const suffix = x.symbol ? `(${x.symbol})` : '';
 					return {

@@ -9,7 +9,6 @@ const ORM = require('@finfluencers/shared/orm');
 let server;
 let host;
 
-// TODO: Flesh out tests more
 describe('Authentication', () => {
 
     it('should raise a server', done => {

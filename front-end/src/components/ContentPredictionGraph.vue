@@ -101,7 +101,6 @@
 			},
 			successfulPrediction(){
 				if(!this.isComplete) return false;
-				console.log('prediction', this.prediction.asset.symbol, this.prediction.price, this.priceAtEnd)
 				if(parseFloat(this.prediction.price) > parseFloat(this.priceAtStart)){
 					return parseFloat(this.priceAtEnd) >= parseFloat(this.prediction.price);
 				} else {

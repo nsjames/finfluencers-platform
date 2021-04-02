@@ -46,12 +46,16 @@
 			Popups,
 		},
 		async mounted(){
-			ApiService.checkUser();
+			await ApiService.checkUser();
 			document.documentElement.className = localStorage.getItem('theme') || 'light';
 			document.documentElement.className = 'dark';
 			document.addEventListener('click', this.clickAnywhere);
 			EventBus.$on('opened-dropdown', this.openedDropdown);
 			EventBus.$on('loading', this.catchLoading);
+
+			if(this.isSignedInRoute && !this.user){
+				this.$router.push('/');
+			}
 		},
 		destroyed(){
 			document.removeEventListener('click', this.clickAnywhere);
@@ -61,6 +65,7 @@
 		computed:{
 			...mapState([
 				'snackbars',
+				'user',
 			]),
 			notLandingPage(){
 				return !['/', '/register'].includes(this.$route.fullPath);
@@ -71,7 +76,10 @@
 			},
 			routeName(){
 				return this.$route.name;
-			}
+			},
+			isSignedInRoute(){
+				return !['Landing', 'Onboarding', '404'].includes(this.$route.name);
+			},
 		},
 		methods:{
 			catchLoading(loading){
