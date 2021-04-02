@@ -267,6 +267,9 @@
 				</p>
 
 				<section class="account-details">
+					<figure class="name-error">
+						<span v-if="!nameAvailable && !checkingNameAvailable">Name is not available</span>
+					</figure>
 					<input v-model="name" class="big" autocomplete="off" placeholder="Choose a username" />
 					<input v-model="email" autocomplete="off" placeholder="Your email" />
 					<section class="password">
@@ -302,6 +305,7 @@
 		ACCOUNT:7,
 	};
 
+	let nameTimeout;
 	export default {
 		name: "Onboarding",
 		components:{
@@ -323,6 +327,9 @@
 			passwordConfirm:'',
 
 			loading:false,
+
+			nameAvailable:true,
+			checkingNameAvailable:false,
 
 		}},
 		mounted(){
@@ -396,9 +403,22 @@
 				const result = await ApiService.register(this.name, this.email, this.password, this.code, data);
 				if(result) this.$router.push('/explore');
 			},
+			async checkName(){
+				this.nameAvailable = await ApiService.isNameAvailable(this.name);
+				this.checkingNameAvailable = false;
+			},
 			...mapActions([
 				'setTheme'
 			])
+		},
+		watch:{
+			name(){
+				this.checkingNameAvailable = true;
+				clearTimeout(nameTimeout);
+				nameTimeout = setTimeout(() => {
+					this.checkName();
+				}, 300);
+			}
 		}
 	}
 </script>
@@ -696,6 +716,13 @@
 					margin:0 4px;
 				}
 			}
+		}
+
+		.name-error {
+			font-size: 14px;
+			font-weight: bold;
+			color:var(--highlight);
+			margin-bottom:10px;
 		}
 
 		.account-details {

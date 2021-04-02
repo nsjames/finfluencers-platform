@@ -30,6 +30,10 @@ module.exports = () => {
         res.json(Results.success(await UserController.getSelfUser(req.user)));
     });
 
+    routes.get('/name/:name', async (req, res) => {
+        res.json(Results.success(await UserController.isNameAvailable(decodeURIComponent(req.params.name))));
+    });
+
     routes.get('/user/:name', AuthenticationService.validate, async (req, res) => {
         const user = await UserController.find(decodeURIComponent(req.params.name), req.user);
         if(user) res.json(Results.success(user));

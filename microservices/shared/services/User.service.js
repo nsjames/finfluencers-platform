@@ -22,7 +22,6 @@ module.exports = class UserService {
             return [
                 x,
                 await ORM.insert(user.index(), user.emailIndex()),
-                await ORM.insert(user.index(), user.nameIndex()),
             ];
         });
     }
@@ -62,6 +61,15 @@ module.exports = class UserService {
             console.error('User service get by id error', e);
             return null;
         }
+    }
+
+    static async getByName(name, prepare = false){
+		return ORM.query(`SELECT * FROM BUCKET_NAME WHERE doc_type = 'user' AND LOWER(name) = '${name.toLowerCase()}'`, User).then(async x => {
+			if(Array.isArray(x)) x = x[0];
+			if(!prepare) return x;
+			await this.buildSnapshot(x);
+			return x;
+		});
     }
 
     static async exists(id){

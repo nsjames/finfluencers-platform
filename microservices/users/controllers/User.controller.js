@@ -14,6 +14,11 @@ const validateEmail = (email) => /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$
 
 module.exports = class UserController {
 
+	static async isNameAvailable(name){
+		const found = await UserService.getByName(name);
+		return !found;
+	}
+
     static async insert(userJson){
         try {
             if(!userJson.code || !userJson.code.length) return results.error(results.ERROR_TYPES.INVALID_PARAMS, "Invalid activation code");
@@ -48,19 +53,19 @@ module.exports = class UserController {
             });
 
             if(await ORM.exists(user.emailIndex()).catch(() => false))
-                return results.error(results.ERROR_TYPES.DATABASE, "This account already exists");
+                return results.error(results.ERROR_TYPES.DATABASE, "This email already has an account");
 
-            if(await ORM.exists(user.nameIndex()).catch(() => false))
+            if(await UserService.getByName(user.name))
                 return results.error(results.ERROR_TYPES.DATABASE, "This username is already taken");
-
-            // Will throw here if invalid fields
-	        const userData = new UserData(Object.assign({
-		        user_id:user.id
-	        }, userJson.data));
 
             // Setting unique-id
             user.id = uuid();
             while(!!await UserService.getById(user.id, true).catch((() => false))) user.id = uuid();
+
+	        // Will throw here if invalid fields
+	        const userData = new UserData(Object.assign({
+		        user_id:user.id
+	        }, userJson.data));
 
 	        // TODO: Register on blockchain
             if(!await UserService.insert(user).catch(err => {
@@ -86,7 +91,14 @@ module.exports = class UserController {
             const original = await UserService.get(email);
             if(!original) return results.error(results.ERROR_TYPES.DATABASE, "User does not exist");
 
-            if(userJson.name) original.name = userJson.name.replace(/[\t\n]+/g,' ');
+
+
+            if(userJson.name) {
+	            if(await ORM.exists((new User({name:userJson.name})).nameIndex()).catch(() => false))
+		            return results.error(results.ERROR_TYPES.DATABASE, "This username is already taken");
+
+            	original.name = userJson.name.replace(/[\t\n]+/g,' ');
+            }
             if(userJson.auth) {
                 const auth = new authentication.AccountAuth(userJson.auth);
                 if(!auth.isValid()) return results.error(results.ERROR_TYPES.INVALID_PARAMS, "The authorization object is invalid");
@@ -105,6 +117,7 @@ module.exports = class UserController {
     }
 
     static async getSelfUser(user){
+	    await UserService.buildSnapshot(user);
 	    const userData = await ORM.get((new UserData({user_id:user.id})).index());
 	    user = user.safe();
 	    user.data = userData;

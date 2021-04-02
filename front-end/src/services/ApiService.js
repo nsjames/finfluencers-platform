@@ -79,6 +79,9 @@ const ApiService = {
 	checkUser(){
 		return regenUser();
 	},
+	isNameAvailable(name){
+		return GET(`users/name/${encodeURIComponent(name)}`);
+	},
 	checkActivationCode:async(code) => {
 		const hash = sha256(code);
 		return GET(`users/find-code/${hash}`)
