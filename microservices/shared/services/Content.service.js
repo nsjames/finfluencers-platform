@@ -1,15 +1,19 @@
+
+
 const {INTERACTION_TYPE} = require("../models/InteractionType");
 const {CONTENT_TYPE} = require('../models/ContentType');
 
 const ORM = require('../orm');
 const couchbase = require('couchbase');
 const Content = require('../models/Content.model');
+const TokenPrice = require('../models/TokenPrice.model');
 const Interaction = require('../models/Interaction.model');
 const UserService = require('../services/User.service');
 const InteractionService = require('../services/Interaction.service');
 const TokenService = require('../services/Token.service');
 const uuid = require('../utils/uuid.util');
 const {sha256} = require('../utils/crypto.util');
+const {historicalPriceQuery} = require("../queries");
 
 // TODO: Left join these?
 const COMMENT_TRACKER_QUERY = (content) =>
@@ -44,13 +48,13 @@ module.exports = class ContentService {
 				});
 
 				if(content.data.historical_prices.length && content.data.historical_prices.length < 30){
-					for(let i = 0; i < 30 - content.data.historical_prices.length; i++){
-						content.data.historical_prices.push({
-							id:content.data.historical_prices[0].id,
-							price:content.data.historical_prices[0].price - (content.data.historical_prices[0].price / 5) + Math.round(Math.random() * content.data.historical_prices[0].price / 4),
-							date:content.data.historical_prices[0].date - (86400*1000*i)
-						});
-					}
+					// for(let i = 0; i < 30 - content.data.historical_prices.length; i++){
+					// 	content.data.historical_prices.push({
+					// 		id:content.data.historical_prices[0].id,
+					// 		price:content.data.historical_prices[0].price - (content.data.historical_prices[0].price / 5) + Math.round(Math.random() * content.data.historical_prices[0].price / 4),
+					// 		date:content.data.historical_prices[0].date - (86400*1000*i)
+					// 	});
+					// }
 
 					content.data.historical_prices = content.data.historical_prices.sort((a,b) => {
 						if(b.date > a.date) return -1;
@@ -78,6 +82,19 @@ module.exports = class ContentService {
 	        switch(content.type){
 		        case CONTENT_TYPE.PREDICTION:
 		        	if(!content.data.asset.id) return {error:"Invalid asset"};
+
+
+		        	console.log('content', content);
+			        let prices = await ORM.query(historicalPriceQuery(content, content.created_at - (86400000), content.created_at + (86400000)), TokenPrice)
+			        if(!prices || !prices.length) return {error:"Could not get a price for this prediction, please try again"};
+			        const priceAtStart = prices.reduce((acc,x) => {
+				        if(x.date >= acc.date && acc.date <= content.created_at) return x;
+				        return acc;
+			        });
+
+			        content.data.predicted_outcome = parseFloat((content.data.price-priceAtStart.price)/content.data.price*100.0);
+			        content.data.starting_price = priceAtStart.price;
+
 		        	break;
 
 		        case CONTENT_TYPE.TRADE:
@@ -167,12 +184,17 @@ module.exports = class ContentService {
 			}
 		}
 
+		// Deleting all bookmarks.
+		// TODO: Should we delete all interactions?
+		await ORM.query(`DELETE FROM BUCKET_NAME WHERE doc_type = 'interaction' AND type = ${INTERACTION_TYPE.BOOKMARK} AND parent_index = 'content:${content.id}'`);
+
+
 		return ORM.getBucket().mutateIn(content.index(), [
 			couchbase.MutateInSpec.upsert("soft_delete", 1),
 		]).catch(err => {
 			console.error("Content soft delete error", err);
 			return false;
-		}).then(x => {
+		}).then(async x => {
 			return true;
 		});
 	}

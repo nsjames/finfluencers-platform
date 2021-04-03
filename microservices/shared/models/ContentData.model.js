@@ -23,6 +23,8 @@ export class PredictionContent {
 		this.price = getOrDefault(json, 'price', 0);
 		this.date = getOrDefault(json, 'date', +new Date() + (60*60*24*7*1000));
 		this.applied = getOrDefault(json, 'applied', 0);
+		this.predicted_outcome = getOrDefault(json, 'predicted_outcome', 0);
+		this.starting_price = getOrDefault(json, 'starting_price', 0);
 	}
 }
 

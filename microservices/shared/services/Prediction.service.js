@@ -10,6 +10,7 @@ const MessageQueueService = require('./MessageQueue.service');
 const ContentService = require('./Content.service');
 const couchbase = require('couchbase');
 const UserService = require('../services/User.service');
+const {historicalPriceQuery} = require("../queries");
 
 module.exports = class PredictionService {
 
@@ -48,7 +49,7 @@ module.exports = class PredictionService {
 		const helpedMeComments = await ORM.query(`SELECT COUNT(*) FROM BUCKET_NAME WHERE doc_type = 'interaction' AND parent_index = 'content:${content.id}' AND type = ${INTERACTION_TYPE.CONTENT_RESOLUTION} AND data > 0`);
 		const hurtMeComments = await ORM.query(`SELECT COUNT(*) FROM BUCKET_NAME WHERE doc_type = 'interaction' AND parent_index = 'content:${content.id}' AND type = ${INTERACTION_TYPE.CONTENT_RESOLUTION} AND data < 0`);
 
-		let prices = await ORM.query(`SELECT * FROM BUCKET_NAME WHERE doc_type = 'tokenprice' AND id = '${content.data.asset.id}' AND date > ${content.data.date - (86400000)} AND date < ${content.data.date + (86400000)}`, TokenPrice)
+		let prices = await ORM.query(historicalPriceQuery(content, content.data.date - (86400000), content.data.date + (86400000)), TokenPrice)
 		const priceAtClose = prices.reduce((acc,x) => {
 			if(x.date >= acc.date && acc.date <= content.data.date) return x;
 			return acc;
@@ -95,13 +96,6 @@ module.exports = class PredictionService {
 		    });
 	    	await ORM.upsert(predictionResult);
 	    }
-
-
-
-
-
-
-
     }
 
 }

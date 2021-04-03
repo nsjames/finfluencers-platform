@@ -7,8 +7,8 @@
 					<Logo class="logo" />
 					<section class="title">finfluencers</section>
 					<section class="subtitle">
-						This is where money <b>lives.</b> Everyone here has the same goal,
-						and no-one is hiding it. Feel free to do the same and let it all out.
+						A majority of people grow up without learning about money, and yet money is one of the most
+						important tools we have.
 					</section>
 
 					<section class="checklist">
@@ -70,10 +70,10 @@
 	import * as ApiService from "../services/ApiService";
 
 	const checklist = [
-		'Work together to get the most out of your money',
-		'Make better financial decisions, based on reality',
-		'Be informed of financial trends here first',
-		'Capitalize on your financial knowledge',
+		'Learn about money from people with public track records.',
+		'Discuss strategies with only financial equals, and above.',
+		'Keep an eye on financial trends, based on real chatter.',
+		'Spread your knowledge and gain influence.',
 	]
 
 	export default {
@@ -198,10 +198,10 @@
 				background:var(--landing-button);
 				color:var(--background-color);
 				border-radius:50px;
-				padding:14px 40px;
+				padding:18px 40px;
 				outline:0;
 				border:0;
-				font-size: 14px;
+				font-size: 18px;
 				font-weight: bold;
 				margin-top:30px;
 				cursor: pointer;

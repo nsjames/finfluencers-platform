@@ -166,7 +166,10 @@
 						this.$nextTick(() => {
 							const elem = document.getElementById(`content_${posted.id}`);
 
-							if(elem) elem.classList.add('self-posted')
+							if(elem) {
+								elem.classList.add('self-posted');
+								elem.scrollIntoView({block: "center"});
+							}
 						})
 
 						this.content = new ContentModel({

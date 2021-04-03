@@ -84,6 +84,7 @@
 				return [...Array(this.graphData.length).keys()].map(() => parseFloat(this.prediction.price));
 			},
 			priceAtStart(){
+				if(this.prediction.starting_price) return this.prediction.starting_price;
 				if(!this.rawGraphData.length) return 0;
 				return (this.rawGraphData.reduce((acc,x) => {
 					if(x.date >= acc.date && acc.date <= this.createdAt) return x;
@@ -98,11 +99,12 @@
 				})).price;
 			},
 			pnl(){
-				const val =parseFloat((this.priceAtEnd-this.priceAtStart)/this.priceAtEnd*100.0).toFixed(2);
+				const val = parseFloat((this.priceAtEnd-this.priceAtStart)/this.priceAtEnd*100.0).toFixed(2);
 				return val > 0 ? '+' + val : val;
 			},
 			pnlToPrediction(){
-				const val = parseFloat((this.prediction.price-this.priceAtStart)/this.prediction.price*100.0).toFixed(2);
+				let val = parseFloat(this.prediction.predicted_outcome).toFixed(2);
+				if(isNaN(val)) val = parseFloat((this.prediction.price-this.priceAtStart)/this.prediction.price*100.0).toFixed(2);
 				return val > 0 ? '+' + val : val;
 			},
 			successfulPrediction(){
@@ -116,9 +118,12 @@
 		},
 		methods:{
 			formatPrice(price){
+				const maxDecimals = price > 10 ? 2 : price < 0.0001 ? 8 : 4;
 				return parseFloat(parseFloat(price).toFixed(8)).toLocaleString('en-US', {
 					style: 'currency',
 					currency: 'USD',
+					minimumFractionDigits: 2,
+					maximumFractionDigits: maxDecimals,
 				});
 			}
 		}

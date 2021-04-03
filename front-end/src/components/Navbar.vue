@@ -6,7 +6,8 @@
 					<Logo />
 				</section>
 				<section key="nav-searchbar" v-if="searchMode" class="search-bar">
-					<i class="fas fa-search"></i>
+					<i class="fas fa-search" v-if="!searching"></i>
+					<i class="fas fa-spin fa-spinner" v-if="searching"></i>
 					<input v-model="searchTerms" placeholder="What are you looking for?" />
 				</section>
 			</transition>
@@ -92,7 +93,6 @@
 				}
 			},
 			async search(){
-				this.searchResults = [];
 				const results = await ApiService.search(this.searchTerms.trim());
 				if(!results) return;
 
@@ -102,15 +102,17 @@
 					return {
 						type:'Profile',
 						text:x.name,
-						url:`/profile/${encodeURIComponent(x.name)}`
+						url:`/profile/${encodeURIComponent(x.name)}`,
 					}
 				}).concat(results.content.map(x => {
 					return {
 						type:this.contentTypeLabel(x),
 						text:x.text.data.substr(0,40),
-						url:`/content/${x.id}`
+						url:`/content/${x.id}`,
 					}
-				}))
+				}));
+
+				this.searching = false;
 			},
 			clickedSearchResult(result){
 				this.$router.push(result.url);
@@ -124,7 +126,9 @@
 		},
 		watch:{
 			searchTerms(){
+				this.searchResults = [];
 				if(!this.searchTerms || !this.searchTerms.trim().length) return;
+				this.searching = true;
 				clearTimeout(searchTimeout);
 				searchTimeout = setTimeout(() => this.search(), 600);
 			}
