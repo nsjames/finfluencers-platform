@@ -44,7 +44,7 @@
 			</section>
 
 			<Achievements :user-id="profile.id" />
-			<Timeline :user="profile" />
+			<Timeline :profile="profile" v-if="isYourProfile" />
 
 
 			<!--<section class="edit-portfolio" v-if="isYourProfile">-->

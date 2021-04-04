@@ -92,6 +92,7 @@
 				})).price;
 			},
 			priceAtEnd(){
+				if(this.prediction.closing_price) return this.prediction.closing_price;
 				if(!this.rawGraphData.length) return 0;
 				return (this.rawGraphData.reduce((acc,x) => {
 					if(x.date >= acc.date && acc.date <= this.prediction.date) return x;

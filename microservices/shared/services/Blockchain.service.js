@@ -17,9 +17,7 @@ const encode = auth => {
 
 const KEYS = {};
 
-const HOSTS = [
-    'http://10.0.0.18:8888',
-]
+const HOSTS = process.env.BLOCKCHAIN_HOSTS.split(',');
 
 let nextChain = 0;
 let nextHost = {};
@@ -50,6 +48,11 @@ HOSTS.map(async host => {
 module.exports = class BlockchainService {
 
 	static async pushTransaction(chain, actions){
+		if(!Object.keys(CHAINS).length) {
+			console.error("No blockchains are live.");
+			return true;
+		}
+
 		const signatureProvider = new JsSignatureProvider([KEYS[chain]]);
 		const chainHost = getNextHost(chain);
 		const rpc = new JsonRpc(chainHost, { fetch });
@@ -73,6 +76,11 @@ module.exports = class BlockchainService {
 	}
 
 	static async getData(chain, table, scope = 'data', rows = []){
+		if(!Object.keys(CHAINS).length) {
+			console.error("No blockchains are live.");
+			return [];
+		}
+
 		const chainHost = getNextHost(chain);
 		const rpc = new JsonRpc(chainHost, { fetch });
 
@@ -113,7 +121,7 @@ module.exports = class BlockchainService {
     }
 
     static async post(content, user){
-	    const result = await this.pushTransaction(user.chain_id, [{
+	    const result = await this.pushTransaction(content.chain_id, [{
 		    contract: 'data',
 		    action: 'post',
 		    data:{

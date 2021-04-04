@@ -14,6 +14,7 @@ const FIELDS = {
     tags:'any',
     soft_delete:'number',
     signature:'string',
+	chain_id:'string',
 };
 
 const METHODS = {
@@ -24,6 +25,7 @@ const METHODS = {
         if(!json.hasOwnProperty('tags') || !json.tags) json.tags = [];
         if(!json.hasOwnProperty('soft_delete') || !json.soft_delete) json.soft_delete = 0;
         if(!json.hasOwnProperty('signature') || !json.signature) json.signature = '';
+        if(!json.hasOwnProperty('chain_id') || !json.signature) json.chain_id = '';
     },
 };
 

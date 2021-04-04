@@ -43,7 +43,7 @@ module.exports = class ContentService {
 
 			if(content.type === CONTENT_TYPE.PREDICTION){
 				const thirtyDaysBefore = content.data.date - 86400*1000*30;
-				content.data.historical_prices = await TokenService.getPriceHistory(content.data.asset.id, thirtyDaysBefore, content.data.date);
+				content.data.historical_prices = await TokenService.getPriceHistory(content.data.asset.id, thirtyDaysBefore, content.data.date + 86400000);
 				content.data.historical_prices = content.data.historical_prices.map(x => {
 					x.price = parseFloat(x.price);
 					return x;
@@ -58,11 +58,11 @@ module.exports = class ContentService {
 					// 	});
 					// }
 
-					content.data.historical_prices = content.data.historical_prices.sort((a,b) => {
-						if(b.date > a.date) return -1;
-						if(b.date < a.date) return 1;
-						return 0;
-					});
+					// content.data.historical_prices = content.data.historical_prices.sort((a,b) => {
+					// 	if(b.date > a.date) return -1;
+					// 	if(b.date < a.date) return 1;
+					// 	return 0;
+					// });
 
 				}
 			}
@@ -108,6 +108,7 @@ module.exports = class ContentService {
 
 	        if(!content.text.data.length) return {error:`You can't post empty text content`};
 
+	        content.chain_id = BlockchainService.getChainId();
 	        if(!await BlockchainService.post(content, user)){
 	        	return {error:"Could not post content to chain"};
 	        }

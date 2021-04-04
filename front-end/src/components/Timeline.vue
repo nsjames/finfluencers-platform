@@ -16,25 +16,25 @@
 
 		<section class="timeline-tabs">
 			<section class="tab active">
-				<figure>$1.8m</figure>
-				<figure>Portfolio</figure>
+				<figure>0</figure>
+				<figure>Financial Potential</figure>
 			</section>
-			<section class="tab">
-				<figure>0.65</figure>
-				<figure>Potential</figure>
-			</section>
-			<section class="tab">
-				<figure>124</figure>
+			<section class="tab disabled">
+				<figure>{{parseInt(profile.snapshot.influence)}}</figure>
 				<figure>Influence</figure>
+			</section>
+			<section class="tab disabled">
+				<figure>{{parseInt(profile.snapshot.subscribers)}}</figure>
+				<figure>Subscribers</figure>
 			</section>
 		</section>
 
 		<section class="timeline-picker">
 			<section class="period">
-				<figure>All</figure>
-				<figure>1y</figure>
-				<figure>6m</figure>
-				<figure>3m</figure>
+				<figure class="disabled">All</figure>
+				<figure class="disabled">1y</figure>
+				<figure class="disabled">6m</figure>
+				<figure class="disabled">3m</figure>
 				<figure class="active">1m</figure>
 			</section>
 			<section class="graph" ref="graphcontainer">
@@ -61,7 +61,7 @@
 			timeline:0,
 			draggingTimeline:false,
 			startDragPosX:0,
-			fullData:[...Array(30).keys()].map((x,i) => Math.round((Math.random() * 100) * i*i)),
+			fullData:[...Array(30).keys()].map((x,i) => 0),
 			updateGraph:0,
 			tooltip:null,
 		}},
@@ -88,8 +88,12 @@
 				this.tooltip = {
 					x:tooltip.x,
 					y:tooltip.y,
-					action:actions[randomIndex],
-					details:details[randomIndex]
+					// action:actions[randomIndex],
+					// details:details[randomIndex]
+					action:'',
+					details:[
+						['Be patient', `You haven't made any financial decisions yet. Once you do you will be able to see how your finances progress.`]
+					]
 				}
 				this.$forceUpdate();
 			},
@@ -292,6 +296,11 @@
 					}
 				}
 			}
+		}
+
+		.disabled {
+			opacity:0.2;
+			cursor: not-allowed !important;
 		}
 	}
 </style>

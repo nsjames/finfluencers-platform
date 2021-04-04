@@ -28,6 +28,7 @@ module.exports = class PredictionService {
     }
 
     static async resolvePrediction(content){
+    	const retry = () => MessageQueueService.emit('resolve-prediction', JSON.parse(JSON.stringify(content)));
     	const date = +new Date();
 	    content = new Content(content);
 
@@ -37,27 +38,32 @@ module.exports = class PredictionService {
 
 	    console.log('Resolving prediction:', content.id);
 
+	    let prices = await ORM.query(historicalPriceQuery(content, content.created_at - (86400000), content.data.date + (86400000)), TokenPrice)
+	    const priceAtClose = prices.reduce((acc,x) => {
+		    if(x.date >= acc.date && acc.date <= content.data.date) return x;
+		    return acc;
+	    });
+	    const priceAtStart = prices.reduce((acc,x) => {
+		    if(x.date >= acc.date && acc.date <= content.created_at) return x;
+		    return acc;
+	    });
+
+	    if(!priceAtStart || !priceAtClose) {
+	    	return retry();
+	    }
+
 	    // Setting the applied first, to cure re-entrance.
 		if(!await ORM.getBucket().mutateIn(content.index(), [
 			couchbase.MutateInSpec.upsert("data.applied", 1),
+			couchbase.MutateInSpec.upsert("data.closing_price", priceAtClose.price),
 		]).catch(err => {
 			console.error("mutate resolve prediction error", err);
 			return false;
-		})) return MessageQueueService.emit('resolve-prediction', JSON.parse(JSON.stringify(content)));
+		})) return retry();
 
 		const hearts = await ORM.query(`SELECT COUNT(*) FROM BUCKET_NAME WHERE doc_type = 'interaction' AND parent_index = 'content:${content.id}' AND type = ${INTERACTION_TYPE.HEART}`);
 		const helpedMeComments = await ORM.query(`SELECT COUNT(*) FROM BUCKET_NAME WHERE doc_type = 'interaction' AND parent_index = 'content:${content.id}' AND type = ${INTERACTION_TYPE.CONTENT_RESOLUTION} AND data > 0`);
 		const hurtMeComments = await ORM.query(`SELECT COUNT(*) FROM BUCKET_NAME WHERE doc_type = 'interaction' AND parent_index = 'content:${content.id}' AND type = ${INTERACTION_TYPE.CONTENT_RESOLUTION} AND data < 0`);
-
-		let prices = await ORM.query(historicalPriceQuery(content, content.data.date - (86400000), content.data.date + (86400000)), TokenPrice)
-		const priceAtClose = prices.reduce((acc,x) => {
-			if(x.date >= acc.date && acc.date <= content.data.date) return x;
-			return acc;
-		});
-		const priceAtStart = prices.reduce((acc,x) => {
-			if(x.date >= acc.date && acc.date <= content.created_at) return x;
-			return acc;
-		});
 
 	    const isSuccessfulPrediction = false;
 	    const priceBuffer = content.data.price / (content.data.price/10);
@@ -95,6 +101,7 @@ module.exports = class PredictionService {
 			    date,
 		    });
 	    	await ORM.upsert(predictionResult);
+
 	    }
     }
 

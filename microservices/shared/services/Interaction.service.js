@@ -21,10 +21,12 @@ module.exports = class InteractionService {
     }
 
     static async removeInteraction(id, parent_owner_id, user){
+	    const interaction = await ORM.get((new Interaction({ id })).index(), Interaction);
+	    if(!interaction) return true;
 	    if(!await BlockchainService.uninteract(id, user)) return false;
-	    const interaction = ORM.get((new Interaction({ id })).index(), Interaction);
-	    await ORM.remove(interaction.index());
-	    await UserService.deltaInfluence(-interaction.data || 1, parent_owner_id);
+	    const removed = await ORM.remove(interaction.index());
+	    await UserService.deltaInfluence(-interaction.data || -1, parent_owner_id);
+	    return !!removed;
     }
 
 }

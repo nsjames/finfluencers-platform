@@ -25,6 +25,7 @@ export class PredictionContent {
 		this.applied = getOrDefault(json, 'applied', 0);
 		this.predicted_outcome = getOrDefault(json, 'predicted_outcome', 0);
 		this.starting_price = getOrDefault(json, 'starting_price', 0);
+		this.closing_price = getOrDefault(json, 'closing_price', 0);
 	}
 }
 

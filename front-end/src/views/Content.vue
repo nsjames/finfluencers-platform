@@ -13,7 +13,7 @@
 			<br />
 			<br />
 			<br />
-			<Comment :key="comment.id" v-for="comment in comments" :comment="comment" :top-level-poster="content.user_id" :parent="`content:${content.id}`" />
+			<Comment :id="`comment_${comment.id}`" :key="comment.id" v-for="comment in comments" :comment="comment" :top-level-poster="content.user_id" :parent="`content:${content.id}`" />
 
 		</section>
 	</section>
@@ -76,6 +76,11 @@
 			},
 			async postedComment(comment){
 				this.comments.unshift(comment);
+				this.$forceUpdate();
+
+				setTimeout(() => {
+					document.getElementById(`comment_${comment.id}`).scrollIntoView({block: "center"});
+				}, 1);
 			},
 			...mapActions([
 				'setContent',

@@ -162,7 +162,7 @@ module.exports = class UserController {
 		if(!await UserService.exists(id))
 		    return {error:"The user you are trying to subscribe to does not exist"};
 
-		const shaID = sha256(`${parent_index}:${user.id}:${INTERACTION_TYPE.SUBSCRIBE}`);
+		const shaID = sha256(`user:${id}:${user.id}:${INTERACTION_TYPE.SUBSCRIBE}`);
 		const index = (new Interaction({id:shaID})).index();
 
 		if(await ORM.exists(index)){

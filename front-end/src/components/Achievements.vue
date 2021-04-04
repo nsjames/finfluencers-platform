@@ -16,25 +16,15 @@
 			achievements(){
 				return [
 					{
-						description:`Put 5% of monthly income into savings for 6 months in a row.`,
-						icon:'fas fa-piggy-bank',
-						title:`Savings II`
+						description:`You have achieved the beginner rank. The more you do on finfluencers, the more achievements you will unlock.`,
+						icon:'fas fa-graduation-cap',
+						title:`Beginner`
 					},
 					{
-						description:`Put 10% of monthly income into savings for 6 months in a row.`,
-						icon:'fas fa-piggy-bank',
-						title:`Savings I`
+						description:`You joined Finfluencers right as we launched. You must be smart.`,
+						icon:'fas fa-umbrella-beach',
+						title:`Open Beta`
 					},
-					{
-						description:`Got 1000 positive feedback ratings from advice.`,
-						icon:'fas fa-hands-helping',
-						title:`Advice Novice`
-					},
-					{
-						description:`Got 1st place in the bi-monthly financial advice tournament.`,
-						icon:'fas fa-award',
-						title:`First Place`
-					}
 				]
 			}
 		}
