@@ -1,6 +1,7 @@
 <template>
 	<section>
 		<section class="profile" v-if="profile"> <!-- :class="{'editable':isYourProfile}" -->
+			<ColorBlast />
 
 			<section class="banner">
 				<figure class="image" :style="`background-image:url(${bannerImage})`"></figure>
@@ -42,16 +43,9 @@
 				</section>
 			</section>
 
-			<!--<section class="portfolio-container">-->
-				<!--&lt;!&ndash;<label>{{isYourProfile ? 'Your' : `${profile.name}'s`}} current portfolio</label>&ndash;&gt;-->
-				<!--<section class="portfolio">-->
-					<!--<ContentPortfolio :portfolio="{snapshot:profile.snapshot}" :details="[-->
-					<!--// ['Saved versus earned','84%'],-->
-				<!--]" :show-comparison="!isYourProfile" />-->
-				<!--</section>-->
-			<!--</section>-->
+			<Achievements :user-id="profile.id" />
+			<Timeline :user="profile" />
 
-			<!--<Achievements :user-id="profile.id" />-->
 
 			<!--<section class="edit-portfolio" v-if="isYourProfile">-->
 				<!--<section class="how-to-edit">-->
@@ -88,6 +82,7 @@
 
 <script>
 	import ColorBlast from '../components/svgs/ColorBlast';
+	import Timeline from '../components/Timeline';
 	import ContentPortfolio from '../components/ContentPortfolio';
 	import PostContent from '../components/PostContent';
 	import Achievements from '../components/Achievements';
@@ -138,6 +133,7 @@
 			Content,
 			ContentPortfolio,
 			Achievements,
+			Timeline,
 		},
 		data(){return {
 			profile:null,

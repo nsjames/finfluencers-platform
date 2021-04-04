@@ -1,21 +1,22 @@
 <template>
 	<section class="graph-item">
-		<canvas ref="graph" :height="height"></canvas>
+		<canvas ref="graph" :height="small ? 50 : 240"></canvas>
 	</section>
 </template>
 
 <script>
 	import Chart from 'chart.js';
 	import {mapState} from "vuex";
+	import formatNumber from "../util/formatNumber";
 
-	Chart.defaults.global.legend.display = false;
-	Chart.defaults.global.tooltips.enabled = false;
+	// Chart.defaults.global.legend.display = false;
+	// Chart.defaults.global.tooltips.enabled = false;
 	Chart.defaults.global.responsive = true;
 	Chart.defaults.global.maintainAspectRatio = false;
 
 
 	export default {
-		props:['hovering', 'height', 'dataArr', 'secondary', 'dataArrSecondary', 'ticks', 'labels'],
+		props:['small', 'dataA', 'dataB', 'updater'],
 		data(){return {
 			chart:null,
 			graphSet:false,
@@ -33,47 +34,41 @@
 		methods:{
 			async setGraph(){
 				var style = getComputedStyle(document.body);
+				var lightLine = style.getPropertyValue('--light-line');
 				var tickColor = style.getPropertyValue('--text-secondary');
-				var color0 = style.getPropertyValue('--graph-line-0');
-				var color1 = style.getPropertyValue('--graph-line-1');
-				var color2 = style.getPropertyValue('--graph-line-mine');
+				var color0 = style.getPropertyValue('--highlight');
+				var color1 = style.getPropertyValue('--highlight-opaque');
 
-				var gradientStroke = this.$refs.graph.getContext("2d").createLinearGradient(500, 0, 100, 0);
-				gradientStroke.addColorStop(0, color1);
-				gradientStroke.addColorStop(1, color0);
 
-				const data = this.dataArr || [10, 180, 20, 100, 50, 120, 80, 123, 148, 180, 160, 210, 190, 250, 280, 210, 320, 390, 450, 500, 290, 390, 412];
-
-				const both = data.concat(this.dataArrSecondary ? this.dataArrSecondary : []);
-				let highest = both.sort()[both.length-1];
-				let lowest = both.sort()[0];
-
+				const data = this.dataA;
+				// const data = this.dataA || [20, 23, 40, 353, 2658, 2350, 2350, 5943, 4904, 3240, 5905, 6090, 7094, 5960];
 				const dataSet1 = {
 					data,
-					lineTension: 0.4,
+					lineTension: 0,
 					fill: false,
-					borderColor: this.secondary ? color2 : gradientStroke,
-					backgroundColor: 'transparent',
+					backgroundColor:color1,
+					borderColor: this.small ? color1 : color0,
 					spanGaps: true,
-					pointRadius:0,
-					borderWidth:5,
-					borderDash:this.secondary ? [5,2] : null
+					pointRadius:this.small ? 0 : 2,
+					pointHoverRadius:this.small ? 0 : 10,
+					pointHitRadius:this.small ? 0 : 10,
+					borderWidth:this.small ? 2 : 1,
+					hoverBackgroundColor:color0,
 				};
-				const dataSet2 = this.dataArrSecondary ? {
-					data:this.dataArrSecondary,
-					lineTension: 0.4,
+				const dataSet2 = this.dataB ? {
+					data:this.dataB,
+					lineTension: 0,
 					fill: false,
-					borderColor: color2,
+					borderColor: color1,
 					backgroundColor: 'transparent',
 					spanGaps: true,
 					pointRadius:0,
-					borderWidth:5,
-					borderDash:[5,3]
+					borderWidth:2,
 				} : null;
 				this.chart = new Chart(this.$refs.graph, {
 					type: 'line',
 					data: {
-						labels: this.labels ? this.labels : data.map(x => null),
+						labels: data.map(x => null),
 						datasets:[dataSet1, dataSet2].filter(x => !!x)
 					},
 					options: {
@@ -82,17 +77,22 @@
 						},
 						tooltips:{
 							enabled:false,
+							axis:'y',
+							custom:(tooltip) => {
+								if(!tooltip.dataPoints) return this.$emit('tooltip', null);
+								this.$emit('tooltip', tooltip);
+							},
 						},
 						animation: {
-							duration: 0
+							duration: 800
 						},
 						responsive: true,
 						maintainAspectRatio: false,
 						layout: {
 							padding: {
-								left:-10,
+								left:-20,
 								right:0,
-								top:0,
+								top:this.small ? 0 : 40,
 								bottom:0,
 							}
 						},
@@ -102,24 +102,31 @@
 							scaleBeginAtZero: false,
 							yAxes: [{
 								ticks: {
-									display: !!this.ticks,
+									display: !this.small,
 									fontColor:tickColor,
-									beginAtZero: false,
+									callback: (label, index, labels) => {
+										return '';
+									},
+									autoSkip: true,
+									maxTicksLimit: 5,
+									minTicksLimit: 5,
 								},
 								gridLines: {
-									display:false
+									display:!this.small,
+									drawTicks:false,
+									color:lightLine,
+									zeroLineColor: color1,
+									drawBorder: false,
 								}
 							}],
 							xAxes: [{
 								ticks: {
-									display: !!this.labels,
-									fontColor:tickColor,
-
-									beginAtZero: false,
-									scaleBeginAtZero: false
+									display: false,
 								},
 								gridLines: {
 									display:false,
+									color:lightLine,
+									zeroLineColor: lightLine,
 								}
 							}],
 						}
@@ -131,7 +138,7 @@
 			updateGraph(){
 				if(this.chart && this.graphSet) {
 					setTimeout(() => {
-						this.chart.data.datasets[0].data = this.dataArr;
+						this.chart.data.datasets[0].data = this.dataA;
 
 						this.chart.update();
 					}, 500);
@@ -139,27 +146,26 @@
 			},
 		},
 		watch:{
-			'hovering'(){
-				this.setGraph();
-			},
 			'theme'(){
 				this.setGraph();
 			},
 			'height'(){
 				this.setGraph();
 			},
-			'dataArr'(){
+			'updater'(){
 				this.updateGraph();
-			}
+			},
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
 	.graph-item {
+		position: relative;
 
-		canvas {
-
+		.graph {
+			position: relative;
+			z-index:1;
 		}
 	}
 

@@ -1,3 +1,4 @@
+const BlockchainService = require('./Blockchain.service');
 
 
 const {INTERACTION_TYPE} = require("../models/InteractionType");
@@ -14,6 +15,7 @@ const TokenService = require('../services/Token.service');
 const uuid = require('../utils/uuid.util');
 const {sha256} = require('../utils/crypto.util');
 const {historicalPriceQuery} = require("../queries");
+const {USD_ID} = require('../models/TokenIds');
 
 // TODO: Left join these?
 const COMMENT_TRACKER_QUERY = (content) =>
@@ -106,7 +108,35 @@ module.exports = class ContentService {
 
 	        if(!content.text.data.length) return {error:`You can't post empty text content`};
 
-	        // TODO: Add to blockchain
+	        if(!await BlockchainService.post(content, user)){
+	        	return {error:"Could not post content to chain"};
+	        }
+
+	        switch(content.type){
+		        case CONTENT_TYPE.TRADE:
+		        	const assets = await BlockchainService.getPortfolio(user);
+
+			        const deltaAsset = (asset, neg = false) => {
+						const found = assets.find(x => x.id === asset.id.toString());
+						const delta = parseFloat(neg ? -parseFloat(asset.amount) : parseFloat(asset.amount));
+						if(found) found.amount = (parseFloat(found.amount) + delta).toString();
+						else assets.push({id:asset.id.toString(), amount:delta.toString()});
+			        };
+
+			        deltaAsset(content.data.from, true);
+			        deltaAsset(content.data.to);
+
+			        console.log(assets);
+
+			        if(!await BlockchainService.portfolio(user, id, assets)){
+				        return {error:"Could not post content to chain"};
+			        }
+
+			        console.log('portfolio after', await BlockchainService.getPortfolio(user));
+
+			        break;
+
+	        }
 
 	        const posted = await ORM.insert(content);
 
@@ -151,13 +181,14 @@ module.exports = class ContentService {
 		const index = (new Interaction({id:shaID})).index();
 
 		if(await ORM.exists(index)){
-			await InteractionService.removeInteraction(shaID, content.user_id);
+			if(!await InteractionService.removeInteraction(shaID, content.user_id, user))
+				return {error:"Could not remove previous interaction from chain"}
 			return {};
 		}
 
 		const saved = await InteractionService.addInteraction(
 			shaID,
-			user.id,
+			user,
 			parent_index,
 			content.user_id,
 			type,

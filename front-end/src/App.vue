@@ -7,7 +7,6 @@
 		<figure class="global-background"></figure>
 		<section class="router">
 			<Navbar v-if="canShowNavbar" />
-			<!--<ColorBlast v-if="notLandingPage" />-->
 			<transition :name="routeTransition" mode="out-in">
 				<router-view />
 			</transition>

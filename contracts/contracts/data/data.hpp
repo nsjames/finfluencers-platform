@@ -1,51 +1,77 @@
-#include "../../libraries/nlohmann/json.hpp"
-
 #include <eosio/eosio.hpp>
+#include <eosio/asset.hpp>
+#include <eosio/crypto.hpp>
 using namespace eosio;
-using Json = nlohmann::json;
 
 namespace data_header {
 
-    TABLE [[eosio::contract("data")]] Interaction {
+    TABLE [[eosio::contract("data")]] User {
+            uint64_t                id;
+            public_key              key;
+            std::string             document;
+
+
+            uint64_t primary_key() const { return id; }
+
+            EOSLIB_SERIALIZE(User, (id)(key)(document))
+    };
+
+    typedef eosio::multi_index<"users"_n, User> Users;
+
+    TABLE [[eosio::contract("data")]] Content {
+            uint64_t                id;
             uint64_t                user_id;
-            eosio::time_point_sec   created_at;
-            std::string             data;
+            std::string             document;
 
 
             uint64_t primary_key() const { return id; }
+            uint64_t by_user() const { return user_id; }
 
-            EOSLIB_SERIALIZE(Content, (id)(created_at)(data))
+            EOSLIB_SERIALIZE(Content, (id)(user_id)(document))
     };
 
-    typedef eosio::multi_index<"interactions"_n, Content> Contents;
+    typedef eosio::multi_index<"contents"_n, Content,
+            indexed_by<"user"_n, const_mem_fun<Content, uint64_t, &Content::by_user>>
+    > Contents;
 
-
-
-
-
-    TABLE [[eosio::contract("data")]] ReverseIndex {
-            uint64_t            id;
-            uint64_t            value;
+    TABLE [[eosio::contract("data")]] Interaction {
+            uint64_t                id;
+            uint64_t                user_id;
+            std::string             document;
 
 
             uint64_t primary_key() const { return id; }
-            uint64_t by_value() const { return value; }
+            uint64_t by_user() const { return user_id; }
 
-            std::string to_string() const {
-                return "{\"id\":"+std::to_string(id)+",\"value\":"+std::to_string(value)+"}";
-            }
-
-            Json to_json() const {
-                Json json;
-                json["id"] = id;
-                json["value"] = value;
-                return json;
-            }
-
-            EOSLIB_SERIALIZE(ReverseIndex, (id)(value))
+            EOSLIB_SERIALIZE(Interaction, (id)(user_id)(document))
     };
 
-    typedef eosio::multi_index<"reverseindex"_n, ReverseIndex,
-            indexed_by<"value"_n, const_mem_fun<ReverseIndex, uint64_t, &ReverseIndex::by_value>>
-    > ReverseIndices;
+    typedef eosio::multi_index<"interactions"_n, Interaction,
+            indexed_by<"user"_n, const_mem_fun<Interaction, uint64_t, &Interaction::by_user>>
+    > Interactions;
+
+    struct Asset {
+        std::string     id;
+        std::string     amount;
+    };
+
+    TABLE [[eosio::contract("data")]] Portfolio {
+            uint64_t                timestamp;
+            uint64_t                content_id;
+            std::vector<Asset>      assets;
+
+
+            uint64_t primary_key() const { return timestamp; }
+            uint64_t by_content_id() const { return content_id; }
+
+            EOSLIB_SERIALIZE(Portfolio, (timestamp)(content_id)(assets))
+    };
+
+    typedef eosio::multi_index<"portfolios"_n, Portfolio,
+            indexed_by<"content"_n, const_mem_fun<Portfolio, uint64_t, &Portfolio::by_content_id>>
+    > Portfolios;
+
+    // TODO: Comments
+
+
 }

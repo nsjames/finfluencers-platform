@@ -52,6 +52,7 @@ module.exports = class UserController {
 	            auth,
 	            graphics:{},
 	            keys:userJson.keys,
+	            chain_id:BlockchainService.getChainId()
             });
 
             if(await ORM.exists(user.emailIndex()).catch(() => false))
@@ -70,6 +71,9 @@ module.exports = class UserController {
 	        }, userJson.data));
 
 	        // TODO: Register on blockchain
+	        const pushedToChain = await BlockchainService.user(user);
+	        if(!pushedToChain) return results.error(results.ERROR_TYPES.DATABASE, "Could not create user on chain");
+
             if(!await UserService.insert(user).catch(err => {
             	console.error("Error creating user", err);
             	return null;
@@ -162,13 +166,14 @@ module.exports = class UserController {
 		const index = (new Interaction({id:shaID})).index();
 
 		if(await ORM.exists(index)){
-			await InteractionService.removeInteraction(shaID, id);
+			if(!await InteractionService.removeInteraction(shaID, id, user))
+				return {error:"Could not remove subscription from chain"};
 			return {};
 		}
 
 		const saved = await InteractionService.addInteraction(
 			shaID,
-			user.id,
+			user,
 			`user:${id}`,
 			id,
 			INTERACTION_TYPE.SUBSCRIBE

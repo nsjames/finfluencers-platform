@@ -56,14 +56,14 @@ module.exports = class CommentController {
 					if(content.user_id === user.id){
 						comment.resolution = '';
 					} else {
-						await InteractionService.addInteraction(
+						if(!await InteractionService.addInteraction(
 							sha256(`${content.id}:${user.id}:${INTERACTION_TYPE.CONTENT_RESOLUTION}`),
-							user.id,
+							user,
 							`content:${content.id}`,
 							content.user_id,
 							INTERACTION_TYPE.CONTENT_RESOLUTION,
 							comment.resolution === 'helped' ? 1 : -1,
-						);
+						)) return {error:"Could not put content resolution on chain"}
 					}
 				} else {
 					comment.resolution = '';
