@@ -57,5 +57,14 @@ npm start
 
 #### Terminal 3 (Blockchain)
 ```
-// TODO:
+# Install eosio.cdt and eosio
+cd ./contracts
+./run.sh
 ```
+
+
+#### Issues with npm links
+We have not put the shared library onto npm yet, so it might cause some issues due to linking.
+
+If you're getting `@finfluencers/shared` errors, go into `./microservices/shared/` and run `npm link`.
+Then run in the `microservices` dir, run `node install_all.js`
