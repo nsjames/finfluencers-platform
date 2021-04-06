@@ -49,22 +49,11 @@ module.exports = class ContentService {
 					return x;
 				});
 
-				if(content.data.historical_prices.length && content.data.historical_prices.length < 30){
-					// for(let i = 0; i < 30 - content.data.historical_prices.length; i++){
-					// 	content.data.historical_prices.push({
-					// 		id:content.data.historical_prices[0].id,
-					// 		price:content.data.historical_prices[0].price - (content.data.historical_prices[0].price / 5) + Math.round(Math.random() * content.data.historical_prices[0].price / 4),
-					// 		date:content.data.historical_prices[0].date - (86400*1000*i)
-					// 	});
-					// }
-
-					// content.data.historical_prices = content.data.historical_prices.sort((a,b) => {
-					// 	if(b.date > a.date) return -1;
-					// 	if(b.date < a.date) return 1;
-					// 	return 0;
-					// });
-
-				}
+				content.data.historical_prices = content.data.historical_prices.sort((a,b) => {
+					if(b.date > a.date) return -1;
+					if(b.date < a.date) return 1;
+					return 0;
+				});
 			}
 		}));
 	}

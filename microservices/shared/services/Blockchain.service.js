@@ -26,7 +26,7 @@ const CHAINS = {};
 
 const getNextChain = () => {
     nextChain++;
-	return Object.keys(CHAINS)[nextChain % Object.keys(CHAINS).length];
+	return Object.keys(CHAINS)[nextChain % Object.keys(CHAINS).length] || '';
 };
 
 const getNextHost = (chain) => {

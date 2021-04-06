@@ -108,6 +108,11 @@
 					}, 500);
 				}
 			},
+			'theme'(){
+				if(!this.isSignedInRoute && this.theme === 'dark'){
+					this.setTheme('light');
+				}
+			}
 		}
 	}
 </script>

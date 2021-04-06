@@ -43,7 +43,10 @@
 				<label>Sign in</label>
 				<input placeholder="Your email" v-model="email" />
 				<input placeholder="Password" type="password" v-model="password" />
-				<button @click="login">Log in</button>
+				<button @click="login">
+					<span v-if="!loggingIn">Log in</span>
+					<i class="fas fa-spin fa-spinner" v-else></i>
+				</button>
 
 				<figure class="secondary-action">
 					Want to <router-link tag="span" to="/register">create an account</router-link> instead?
@@ -84,6 +87,7 @@
 			checklist,
 			email:'',
 			password:'',
+			loggingIn:false,
 		}},
 		mounted(){
 			document.documentElement.className = 'light';
@@ -94,9 +98,10 @@
 		},
 		methods:{
 			async login(){
-				const login = await ApiService.login(this.email, this.password);
-
+				this.loggingIn = true;
+				const login = await ApiService.login(this.email, this.password).catch(() => false);
 				if(login) this.$router.push('/explore');
+				this.loggingIn = false;
 			},
 		}
 	}

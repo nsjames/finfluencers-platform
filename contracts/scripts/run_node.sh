@@ -1,6 +1,8 @@
 #!/bin/bash
 
-
+# tmux
+# ctrl+b && d
+# signature-provider = EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV=KEY:5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3
 
 pkill -f nodeos
 

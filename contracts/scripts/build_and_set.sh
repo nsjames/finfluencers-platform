@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PUBLIC_KEY="EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV"
+PUBLIC_KEY=${1:-"EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV"}
 
 function build {
   eosio-cpp --abigen --contract=$1 ./contracts/$1/$1.cpp -o ~/contracts/$1.wasm
