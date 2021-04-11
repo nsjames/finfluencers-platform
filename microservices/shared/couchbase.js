@@ -19,7 +19,6 @@ const init = (host, username, password, bucket_name) => {
 const query = (queryString, model = null) => {
     // Replaces placeholder param.
     queryString = queryString.replace(/BUCKET_NAME/g, '`'+BUCKET_NAME+'`');
-    // console.log(queryString);
 
     const isCount = queryString.indexOf('COUNT(') > -1;
 

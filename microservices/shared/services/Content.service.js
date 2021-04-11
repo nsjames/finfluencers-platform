@@ -42,7 +42,7 @@ module.exports = class ContentService {
 			content.interactions = await ORM.query(INTERACTIONS_QUERY(content, user), Interaction);
 
 			if(content.type === CONTENT_TYPE.PREDICTION){
-				const thirtyDaysBefore = content.data.date - 86400*1000*30;
+				const thirtyDaysBefore = content.created_at - 86400*1000*30;
 				content.data.historical_prices = await TokenService.getPriceHistory(content.data.asset.id, thirtyDaysBefore, content.data.date + 86400000);
 				content.data.historical_prices = content.data.historical_prices.map(x => {
 					x.price = parseFloat(x.price);
